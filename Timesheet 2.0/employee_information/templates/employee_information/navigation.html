@@ -1,0 +1,100 @@
+{% load static %}
+<style>
+    .selected-option {
+        background-color: transparent !important ;
+        color: #000000;
+        border-radius: 5px;
+        padding: 5px;
+    }
+    #dropdown option {
+        color: #000000; /* Change this to the color you want */
+    }
+</style>
+<aside class="mdc-drawer mdc-drawer--dismissible mdc-drawer--open">
+    <div class="mdc-drawer__header border-bottom border-light">
+        <a href="{% url 'home-page' %}" class="brand-logo">
+            <h3 class="text-center text-light">XYZ Corp</h3>
+        </a>
+    </div>
+    <div class="mdc-drawer__content">
+        <div class="mdc-list-group">
+            <nav class="mdc-list mdc-drawer-menu">
+                <div class="mdc-list-item mdc-drawer-item ">
+                    <a class="mdc-drawer-link" href="{% url 'home-page' %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">home</i> Home
+                    </a>
+                </div>
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'department-page' %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">business</i> Department List
+                    </a>
+                </div>
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'position-page' %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">list</i> Position List
+                    </a>
+                </div>
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'employee-page' %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">group</i> Employee List
+                    </a>
+                </div>
+                <div class="mdc-list-item mdc-drawer-item">
+                    <span class="mdc-drawer-link">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true" style="color:white">group</i> 
+                        <select id="dropdown" onchange="redirectToPage()"; style="background-color: transparent; color: white; border: none; margin-left: -3px; font-weight: bold;">
+                            <option value="time_sh" style="display: none;">Time Sheet </option>
+                            <option value="time_sheet">Time Sheet </option>
+                            <option value="time_sheet_status">Time Sheet Status</option>
+                        </select>
+                    </span>
+                </div>
+                <script>
+                    /// JavaScript function to handle the redirection
+
+                    function redirectToPage() {
+                        // Get the selected value from the dropdown
+                        var selectedValue = document.getElementById("dropdown").value;
+
+                        // Define the URLs for redirection based on the selected value
+                        var redirectionURLs = {
+                            "time_sheet": "{% url 'timesheets_create' %}",     // Replace with the actual URLs
+                            "time_sheet_status": "{% url 'time_sheet_status' %}",
+                        };
+
+                        var options = document.getElementById("dropdown").options;
+                        for (var i = 0; i < options.length; i++) {
+                            if (options[i].value === selectedValue) {
+                                options[i].classList.add("selected-option");
+                            } else {
+                                options[i].classList.remove("selected-option");
+                            }
+                        }
+
+                        // Redirect to the selected page
+                        window.location.href = redirectionURLs[selectedValue];
+                    }
+
+                    // Update the selected option based on the current URL
+                    window.onload = function() {
+                        var currentURL = window.location.href;
+                        var dropdown = document.getElementById("dropdown");
+                        var mdcDrawerLink = document.querySelector(".mdc-drawer-link");
+                        for (var i = 0; i < dropdown.options.length; i++) {
+                            if (currentURL.includes(dropdown.options[i].value)) {
+                                dropdown.value = dropdown.options[i].value;
+                                dropdown.options[i].classList.add("selected-option");
+                                
+                            } else {
+                                dropdown.options[i].classList.remove("selected-option");
+                            }
+                        }
+                    };
+
+                </script>
+                
+            </nav>
+        </div>
+    </div>
+</aside>
+<!-- partial -->

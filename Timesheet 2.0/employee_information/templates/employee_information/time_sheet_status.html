@@ -1,0 +1,203 @@
+{% extends "employee_information/base.html" %} {% block pageContent %}
+<style>
+    .highlight-row{
+        background-color: #e0e0e0 !important;
+        height: 35px;
+        border-color: white;
+
+    }
+    .highlight-row td {
+    line-height: 8px;
+    border-top: 1px solid transparent; /* Adjust this value */
+    border-bottom: 1px solid transparent; /* Adjust this value */
+    vertical-align: middle; /* To align the text vertically in the middle */
+}
+    .italic-text {
+        
+        white-space: nowrap;
+    }
+    .spaced-table {
+        border-collapse: separate;
+        border-spacing: 0 5px;
+    }
+    .spaced-table th {
+        color: white !important;
+    }
+    .button-group {
+    display: flex;
+    justify-content: flex-end;
+    }
+
+    .message-box {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: black;
+        color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .message-box.show {
+        opacity: 1;
+        display: block;
+        animation: fadeOut 0.5s ease-in-out;
+    }
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+}
+</style>
+<div class="italic-text">
+    <h2> Time Sheet Status</h2>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card py-2" style="background-color: #dcd0ff;">
+        <div class="d-flex justify-content-start align-items-center">
+            <label for="start_date" class="me-2">Start Date </label>
+            <input type="date" id="start_date" name="start_date" class="me-4">
+            <label for="end_date" class="me-2">End Date</label>
+            <input type="date" id="end_date" name="end_date" class="me-5">
+            <button type="button" id="applyFilterBtn" class="btn btn-primary">Apply Filter</button>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="table-responsive">
+            <form id="timeSheetForm">
+            <table class="table table-bordered spaced-table">
+                <colgroup>
+                    <col width="15%">
+                    <col width="11.5%">
+                    <col width="11.5%">
+                    <col width="11.5%">
+                    <col width="11.5%">
+                    <col width="11.5%">
+                    <col width="11.5%">
+                </colgroup>
+                <thead style="height: 10px;" >
+                    <tr style="background-color: grey;">
+                        <th class="text-center ">Project name</th>
+                        <th class="text-center ">Start Date</th>
+                        <th class="text-center ">End Date</th>
+                        <th class="text-center ">ST</th>
+                        <th class="text-center ">OT</th>
+                        <th class="text-center ">Status</th>
+                        <th class="text-center ">Approved By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for position in data %}    
+                        <tr class="highlight-row" >
+                        <td class=" text-center">{{ position.project_name }}</td>
+                        <td class=" text-center">{{ position.start_date }}</td>
+                        <td class=" text-center">{{ position.end_date }}</td>
+                        <td class=" text-center">{{ position.ST }}</td>
+                        <td class=" text-center">{{ position.OT }}</td>
+                        <td class=" text-center">{{ position.Status }}</td>
+                        <td class=" text-center">{{ position.Approved_By }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </form>
+        <div id="pagination" style="text-align: right;">
+            <span id="pageDisplay">Page 1</span>
+            <button id="prevBtn" disabled><</button>
+            <button id="nextBtn">></button>
+            <button type="button" id="saveBtn" class="btn btn-primary" style="float: left; margin-right: 10px;">Download List Data</button>
+        </div>
+    </div>
+</div>
+{% endblock pageContent %} {% block ScriptBlock %}
+
+<script>
+    document.getElementById('applyFilterBtn').addEventListener('click', function() {
+        var startDate = document.getElementById('start_date').value;
+        var endDate = document.getElementById('end_date').value;
+
+        fetch("{% url 'time_sheet_status' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'start_date': startDate,
+                'end_date': endDate
+            })
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            var tableBody = document.querySelector('.table tbody');
+            var currentPage = 0;
+            var rowsPerPage = 10;
+
+            function displayPage() {
+                while (tableBody.firstChild) {
+                    tableBody.removeChild(tableBody.firstChild);
+                }
+
+                var start = currentPage * rowsPerPage;
+                var end = start + rowsPerPage;
+
+                data.slice(start, end).forEach(function(item) {
+                    var row = document.createElement('tr');
+                    row.classList.add('highlight-row')
+                    row.innerHTML = `
+                        <td class="px-2 py-1 text-center">${item.project_name}</td>
+                        <td class="px-2 py-1 text-center">${item.start_date}</td>
+                        <td class="px-2 py-1 text-center">${item.end_date}</td>
+                        <td class="px-2 py-1 text-center">${item.ST}</td>
+                        <td class="px-2 py-1 text-center">${item.OT}</td>
+                        <td class="px-2 py-1 text-center">${item.Status}</td>
+                        <td class="px-2 py-1 text-center">${item.Approved_By}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                document.getElementById('pageDisplay').textContent = 'Page ' + (currentPage + 1);
+
+                var prevBtn = document.getElementById('prevBtn');
+                var nextBtn = document.getElementById('nextBtn');
+
+                if (currentPage === 0) {
+                    prevBtn.disabled = true;
+                } else {
+                    prevBtn.disabled = false;
+                }
+
+                if (end >= data.length) {
+                    nextBtn.disabled = true;
+                } else {
+                    nextBtn.disabled = false;
+                }
+            }
+
+            displayPage();
+
+            document.getElementById('prevBtn').addEventListener('click', function() {
+                currentPage--;
+                displayPage();
+            });
+
+            document.getElementById('nextBtn').addEventListener('click', function() {
+                currentPage++;
+                displayPage();
+            });
+        }).catch(function(error) {
+            console.error('Error:', error);
+        });
+    });
+</script>
+{% endblock ScriptBlock %}
