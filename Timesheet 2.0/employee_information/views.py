@@ -69,7 +69,7 @@ def home(request):
         'total_position': len(Position.objects.all()),
         'total_employee': len(Employees.objects.all()),
     }
-    return render(request, 'employee_information/home.html', context)
+    return render(request, 'employee_information/home_employee.html', context)
 
 
 def about(request):
@@ -293,9 +293,7 @@ def view_employee(request):
     return render(request, 'employee_information/view_employee.html', context)
 
 
-@login_required
-# def time_sheet( request ):
-#     return render(request, 'employee_information/time_sheet.html' )
+
 @login_required
 def time_sheet_status(request):
     model = TimeSheet
@@ -375,3 +373,10 @@ def TimeSheetCreate(request):
             # }
             return JsonResponse(data, safe=False)
     return render(request, 'employee_information/time_sheet.html')
+@login_required
+def home_employee( request ):
+     data=[{
+         "alert":"success",
+         "comment":"This is the comment."
+     }]
+     return render(request, 'employee_information/home_employee.html', {"data":data} )
