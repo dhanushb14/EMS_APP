@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import TimeSheet
-
+from .forms import EmployeeForm 
 import json
 from django.views.decorators.http import require_http_methods
 # employees = [
@@ -375,3 +375,18 @@ def TimeSheetCreate(request):
             # }
             return JsonResponse(data, safe=False)
     return render(request, 'employee_information/time_sheet.html')
+
+def timesheet_update_view(request, timesheet_id):
+    timesheet = get_object_or_404(TimeSheet, id=timesheet_id)
+
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST, instance=timesheet)
+        if form.is_valid():
+            form.save()
+            return redirect('timesheet_detail', timesheet_id=timesheet.id)
+
+    else:
+        form = EmployeeForm(instance=timesheet)
+
+    return render(request, 'timesheet_update.html', {'form': form, 'timesheet': timesheet})
+
