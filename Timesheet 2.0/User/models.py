@@ -11,6 +11,17 @@ class EmployeeManager(BaseUserManager):
         employee.set_password(password)
         employee.save(using=self._db)
         return employee
+    
+    def create_superuser(self, employee_id, password=None, role=None, **extra_fields):
+        # Create a superuser with the provided data
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if role != 'superadmin':
+            raise ValueError('Superuser must have role set to "superadmin"')
+
+        return self.create_user(employee_id, password, role, **extra_fields)
 
 class Employee(AbstractBaseUser, PermissionsMixin):
     employee_name = models.CharField(max_length=100)

@@ -69,8 +69,8 @@ class TimeSheet(models.Model):
     ovt_friday = models.IntegerField()
     ovt_saturday = models.IntegerField()
     ovt_sunday = models.IntegerField()
-    Std_time =  models.DateTimeField()
-    ovt_time = models.DateTimeField()
+    St =  models.IntegerField(null=True)
+    ot = models.IntegerField(null=True)
     total_hour = models.IntegerField()
 
     comments = models.CharField(max_length=100)
