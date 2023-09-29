@@ -1,0 +1,189 @@
+{% extends "employee_information/base.html" %} {% block pageContent %}
+<style>
+    .input-large {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+    .highlight-row{
+        background-color: #e0e0e0 !important;
+        height: 20px !important;
+        border-color: white;
+        
+        
+
+    }
+
+    
+.highlight-row td {
+height: 30px;
+border-top: 1px solid transparent; /* Adjust this value */
+border-bottom: 1px solid transparent; /* Adjust this value */
+vertical-align: center; /* To align the text vertically in the middle */
+
+padding: 0; /* Add this line */
+}
+    .italic-text {
+        
+        white-space: nowrap;
+    }
+    .spaced-table {
+        border-collapse: separate;
+        border-spacing: 0 5px;
+    }
+    .spaced-table th {
+        color: white !important;
+    }
+    .button-group {
+    display: flex;
+    justify-content: flex-end;
+    }
+
+    .message-box {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: black;
+        color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .message-box.show {
+        opacity: 1;
+        display: block;
+        animation: fadeOut 0.5s ease-in-out;
+    }
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+}
+</style>
+<div class="italic-text">
+    <h2> Time Sheets</h2>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card py-2" style="background-color: #dcd0ff;">
+        <div class="d-flex justify-content-start align-items-center">
+            <label for="start_date" class="me-2">Project Name: </label>
+            <input type="text" id="project_name" name="project_name" class="me-4">
+            <button type="button" id="applyFilterBtn" class="btn btn-primary"">Apply Filter</button>
+        </div>
+    </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="table-responsive">
+            <form id="timeSheetForm">
+            <table class="table table-bordered spaced-table">
+                <colgroup>
+                    <col width="15%">
+                    <col width="11.5%">
+                    <col width="11.5%">
+                    <col width="11.5%">
+                    <col width="11.5%">
+                    <col width="11.5%">
+                    <col width="20%">
+                    <col width="8%">
+                </colgroup>
+                <thead style="height: 10px;" >
+                    <tr style="background-color: grey;">
+                        <th class="text-center ">Project name</th>
+                        <th class="text-center ">Start Date</th>
+                        <th class="text-center ">End Date</th>
+                        <th class="text-center ">ST</th>
+                        <th class="text-center ">OT</th>
+                        <th class="text-center ">Status</th>
+                        <th class="text-center ">Comment</th>
+                        <th class="text-center "></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for position in data %}    
+                        <tr class="highlight-row" >
+                        <td class=" text-center">{{ position.project_name }}</td>
+                        <td class=" text-center">{{ position.start_date }}</td>
+                        <td class=" text-center">{{ position.end_date }}</td>
+                        <td class=" text-center">{{ position.ST }}</td>
+                        <td class=" text-center">{{ position.OT }}</td>
+                        <td class="text-center">
+                            <select name="status" id="status" style="width: 100%; height: 100%;">
+                                <option class="me-4" value="Accepted">Accepted</option>
+                                <option class="me-4" value="Rejected">Rejected</option>
+                                
+                            </select>
+                        </td>
+                        <td class="text-center">
+                            
+                            <input type="text" id="comment" name="comment" style="width: 100%;height: 100%;">
+                            
+                        </td>
+                        <td class="px-2 py-3 text-center">
+                            <button id="send-btn" onclick="submitForm()" style="background-color: red !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">SEND</button>
+                            <button class="mdc-button mdc-button--raised p-1 icon-button mdc-ripple-upgraded view-data" type="button" title="View Details">
+                                <i class="material-icons mdc-button__icon">visibility</i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </form>
+        <div id="pagination" style="text-align: right;">
+            <span id="pageDisplay">Page 1</span>
+            <button id="prevBtn" disabled><</button>
+            <button id="nextBtn">></button>
+        </div>
+    </div>
+</div>
+<script>
+    function submitForm(event) {
+        event.preventDefault(); // Prevent form submission and page refresh
+
+        var button = event.target;
+        var row = button.parentNode.parentNode;
+        var data = {
+            'project_name': row.querySelector('td:nth-child(1)').innerText,
+            'start_date': row.querySelector('td:nth-child(2)').innerText,
+            'end_date': row.querySelector('td:nth-child(3)').innerText,
+            'ST': row.querySelector('td:nth-child(4)').innerText,
+            'OT': row.querySelector('td:nth-child(5)').innerText,
+            'status': row.querySelector('td:nth-child(6) select').value,
+            'comment': row.querySelector('td:nth-child(7) input').value
+        };
+
+        fetch("{% url 'timesheet_manager' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        }).then(function(response) {
+            document.getElementById("send-btn").style.backgroundColor = "green";
+            return response.json();
+        }).then(function(data) {
+            console.log(data);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var sendButton = document.getElementById("send-btn");
+        sendButton.addEventListener('click', submitForm);
+    });
+</script>
+
+{% endblock pageContent %} {% block ScriptBlock %}
+
+
+{% endblock ScriptBlock %}

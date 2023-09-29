@@ -380,3 +380,23 @@ def home_employee( request ):
          "comment":"This is the comment."
      }]
      return render(request, 'employee_information/home_employee.html', {"data":data} )
+
+@login_required
+def timesheet_manager( request ):
+     model = "" #Specify the mode
+    #  data =            [{
+    #             "project_name": "DHL",
+    #             "start_date": "30",
+    #             "end_date": "7",
+    #             "ST": "30",
+    #             "OT": "7",
+
+    #         }]
+     data=[{}]
+     
+     if request.method == 'POST':
+        data = json.loads(request.body)
+        #model.objects.create(**data)
+        return JsonResponse(data, safe=False)
+
+     return render(request, 'employee_information/timesheet_manager.html', {"data":data} )
