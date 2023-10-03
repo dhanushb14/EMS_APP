@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'employee_information.apps.EmployeeInformationConfig',
     'django.contrib.humanize',
+    'User',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,4 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login'
+AUTH_USER_MODEL = "User.Employee"

@@ -27,6 +27,10 @@ urlpatterns = [
     # path('time_sheet', views.time_sheet, name="time_sheet"),
     path('time_sheet_status', views.time_sheet_status, name="time_sheet_status"),
     path('timesheets_create', views.TimeSheetCreate, name='timesheets_create'),
+
     path('home_employee', views.home_employee, name='home_employee'),
     path('timesheet_manager', views.timesheet_manager, name='timesheet_manager'),
+
+    path('timesheets_update', views.timesheet_update_view, name= "time-sheet-update")
+
 ]
