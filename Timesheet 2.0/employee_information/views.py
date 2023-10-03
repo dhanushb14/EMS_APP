@@ -69,7 +69,7 @@ def home(request):
         'total_position': len(Position.objects.all()),
         'total_employee': len(Employees.objects.all()),
     }
-    return render(request, 'employee_information/home_employee.html', context)
+    return render(request, 'employee_information/home.html', context)
 
 
 def about(request):
