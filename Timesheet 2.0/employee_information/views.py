@@ -293,9 +293,7 @@ def view_employee(request):
     return render(request, 'employee_information/view_employee.html', context)
 
 
-@login_required
-# def time_sheet( request ):
-#     return render(request, 'employee_information/time_sheet.html' )
+
 @login_required
 def time_sheet_status(request):
     model = TimeSheet
@@ -376,6 +374,35 @@ def TimeSheetCreate(request):
             return JsonResponse(data, safe=False)
     return render(request, 'employee_information/time_sheet.html')
 
+@login_required
+def home_employee( request ):
+     data=[{
+         "alert":"success",
+         "comment":"This is the comment."
+     }]
+     return render(request, 'employee_information/home_employee.html', {"data":data} )
+
+@login_required
+def timesheet_manager( request ):
+     model = "" #Specify the mode
+    #  data =            [{
+    #             "project_name": "DHL",
+    #             "start_date": "30",
+    #             "end_date": "7",
+    #             "ST": "30",
+    #             "OT": "7",
+
+    #         }]
+     data=[{}]
+     
+     if request.method == 'POST':
+        data = json.loads(request.body)
+        #model.objects.create(**data)
+        return JsonResponse(data, safe=False)
+
+     return render(request, 'employee_information/timesheet_manager.html', {"data":data} )
+
+
 def timesheet_update_view(request, timesheet_id):
     timesheet = get_object_or_404(TimeSheet, id=timesheet_id)
 
@@ -389,4 +416,5 @@ def timesheet_update_view(request, timesheet_id):
         form = EmployeeForm(instance=timesheet)
 
     return render(request, 'timesheet_update.html', {'form': form, 'timesheet': timesheet})
+
 
