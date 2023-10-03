@@ -69,24 +69,21 @@ class TimeSheet(models.Model):
     ovt_friday = models.IntegerField()
     ovt_saturday = models.IntegerField()
     ovt_sunday = models.IntegerField()
-
+    St =  models.IntegerField(null=True)
+    ot = models.IntegerField(null=True)
     total_hour = models.IntegerField()
 
+    comments = models.CharField(max_length=100)
+    timesheet_status = (
+        ('Approve', 'Approve'),
+        ('Reject', 'Reject')
+    )
+    status = models.CharField(max_length=20, choices=timesheet_status)
     def __str__(self):
         return f"Time Sheet for {self.project_name} ({self.start_date} - {self.end_date})"
     
 
 
 
-class UserProfile(models.Model):
-    USER_ROLES = (
-        ('superadmin', 'Superadmin'),
-        ('employee', 'Employee'),
-    )
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=20, choices=USER_ROLES)
-    # Add any additional fields specific to each role here
 
-    def __str__(self):
-        return self.user.username
 

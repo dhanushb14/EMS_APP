@@ -27,4 +27,5 @@ urlpatterns = [
     # path('time_sheet', views.time_sheet, name="time_sheet"),
     path('time_sheet_status', views.time_sheet_status, name="time_sheet_status"),
     path('timesheets_create', views.TimeSheetCreate, name='timesheets_create'),
+    path('timesheets_update', views.timesheet_update_view, name= "time-sheet-update")
 ]
