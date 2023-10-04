@@ -54,142 +54,61 @@
                                 <h3 class="text-center ">Employee Sign Up</h3>
                             </div>
                         </div>
-                        <div class="mdc-layout-grid_inner" style="margin-left: 135px; margin-right: 135px;box-shadow: 0 4px 8px 0 rgba(185, 79, 255, 0.2), 0 6px 20px 0 rgba(158, 72, 250, 0.281);">
+                        <div class="mdc-layout-grid_inner" style="margin-left: 500px; margin-right: 500px;box-shadow: 0 4px 8px 0 rgba(185, 79, 255, 0.2), 0 6px 20px 0 rgba(158, 72, 250, 0.281);">
                             <div class="stretch-card mdc-layout-grid__cell--span-4-desktop mdc-layout-grid__cell--span-1-tablet"></div>
                             <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-4-desktop mdc-layout-grid__cell--span-6-tablet">
                                 <div class="mdc-card">
-                                    <form id="login-user">
-                                        {% csrf_token %}
+                                    <form>
+                                        
                                         <div class="mdc-lay out-grid">
                                             <div class="mdc-layout-grid__inner">
-                                                <form action="" id="login" method="post">
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6" >
-                                                        <div class="mdc-text-field w-100">
-                                                            <input class="mdc-text-field__input" name="employee_id" id="text-field-hero-input">
-                                                            <div class="mdc-line-ripple"></div>
-                                                            <label for="text-field-hero-input" class="mdc-floating-label">Employee id</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="mdc-text-field w-100">
-                                                            <input class="mdc-text-field__input" name="firstname" id="text-field-hero-input">
-                                                            <div class="mdc-line-ripple"></div>
-                                                            <label for="text-field-hero-input" class="mdc-floating-label">First name</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="mdc-text-field w-100">
-                                                            <input class="mdc-text-field__input" name="middlename" id="text-field-hero-input">
-                                                            <div class="mdc-line-ripple"></div>
-                                                            <label for="text-field-hero-input" class="mdc-floating-label">Middle name</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="mdc-text-field w-100">
-                                                            <input class="mdc-text-field__input" name="lastname" id="text-field-hero-input">
-                                                            <div class="mdc-line-ripple"></div>
-                                                            <label for="text-field-hero-input" class="mdc-floating-label">Last name</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="mdc-text-field w-100">
-                                                            <input class="mdc-text-field__input" name="contact" id="text-field-hero-input">
-                                                            <label for="text-field-hero-input" class="mdc-floating-label">Contact</label>
-                                                            <div class="mdc-line-ripple"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="mdc-text-field w-100">
-                                                            <label for="address-field" class="mdc-floating-label">Address</label>
-                                                            <div class="mdc-line-ripple"></div>
-                                                            <input class="mdc-text-field__input" name="address" id="text-field-hero-input">  
-                                                        </div>
-                                                    </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6" >
-                                                        <div class="mdc-text-field w-100">
-                                                            <input class="mdc-text-field__input" name="email" id="text-field-hero-input">
-                                                            <div class="mdc-line-ripple"></div>
-                                                            <label for="contact-field" class="mdc-floating-label">Email</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6" >
-                                                        <div class="mdc-text-field w-100">
-                                                            <input class="mdc-text-field__input" name="salary" id="salary-field">
-                                                            <div class="mdc-line-ripple"></div>
-                                                            <label for="contact-field" class="mdc-floating-label">Salary</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="w-100">
-                                                            <label for="dob-field" style="display: inline-block; width: 120px;" >DOB:</label>
-                                                            <input  type="date" name="dob" id="dob-field" style="display: inline-block; border: transparent; margin-left: 20px;">
-                                                            <div class="mdc-line-ripple"></div>
-                                                        </div>
-                                                    </div>
+                                                
                                                     
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="mdc-text-field w-100">
-                                                            <label>Gender:</label>
-                                                            <input class="mdc-text-field" name="gender" type="radio" id="male" value="Male" style="width: 50px; height: 20px;margin-left: 70px;">
-                                                            <label for="male" style="margin-right: 50px;">Male</label>
-                                                            <input class="mdc-text-field" name="gender" type="radio" id="female" value="Female" style="width: 50px; height: 20px;">
-                                                            <label for="female" style="margin-right: 5px;">Female</label>
-                                                            
-                                                        </div>
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" >
+                                                    <div class="mdc-text-field w-100">
+                                                        <input class="mdc-text-field__input" name="employee_id" id="employee_id">
+                                                        <div class="mdc-line-ripple"></div>
+                                                        <label for="employee_id" class="mdc-floating-label">Employee id</label>
                                                     </div>
-                                                    
-                                                    
-                                                    
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="w-100">
-                                                            <label for="department-field" style="display: inline-block; width: auto;" >Department:</label>
-                                                            <select name="department" id="department-field" style="display: inline-block; border: none; background-color: white; margin-left: 50px;">
-                                                                <option value="">Select Department</option>
-                                                                <option value="HR">HR</option>
-                                                                <option value="Sales">Sales</option>
-                                                                <option value="Marketing">Marketing</option>
-                                                                <!-- Add more options as needed -->
-                                                            </select>
-                                                        </div>
+                                                </div>
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                                                    <div class="mdc-text-field w-100">
+                                                        <input class="mdc-text-field__input" name="employee_name" id="employee_name">
+                                                        <div class="mdc-line-ripple"></div>
+                                                        <label for="employee_name" class="mdc-floating-label">Employee Name</label>
                                                     </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="w-100">
-                                                            <label for="position-field" style="display: inline-block; width: auto;" >Position:</label>
-                                                            <select name="position" id="position-field" style="display: inline-block; border: none; background-color: white; margin-left: 75px;">
-                                                                <option value="">Select Position</option>
-                                                                <option value="HR">HR</option>
-                                                                <option value="Sales">Sales</option>
-                                                                <option value="Marketing">Marketing</option>
-                                                                <!-- Add more options as needed -->
-                                                            </select>
-                                                        </div>
+                                                </div>
+                                                
+                                                
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" >
+                                                    <div class="mdc-text-field w-100">
+                                                        <input class="mdc-text-field__input" name="email_id" id="email_id">
+                                                        <div class="mdc-line-ripple"></div>
+                                                        <label for="email_id" class="mdc-floating-label">Email</label>
                                                     </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="w-100">
-                                                            <label for="date-hired" style="display: inline-block; width: auto;" >Date Hired:</label>
-                                                            <input  type="date" name="date-hierd" id="date-hierd" style="display: inline-block; border: transparent; margin-left: 60px;">
-                                                            <div class="mdc-line-ripple"></div>
-                                                        </div>
+                                                </div>
+                                                
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" >
+                                                    <div class="mdc-text-field w-100">
+                                                        <input class="mdc-text-field__input" name="phonenumber" id="phonenumber">
+                                                        <div class="mdc-line-ripple"></div>
+                                                        <label for="phonenumber" class="mdc-floating-label">Contact</label>
                                                     </div>
-                                                    
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-                                                        <div class="w-100">
-                                                            <label for="position-field" style="display: inline-block; width: auto; "  >Status:</label>
-                                                            <select name="position" id="position-field" style="display: inline-block; border: none; background-color: white; margin-left: 85px;">
-                                                                <option value="">Select Status</option>
-                                                                <option value="active">Active</option>
-                                                                <option value="unactive">UnActive</option>
-                                                                
-                                                                <!-- Add more options as needed -->
-                                                            </select>
-                                                        </div>
+                                                </div>
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" >
+                                                    <div class="mdc-text-field w-100">
+                                                        <input class="mdc-text-field__input" name="password" id="password" type="password" required minlength="8" pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$" title="Password must contain at least one uppercase letter, one digit, and one special character, and be at least 8 characters long." >
+                                                        <div class="mdc-line-ripple"></div>
+                                                        <label for="password" class="mdc-floating-label">Password</label>
                                                     </div>
-                                                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-                                                        <button class="mdc-button mdc-button--raised" style="width: 200px; margin: auto; display: block;">
-                                                            Sign-up
-                                                        </button>
-                                                    </div>
-                                                </form>
+                                                </div>
+            
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                                                    <button id="submitbtn" class="mdc-button mdc-button--raised" style="width: 200px; margin: auto; display: block;">
+                                                        Sign-up
+                                                    </button>
+                                                </div>
+                                                
                                             </div>
                                         </div>
                                     </form>
@@ -251,57 +170,46 @@
     <script src="{% static 'employee_information/assets/material-admin/js/material.js' %}"></script>
     <script src="{% static 'employee_information/assets/material-admin/js/misc.js' %}"></script>
     <script src="{% static 'employee_information/assets/material-admin/js/dashboard.js' %}"></script>
+    
     <script>
-        $(function() {
-            $('#login-user').submit(function(e) {
-                e.preventDefault();
-                var _this = $(this)
-                $('.err-msg').remove();
-                var el = $('<div>')
-                el.addClass("alert alert-danger err-msg")
-                el.hide()
-                if (_this[0].checkValidity() == false) {
-                    _this[0].reportValidity();
-                    return false;
-                }
-                start_loader();
-                $.ajax({
-                    headers: {
-                        "X-CSRFToken": '{{csrf_token}}'
-                    },
-                    url: "{% url 'login-user' %}",
-                    data: new FormData($(this)[0]),
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    method: 'POST',
-                    type: 'POST',
-                    dataType: 'json',
-                    error: err => {
-                        console.log(err)
-                        alert_toast("An error occured", 'error');
-                        end_loader();
-                    },
-                    success: function(resp) {
-                        if (typeof resp == 'object' && resp.status == 'success') {
-                            el.removeClass("alert alert-danger err-msg")
-                            location.href = "{% url 'home-page' %}"
-                        } else if (resp.status == 'failed' && !!resp.msg) {
-                            el.text(resp.msg)
-                        } else {
-                            el.text("An error occured", 'error');
-                            end_loader();
-                            console.err(resp)
-                        }
-                        _this.prepend(el)
-                        el.show('slow')
-                        $("html, body, .modal").scrollTop(0);
-                        end_loader()
-                    }
+
+        document.getElementById("submitbtn").addEventListener("click", function() {
+            event.preventDefault();
+            var employee_id = document.getElementById('employee_id').value;
+            var employee_name = document.getElementById('employee_name').value;
+            var phonenumber = document.getElementById('phonenumber').value;
+            var email_id = document.getElementById('email_id').value;
+            var password = document.getElementById('password').value;
+            
+            if (!employee_id || !employee_name || !phonenumber || !email_id){
+                alert("Please fill all the fields");
+            }
+
+            else {
+            // Disable the button to prevent multiple submissions
+            document.getElementById("submitbtn").disabled = true;
+
+            fetch("{% url 'User:employee_create' %}", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'employee_id': employee_id,
+                    'employee_name': employee_name,
+                    'phonenumber': phonenumber,
+                    'email_id': email_id,
+                    'password': password
                 })
-            })
+            }).then(function(response) {
+                window.location.href = "{% url 'login' %}";
         })
+            
+        }
+    });
     </script>
+    
 </body>
 
 </html>
