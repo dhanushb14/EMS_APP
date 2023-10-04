@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        .form-label {
+            display: inline-block;
+            width: 150px; /* Adjust as needed */
+            text-align: right;
+            margin-right: 10px;
+        }
+        
+    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% if page_title %}
+    <title>{{ page_title }} | Employee Information System</title>
+    {% else %}
+    <title>Employee Information System</title>
+    {% endif %}
+    <link rel="stylesheet" href="{% static 'employee_information/assets/default/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'employee_information/assets/bootstrap/css/bootstrap.min.css' %}">
+
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="{% static 'employee_information/assets/material-admin/vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'employee_information/assets/material-admin/vendors/css/vendor.bundle.base.css' %}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{% static 'employee_information/assets/material-admin/vendors/flag-icon-css/css/flag-icon.min.css' %}">
+    <link rel="stylesheet" href="{% static 'employee_information/assets/material-admin/vendors/jvectormap/jquery-jvectormap.css' %}">
+    <!-- End plugin css for this page -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="{% static 'employee_information/assets/material-admin/css/demo/style.css' %}">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="{% static 'employee_information/assets/material-admin/images/favicon.png' %}" />
+    <script src="{% static 'employee_information/assets/default/js/jquery-3.6.0.min.js' %}">
+    </script>
+    <script src="{% static 'employee_information/assets/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'employee_information/assets/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'employee_information/assets/bootstrap/js/popper.min.js' %}"></script>
+</head>
+
+<body style="font-family: Arial, sans-serif !important ;background-color: #f0f0f0 !important;">
+    <script src="{% static 'employee_information/assets/material-admin/js/preloader.js' %}"></script>
+    <div class="body-wrapper">
+        <div class="main-wrapper">
+            <div class="page-wrapper full-page-wrapper d-flex align-items-center justify-content-center mdc-elevation--z3">
+                <main class="auth-page">
+                    <div class="mdc-layout-grid ">
+                        <div class="mdc-layout-grid__inner ">
+                            <div class="mdc-layout-grid__cell--span-2-desktop "></div>
+                            <div class="mdc-card mdc-layout-grid__cell--span-8-desktop mdc-layout-grid__cell--span-1-tablet mb-5 mdc-elevation-z3"style="box-shadow: 0 4px 8px 0 rgba(185, 79, 255, 0.2), 0 6px 20px 0 rgba(158, 72, 250, 0.281);">
+                                <h3 class="text-center ">Employee Sign Up</h3>
+                            </div>
+                        </div>
+                        <div class="mdc-layout-grid_inner" style="margin-left: 500px; margin-right: 500px;box-shadow: 0 4px 8px 0 rgba(185, 79, 255, 0.2), 0 6px 20px 0 rgba(158, 72, 250, 0.281);">
+                            <div class="stretch-card mdc-layout-grid__cell--span-4-desktop mdc-layout-grid__cell--span-1-tablet"></div>
+                            <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-4-desktop mdc-layout-grid__cell--span-6-tablet">
+                                <div class="mdc-card">
+                                    <form>
+                                        
+                                        <div class="mdc-lay out-grid">
+                                            <div class="mdc-layout-grid__inner">
+                                                
+                                                    
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" >
+                                                    <div class="mdc-text-field w-100">
+                                                        <input class="mdc-text-field__input" name="employee_id" id="employee_id">
+                                                        <div class="mdc-line-ripple"></div>
+                                                        <label for="employee_id" class="mdc-floating-label">Employee id</label>
+                                                    </div>
+                                                </div>
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                                                    <div class="mdc-text-field w-100">
+                                                        <input class="mdc-text-field__input" name="employee_name" id="employee_name">
+                                                        <div class="mdc-line-ripple"></div>
+                                                        <label for="employee_name" class="mdc-floating-label">Employee Name</label>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" >
+                                                    <div class="mdc-text-field w-100">
+                                                        <input class="mdc-text-field__input" name="email_id" id="email_id">
+                                                        <div class="mdc-line-ripple"></div>
+                                                        <label for="email_id" class="mdc-floating-label">Email</label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" >
+                                                    <div class="mdc-text-field w-100">
+                                                        <input class="mdc-text-field__input" name="phonenumber" id="phonenumber">
+                                                        <div class="mdc-line-ripple"></div>
+                                                        <label for="phonenumber" class="mdc-floating-label">Contact</label>
+                                                    </div>
+                                                </div>
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" >
+                                                    <div class="mdc-text-field w-100">
+                                                        <input class="mdc-text-field__input" name="password" id="password" type="password" required minlength="8" pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$" title="Password must contain at least one uppercase letter, one digit, and one special character, and be at least 8 characters long." >
+                                                        <div class="mdc-line-ripple"></div>
+                                                        <label for="password" class="mdc-floating-label">Password</label>
+                                                    </div>
+                                                </div>
+            
+                                                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                                                    <button id="submitbtn" class="mdc-button mdc-button--raised" style="width: 200px; margin: auto; display: block;">
+                                                        Sign-up
+                                                    </button>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="stretch-card mdc-layout-grid__cell--span-4-desktop mdc-layout-grid__cell--span-1-tablet"></div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+    <script>
+        window.start_loader = function() {
+            $('body').removeClass('loaded')
+        }
+        window.end_loader = function() {
+            $('body').addClass('loaded')
+        }
+        window.uni_modal = function($title = '', $url = '', $size = "") {
+            start_loader()
+            $.ajax({
+                url: $url,
+                error: err => {
+                    console.log()
+                    alert("An error occured")
+                },
+                success: function(resp) {
+                    if (resp) {
+                        $('#uni_modal .modal-title').html($title)
+                        $('#uni_modal .modal-body').html(resp)
+                        if ($size != '') {
+                            $('#uni_modal .modal-dialog').addClass($size + '  modal-dialog-centered')
+                        } else {
+                            $('#uni_modal .modal-dialog').removeAttr("class").addClass("modal-dialog modal-md modal-dialog-centered")
+                        }
+                        $('#uni_modal').modal({
+                            backdrop: 'static',
+                            keyboard: false,
+                            focus: true
+                        })
+                        $('#uni_modal').modal('show')
+                        end_loader()
+                    }
+                }
+            })
+        }
+        window._conf = function($msg = '', $func = '', $params = []) {
+            $('#confirm_modal #confirm').attr('onclick', $func + "(" + $params.join(',') + ")")
+            $('#confirm_modal .modal-body').html($msg)
+            $('#confirm_modal').modal('show')
+        }
+        $(function() {
+
+        })
+    </script>
+
+    <script src="{% static 'employee_information/assets/material-admin/vendors/js/vendor.bundle.base.js' %}"></script>
+    <script src="{% static 'employee_information/assets/material-admin/js/material.js' %}"></script>
+    <script src="{% static 'employee_information/assets/material-admin/js/misc.js' %}"></script>
+    <script src="{% static 'employee_information/assets/material-admin/js/dashboard.js' %}"></script>
+    
+    <script>
+
+        document.getElementById("submitbtn").addEventListener("click", function() {
+            event.preventDefault();
+            var employee_id = document.getElementById('employee_id').value;
+            var employee_name = document.getElementById('employee_name').value;
+            var phonenumber = document.getElementById('phonenumber').value;
+            var email_id = document.getElementById('email_id').value;
+            var password = document.getElementById('password').value;
+            
+            if (!employee_id || !employee_name || !phonenumber || !email_id){
+                alert("Please fill all the fields");
+            }
+
+            else {
+            // Disable the button to prevent multiple submissions
+            document.getElementById("submitbtn").disabled = true;
+
+            fetch("{% url 'User:employee_create' %}", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'employee_id': employee_id,
+                    'employee_name': employee_name,
+                    'phonenumber': phonenumber,
+                    'email_id': email_id,
+                    'password': password
+                })
+            }).then(function(response) {
+                window.location.href = "{% url 'login' %}";
+        })
+            
+        }
+    });
+    </script>
+    
+</body>
+
+</html>

@@ -25,9 +25,10 @@ class EmployeeManager(BaseUserManager):
 
 class Employee(AbstractBaseUser, PermissionsMixin):
     employee_name = models.CharField(max_length=100)
-    email_id = models.EmailField(blank=False, unique=True)
+    email_id = models.EmailField(blank=False, unique=True)  
     phonenumber = models.CharField(max_length=20, unique=True)
     employee_id = models.CharField(unique=True, max_length=10, primary_key=True)
+    password = models.CharField(max_length=100)
     role = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

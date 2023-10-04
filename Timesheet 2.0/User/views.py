@@ -2,6 +2,11 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Employee
 from django.urls import reverse
+from django.http import HttpResponse, JsonResponse
+import json
+from employee_information import urls
+from django.urls import reverse
+from django.contrib.auth.hashers import make_password
 
 def employee_list(request):
     # Check the user's role
@@ -13,12 +18,17 @@ def employee_list(request):
         return render(request, 'unauthorized.html') 
 
 def employee_create(request):
+    model = Employee
     if request.method == 'POST':
-        # Handle the form submission and create a new employee
-        # This part depends on your form handling logic
-        pass
+        data = json.loads(request.body)
+        if 'password' in data:
+            data['password'] = make_password(data['password'])
+        model.objects.create(**data)
+        
+        return JsonResponse(data, safe=True)
+        
     else:
-        return render(request, 'home.html')
+        return render(request, 'employee_information/employee_signup.html')
 
 def employee_update(request, pk):
     employee = get_object_or_404(Employee, employee_id=pk)
@@ -28,6 +38,8 @@ def employee_update(request, pk):
         pass
     else:
         return render(request, 'home.html', {'employee': employee})
+   
+
 
 # def employee_delete(request, pk):
 #     employee = get_object_or_404(Employee, employee_id=pk)
