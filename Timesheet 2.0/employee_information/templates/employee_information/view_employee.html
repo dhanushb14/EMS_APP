@@ -9,34 +9,25 @@
         <div class="col-sm-6">
             <dl>
                 <dt class="mdc-typography mdc-theme--primary">Employee ID/Code</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.code }}</dd>
-                <dt class="mdc-typography mdc-theme--primary">Fullname</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.firstname }} {{ employee.middlename }} {{ employee.lastname }}</dd>
-                <dt class="mdc-typography mdc-theme--primary">Gender</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.gender }}</dd>
-                <dt class="mdc-typography mdc-theme--primary">Date of Birth</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.dob|date:'M d, Y' }}</dd>
+                <dd class="ps-3 fw-bolder">{{ employee.id }}</dd>
+                <dt class="mdc-typography mdc-theme--primary">Name</dt>
+                <dd class="ps-3 fw-bolder">{{ employee.name }} </dd>               
                 <dt class="mdc-typography mdc-theme--primary">Email</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.email }}</dd>
+                <dd class="ps-3 fw-bolder">{{ employee.email_id }}</dd>
                 <dt class="mdc-typography mdc-theme--primary">Contact #</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.contact }}</dd>
-                <dt class="mdc-typography mdc-theme--primary">Address</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.address }}</dd>
+                <dd class="ps-3 fw-bolder">{{ employee.phonenumber }}</dd>
+                
             </dl>
         </div>
         <div class="col-sm-6">
             <dl>
-                <dt class="mdc-typography mdc-theme--primary">Department</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.department_id }}</dd>
-                <dt class="mdc-typography mdc-theme--primary">Position</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.position_id }}</dd>
-                <dt class="mdc-typography mdc-theme--primary">Date Hired</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.date_hired|date:'M d, Y' }}</dd>
-                <dt class="mdc-typography mdc-theme--primary">Salary</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.salary|intcomma }}</dd>
+                
+                
+                
+                
                 <dt class="mdc-typography mdc-theme--primary">Status</dt>
                 <dd class="ps-3 fw-bolder">
-                    {% if employee.status == 1 %}
+                    {% if employee.is_active == 1 %}
                     <span class="badge bg-primary rounded-pill px-3">Active</span> {% else %}
                     <span class="badge bg-secondary rounded-pill px-3">Inactive</span> {% endif %}
                 </dd>

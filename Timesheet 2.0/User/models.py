@@ -24,10 +24,11 @@ class EmployeeManager(BaseUserManager):
         return self.create_user(employee_id, password, role, **extra_fields)
 
 class Employee(AbstractBaseUser, PermissionsMixin):
+    id = models.AutoField(primary_key=True)
     employee_name = models.CharField(max_length=100)
     email_id = models.EmailField(blank=False, unique=True)  
     phonenumber = models.CharField(max_length=20, unique=True)
-    employee_id = models.CharField(unique=True, max_length=10, primary_key=True)
+    employee_id = models.CharField(unique=True, max_length=10)
     password = models.CharField(max_length=100)
     role = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
@@ -37,6 +38,15 @@ class Employee(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'employee_id'
     REQUIRED_FIELDS = ['employee_name', 'phonenumber', 'role', 'email_id']
-
+    def save(self, *args, **kwargs):
+        try:
+            if not self.id:
+                # Get the maximum id value from the existing records
+                max_id = Employee.objects.aggregate(models.Max('id'))['id__max']
+                self.id = 1 if max_id is None else max_id + 1
+            return super(Employee, self).save(*args, **kwargs)
+        except Exception:
+            # Handle the error here
+            pass
     def _str_(self):
         return self.employee_id
