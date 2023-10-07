@@ -35,7 +35,8 @@ class TimeSheet(models.Model):
     comments = models.CharField(max_length=100)
     timesheet_status = (
         ('Approve', 'Approve'),
-        ('Reject', 'Reject')
+        ('Reject', 'Reject'),
+        ('Pending', 'Pending'),
     )
     status = models.CharField(max_length=20, choices=timesheet_status)
     def __str__(self):
