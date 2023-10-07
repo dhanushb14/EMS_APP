@@ -77,7 +77,7 @@
             <label for="start_date" class="me-2">Start Date </label>
             <input type="date" id="start_date" name="start_date" class="me-4">
             <label for="end_date" class="me-2">End Date</label>
-            <input type="date" id="end_date" name="end_date" class="me-5">
+            <input type="date" id="end_date" name="end_date" class="me-5" readonly>
             <label for="holiday" class="me-4">Holiday (*)</label>
         </div>
     </div>
@@ -168,11 +168,11 @@
                     <tr style="background-color: #e0e0e0;">
                         <td class="px-2 py-1 text-center">
                             Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
-                            <input type="text" id="ST" name="ST" placeholder="0" value="0" style="width: 50px;" readonly>
+                            <input type="text" id="St" name="ST" placeholder="0" value="0" style="width: 50px;" readonly>
                         </td>
                         <td class="px-2 py-1 text-center">
                             Over Time: &nbsp;&nbsp;&nbsp&nbsp;
-                            <input type="text" id="OT" name="ST" placeholder="0" value="0" style="width: 50px" readonly>
+                            <input type="text" id="ot" name="ST" placeholder="0" value="0" style="width: 50px" readonly>
                         </td>
                         <td class="px-2 py-1 text-center">
                             Total Hours: &nbsp;&nbsp;&nbsp&nbsp;
@@ -185,7 +185,7 @@
                 </tbody>
             </table>
         </div>
-        <div >
+        <div id="parent">
             <button type="button" id="saveBtn" class="btn btn-primary" style="float: left; margin-right: 10px;">Save</button>
             <button type="button" id="discardBtn" class="btn btn-secondary" style="float: left;">Discard</button>
             <button type="submit" id="submitBtn" class="btn btn-success" style="float: right;">Submit</button>
@@ -195,17 +195,23 @@
 </div>
 {% endblock pageContent %} {% block ScriptBlock %}
 <script>
+    
     function getPreviousMonday() {
-        var date = new Date(); // Gets date from the browser date and time
-        var day = date.getDay();
+        var date = new Date();
+        if (date.getUTCHours() < 6) {
+            date.setUTCDate(date.getUTCDate() - 1);
+        }
+        var day = date.getUTCDay();
         var prevMonday;
-        if(date.getDay() == 0){
-            prevMonday = new Date().setDate(date.getDate() - 6);
+
+        if(day === 0){
+            prevMonday = new Date(date.getTime() - 6 * 24 * 60 * 60 * 1000);
         }
         else{
-            prevMonday = new Date().setDate(date.getDate() - day + (day == 1 ? -6 : 1));
+            prevMonday = new Date(date.getTime() - (day - 1) * 24 * 60 * 60 * 1000);
         }
-        return new Date(prevMonday);
+
+        return prevMonday;
     }
 
     $(function() {
@@ -216,8 +222,20 @@
         var endDate = new Date(startDate.getTime() + (6 * 24 * 60 * 60 * 1000)); // Add 6 days to start date
         var formattedEndDate = endDate.toISOString().split('T')[0]; // Format the end date as YYYY-MM-DD
         $('#end_date').val(formattedEndDate);
-        
-        fetch("{% url 'timesheets_create' %}", {
+
+        document.getElementById('start_date').addEventListener('change', function() {
+            
+            var startDate = new Date(this.value);
+            var day = startDate.getDay();
+            var diff = startDate.getDate() - day + (day === 0 ? -6 : 1); // Calculate the difference to the previous Monday
+            var mondayDate = new Date(startDate.setDate(diff));
+            var formattedStartDate = mondayDate.toISOString().split('T')[0];
+            var endDate = new Date(mondayDate.getTime() + (6 * 24 * 60 * 60 * 1000)); // Add 6 days to start date
+            var formattedEndDate = endDate.toISOString().split('T')[0]; // Format the end date as YYYY-MM-DD
+            document.getElementById('end_date').value = formattedEndDate;
+            document.getElementById('start_date').value = formattedStartDate;
+
+            fetch("{% url 'timesheets_create' %}", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -230,7 +248,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            
+            console.log('first')
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
                 document.getElementById("project_name").value = data?.project_name || '';
@@ -248,11 +266,11 @@
                 document.getElementById("ovt_friday").value = data?.ovt_friday || '';
                 document.getElementById("ovt_saturday").value = data?.ovt_saturday || '';
                 document.getElementById("ovt_sunday").value = data?.ovt_sunday || '';
-                document.getElementById("ST").value = data?.ST || '';
-                document.getElementById("OT").value = data?.OT || '';
+                document.getElementById("St").value = data?.St || '';
+                document.getElementById("ot").value = data?.ot || '';
                 document.getElementById("total_hour").value = data?.total_hour || '';
 
-                if (data?.project_name) {
+                if (data?.project_name ) {
                     // Removing buttons
                     document.getElementById("submitBtn").remove();
                     document.getElementById("discardBtn").remove();
@@ -274,8 +292,8 @@
                     document.getElementById("ovt_friday").readOnly = true;
                     document.getElementById("ovt_saturday").readOnly = true;
                     document.getElementById("ovt_sunday").readOnly = true;
-                    document.getElementById("ST").readOnly = true;
-                    document.getElementById("OT").readOnly = true;
+                    document.getElementById("St").readOnly = true;
+                    document.getElementById("ot").readOnly = true;
                     document.getElementById("total_hour").readOnly = true;
 
                     // Creating the warning msg
@@ -291,10 +309,104 @@
                     messageCell.appendChild(messageBox1);
 
                 }
+                else{
+                    location.reload();
+                                }
+                            
+
+                    // fetch("{% url 'timesheets_create' %}", {
+                    //     method: 'GET', // or 'POST', 'PUT', 'DELETE', etc. depending on your API
+                    //     headers: {
+                    //         'Content-Type': 'application/json', // set the appropriate content type
+                    //         'X-CSRFToken': '{{ csrf_token }}'
+                    //     },
+                    //     // add a request body if required
+                    //     })
+                    
                 
+            });
+
+        });    
+        
+        fetch("{% url 'timesheets_create' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'start_date': startDate,
+                'end_date': endDate
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('first')
+                // data is not empty, create HTML elements to display the data
+                let table = document.getElementById('yourTableId')
+                document.getElementById("project_name").value = data?.project_name || '';
+                document.getElementById("monday_value").value = data?.monday_value || '';
+                document.getElementById("tuesday_value").value = data?.tuesday_value || '';
+                document.getElementById("wednesday_value").value = data?.wednesday_value || '';
+                document.getElementById("thursday_value").value = data?.thursday_value || '';
+                document.getElementById("friday_value").value = data?.friday_value || '';
+                document.getElementById("saturday_value").value = data?.saturday_value || '';
+                document.getElementById("sunday_value").value = data?.sunday_value || '';
+                document.getElementById("ovt_monday").value = data?.ovt_monday || '';
+                document.getElementById("ovt_tuesday").value = data?.ovt_tuesday || '';
+                document.getElementById("ovt_wednesday").value = data?.ovt_wednesday || '';
+                document.getElementById("ovt_thursday").value = data?.ovt_thursday || '';
+                document.getElementById("ovt_friday").value = data?.ovt_friday || '';
+                document.getElementById("ovt_saturday").value = data?.ovt_saturday || '';
+                document.getElementById("ovt_sunday").value = data?.ovt_sunday || '';
+                document.getElementById("St").value = data?.St || '';
+                document.getElementById("ot").value = data?.ot || '';
+                document.getElementById("total_hour").value = data?.total_hour || '';
+
+                if (data?.project_name ) {
+                    // Removing buttons
+                    document.getElementById("submitBtn").remove();
+                    document.getElementById("discardBtn").remove();
+                    document.getElementById("saveBtn").remove();
+                    
+                    // Making inputs read-only
+                    document.getElementById("project_name").readOnly = true;
+                    document.getElementById("monday_value").readOnly = true;
+                    document.getElementById("tuesday_value").readOnly = true;
+                    document.getElementById("wednesday_value").readOnly = true;
+                    document.getElementById("thursday_value").readOnly = true;
+                    document.getElementById("friday_value").readOnly = true;
+                    document.getElementById("saturday_value").readOnly = true;
+                    document.getElementById("sunday_value").readOnly = true;
+                    document.getElementById("ovt_monday").readOnly = true;
+                    document.getElementById("ovt_tuesday").readOnly = true;
+                    document.getElementById("ovt_wednesday").readOnly = true;
+                    document.getElementById("ovt_thursday").readOnly = true;
+                    document.getElementById("ovt_friday").readOnly = true;
+                    document.getElementById("ovt_saturday").readOnly = true;
+                    document.getElementById("ovt_sunday").readOnly = true;
+                    document.getElementById("St").readOnly = true;
+                    document.getElementById("ot").readOnly = true;
+                    document.getElementById("total_hour").readOnly = true;
+
+                    // Creating the warning msg
+                    var messageBox1 = document.createElement("div");
+                    messageBox1.textContent = "* You have already Submitted the Time Sheet *";
+                    messageBox1.classList.add("message1-box");
+                    //document.body.appendChild(messageBox1);
+                    // Get the parent element of the total hour input field
+                    
+                    var messageCell = document.getElementById("message").children[0];
+
+                    // Append the message box to the table cell
+                    messageCell.appendChild(messageBox1);
+
+                }
+            });   
             
-        });
+        
     });
+    
     // Add event listener to project name input field
     var inputFields = document.querySelectorAll('input');
     inputFields.forEach(function(input) {
@@ -329,8 +441,8 @@
                 var value = parseFloat($(this).val()) || 0;
                 ot += value;
             });
-            $('#ST').val(st);
-            $('#OT').val(ot);
+            $('#St').val(st);
+            $('#ot').val(ot);
             $('#total_hour').val(total);
         }
 
@@ -357,8 +469,8 @@
         document.getElementById("ovt_friday").value = "";
         document.getElementById("ovt_saturday").value = "";
         document.getElementById("ovt_sunday").value = "";
-        document.getElementById("ST").value = "";
-        document.getElementById("OT").value = "";
+        document.getElementById("St").value = "";
+        document.getElementById("ot").value = "";
         document.getElementById("total_hour").value = "";
         // Remove the table data from local storage
         localStorage.removeItem('tableData');
@@ -383,8 +495,8 @@
             ovt_friday: document.getElementById('ovt_friday').value,
             ovt_saturday: document.getElementById('ovt_saturday').value,
             ovt_sunday: document.getElementById('ovt_sunday').value,
-            ST: document.getElementById('ST').value,
-            OT: document.getElementById('OT').value,
+            St: document.getElementById('St').value,
+            ot: document.getElementById('ot').value,
             total_hour: document.getElementById('total_hour').value
         };
         // Store the table data in local storage
@@ -405,24 +517,24 @@
         event.preventDefault();
         var start_date = document.getElementById('start_date').value;
         var end_date = document.getElementById('end_date').value;
-        var project_name = document.getElementById('project_name').value;
-        var monday_value = document.getElementById('monday_value').value;
-        var tuesday_value = document.getElementById('tuesday_value').value;
-        var wednesday_value = document.getElementById('wednesday_value').value;
-        var thursday_value = document.getElementById('thursday_value').value;
-        var friday_value = document.getElementById('friday_value').value;
-        var saturday_value = document.getElementById('saturday_value').value;
-        var sunday_value = document.getElementById('sunday_value').value;
-        var ovt_monday = document.getElementById('ovt_monday').value;
-        var ovt_tuesday = document.getElementById('ovt_tuesday').value;
-        var ovt_wednesday = document.getElementById('ovt_wednesday').value;
-        var ovt_thursday = document.getElementById('ovt_thursday').value;
-        var ovt_friday = document.getElementById('ovt_friday').value;
-        var ovt_saturday = document.getElementById('ovt_saturday').value;
-        var ovt_sunday = document.getElementById('ovt_sunday').value;
-        var ST = document.getElementById('ST').value;
-        var OT = document.getElementById('OT').value;
-        var total_hour = document.getElementById('total_hour').value;
+        var project_name = document.getElementById('project_name').value || '0';
+        var monday_value = document.getElementById('monday_value').value || '0';
+        var tuesday_value = document.getElementById('tuesday_value').value || '0';
+        var wednesday_value = document.getElementById('wednesday_value').value || '0';
+        var thursday_value = document.getElementById('thursday_value').value || '0';
+        var friday_value = document.getElementById('friday_value').value || '0';
+        var saturday_value = document.getElementById('saturday_value').value || '0';
+        var sunday_value = document.getElementById('sunday_value').value || '0';
+        var ovt_monday = document.getElementById('ovt_monday').value || '0';
+        var ovt_tuesday = document.getElementById('ovt_tuesday').value || '0';
+        var ovt_wednesday = document.getElementById('ovt_wednesday').value || '0';
+        var ovt_thursday = document.getElementById('ovt_thursday').value || '0';
+        var ovt_friday = document.getElementById('ovt_friday').value || '0';
+        var ovt_saturday = document.getElementById('ovt_saturday').value || '0';
+        var ovt_sunday = document.getElementById('ovt_sunday').value || '0';
+        var St = document.getElementById('St').value || '0';
+        var ot = document.getElementById('ot').value || '0';
+        var total_hour = document.getElementById('total_hour').value || '0';
 
         
         // Get the form data
@@ -454,8 +566,8 @@
                 'ovt_friday': ovt_friday,
                 'ovt_saturday': ovt_saturday,
                 'ovt_sunday': ovt_sunday,
-                'ST': ST,
-                'OT': OT,
+                'St': St,
+                'ot': ot,
                 'total_hour': total_hour
 
             })
@@ -510,8 +622,8 @@ window.addEventListener('load', function() {
         document.getElementById('ovt_friday').value = tableData.ovt_friday;
         document.getElementById('ovt_saturday').value = tableData.ovt_saturday;
         document.getElementById('ovt_sunday').value = tableData.ovt_sunday;
-        document.getElementById('ST').value = tableData.ST;
-        document.getElementById('OT').value = tableData.OT;
+        document.getElementById('St').value = tableData.St;
+        document.getElementById('ot').value = tableData.ot;
         document.getElementById('total_hour').value = tableData.total_hour;
     }
 });

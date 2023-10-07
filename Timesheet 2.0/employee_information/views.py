@@ -12,6 +12,20 @@ from .models import TimeSheet
 from .forms import EmployeeForm 
 import json
 from django.views.decorators.http import require_http_methods
+
+import openpyxl
+import pandas as pd
+import re
+import csv
+from datetime import datetime
+from openpyxl.utils import get_column_letter
+from openpyxl.drawing.image import Image
+from openpyxl.styles import Font, Alignment
+from openpyxl.utils.dataframe import dataframe_to_rows
+from django.http import HttpResponse
+from django.http import FileResponse
+from tempfile import NamedTemporaryFile
+
 # employees = [
 
 #     {
@@ -286,62 +300,86 @@ def view_employee(request):
 @login_required
 def time_sheet_status(request):
     model = TimeSheet
-    data = model.objects.all()
-    print(data)
+    data_result = model.objects.all()
+    
     if request.method == 'POST':
         data = json.loads(request.body)
         start_date = data.get('start_date')
         end_date = data.get('end_date')
+        
 
-        # data={
+        # Convert start_date and end_date to datetime objects
+        
+        
+        data = model.objects.filter(start_date__range=(start_date, end_date), end_date__range=(start_date, end_date))
+        
+        data_result = []
+        #print(data.status)
+        for data in data:
+            
+            data_dict = {
+                    "project_name": data.project_name,
+                    "start_date": data.start_date,
+                    "end_date": data.end_date,
+                    "St": data.St,
+                    "ot": data.ot,
+                    "status": data.status,
+                }
+            data_result.append(data_dict)
+
+        
+        # data={n
+
         # place your data here
         # }
 
-        data = [
-            {
-                "project_name": "Medtronic",
-                "start_date": "2023-1-09",
-                "end_date": "2023-1-16",
-                "ST": "40",
-                "OT": "15",
-                "Status": "Approved",
-                "Approved_By": "Supervisor",
+        # data = [
+        #     {
+        #         "project_name": "Medtronic",
+        #         "start_date": "2023-1-09",
+        #         "end_date": "2023-1-16",
+        #         "ST": "40",
+        #         "OT": "15",
+        #         "Status": "Approved",
+        #         "Approved_By": "Supervisor",
 
-            },
+        #     },
 
-            {
-                "project_name": "Scotia bank",
-                "start_date": "2023-1-09",
-                "end_date": "2023-1-16",
-                "ST": "35",
-                "OT": "0",
-                "Status": "Pending",
-                "Approved_By": "",
+        #     {
+        #         "project_name": "Scotia bank",
+        #         "start_date": "2023-1-09",
+        #         "end_date": "2023-1-16",
+        #         "ST": "35",
+        #         "OT": "0",
+        #         "Status": "Pending",
+        #         "Approved_By": "",
 
-            },
+        #     },
 
-            {
-                "project_name": "DHL",
-                "start_date": "2023-9-5",
-                "end_date": "2023-9-12",
-                "ST": "30",
-                "OT": "7",
-                "Status": "Pending",
-                "Approved_By": "",
+        #     {
+        #         "project_name": "DHL",
+        #         "start_date": "2023-9-5",
+        #         "end_date": "2023-9-12",
+        #         "ST": "30",
+        #         "OT": "7",
+        #         "Status": "Pending",
+        #         "Approved_By": "",
 
-            }
+        #     }
 
 
-        ]
-        return JsonResponse(data, safe=False)
-    return render(request, 'employee_information/time_sheet_status.html', {'data': data})
+        # ]
+        return JsonResponse(data_result, safe=False)
+    return render(request, 'employee_information/time_sheet_status.html', {'data_result': data_result})
 
 
 @login_required
 def TimeSheetCreate(request):
     model = TimeSheet
+
     # template_name = 'employee_information/time_sheet_status.html'
     if request.method == 'POST':
+        
         data = json.loads(request.body)
         print(len(data))
         if len(data) > 2:  # Loading the date into db
@@ -351,7 +389,43 @@ def TimeSheetCreate(request):
         else:    # Fetching the data with start and end date
             start_date = data.get('start_date')
             end_date = data.get('end_date')
-            # For testing
+            from datetime import datetime
+
+            # Convert start_date and end_date to datetime objects
+            start_date = datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+            #import pdb
+            #pdb.set_trace()
+            try:
+            # Filter data based on start_date and end_date
+                data = model.objects.get(start_date=start_date, end_date=end_date)
+                
+                print(dir(data))
+                data = {
+                    "start_date": data.start_date,
+                    "end_date" : data.end_date,
+                    "project_name": data.project_name,
+                    "monday_value": data.monday_value,
+                    "tuesday_value": data.tuesday_value,
+                    "wednesday_value": data.wednesday_value,
+                    "thursday_value": data.thursday_value,
+                    "friday_value": data.friday_value,
+                    "saturday_value": data.saturday_value,
+                    "sunday_value": data.sunday_value,
+                    "ovt_monday": data.ovt_monday,
+                    "ovt_tuesday": data.ovt_tuesday,
+                    "ovt_wednesday": data.ovt_wednesday,
+                    "ovt_thursday": data.ovt_thursday,
+                    "ovt_friday": data.ovt_friday,
+                    "ovt_saturday": data.ovt_saturday,
+                    "ovt_sunday": data.ovt_sunday,
+                    "St": data.St,
+                    "ot": data.ot,
+                    "total_hour": data.total_hour
+                }
+            except Exception:
+                data = 0
+                # For testing
             # data =            {
             #     "project_name": "DHL",
             #     "monday_value": "30",
@@ -361,6 +435,9 @@ def TimeSheetCreate(request):
 
             # }
             return JsonResponse(data, safe=False)
+    if request.method == 'GET':
+        #print('IN')
+        return render(request, 'employee_information/time_sheet.html')
     return render(request, 'employee_information/time_sheet.html')
 
 @login_required
@@ -405,5 +482,29 @@ def timesheet_update_view(request, timesheet_id):
         form = EmployeeForm(instance=timesheet)
 
     return render(request, 'timesheet_update.html', {'form': form, 'timesheet': timesheet})
+
+from django.http import HttpResponse
+import csv
+import pandas as pd
+import json
+
+def download_list_data(request):
+    if request.method == 'POST':
+        # Get the JSON data from the request body
+        table_data = json.loads(request.body)
+        df = pd.DataFrame(table_data)
+
+        # Create a HttpResponse object with the appropriate CSV header.
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="list_data.csv"'
+
+        # Create a CSV writer.
+        writer = csv.writer(response)
+
+        # Write your data to the CSV writer.
+        for row in df.values:
+            writer.writerow(row)
+
+        return response
 
 

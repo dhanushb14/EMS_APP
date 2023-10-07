@@ -96,15 +96,23 @@
                 </thead>
                 <tbody>
                     
-                    {% for position in data %}    
+                    {% for position in data_result %}    
                         <tr class="highlight-row" >
                         <td class=" text-center">{{ position.project_name }}</td>
                         <td class=" text-center">{{ position.start_date }}</td>
                         <td class=" text-center">{{ position.end_date }}</td>
-                        <td class=" text-center">{{ position.ST }}</td>
-                        <td class=" text-center">{{ position.OT }}</td>
-                        <td class=" text-center">{{ position.Status }}</td>
+                        <td class=" text-center">{{ position.St }}</td>
+                        <td class=" text-center">{{ position.ot }}</td>
+                        {% if position.status and position.status != " " %}
+                        <td class=" text-center">{{ position.status }}</td>
+                        {% else %}
+                        <td class=" text-center">Pending</td>
+                        {% endif %}
+                        {% if position.Approved_by %}
                         <td class=" text-center">{{ position.Approved_By }}</td>
+                        {% else %}
+                        <td class=" text-center">Pending</td>
+                        {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -138,7 +146,7 @@
             })
         }).then(function(response) {
             return response.json();
-        }).then(function(data) {
+        }).then(function(data_result) {
             var tableBody = document.querySelector('.table tbody');
             var currentPage = 0;
             var rowsPerPage = 10;
@@ -151,16 +159,17 @@
                 var start = currentPage * rowsPerPage;
                 var end = start + rowsPerPage;
 
-                data.slice(start, end).forEach(function(item) {
+                data_result.slice(start, end).forEach(function(item) {
                     var row = document.createElement('tr');
                     row.classList.add('highlight-row')
                     row.innerHTML = `
                         <td class="px-2 py-1 text-center">${item.project_name}</td>
                         <td class="px-2 py-1 text-center">${item.start_date}</td>
                         <td class="px-2 py-1 text-center">${item.end_date}</td>
-                        <td class="px-2 py-1 text-center">${item.ST}</td>
-                        <td class="px-2 py-1 text-center">${item.OT}</td>
-                        <td class="px-2 py-1 text-center">${item.Status}</td>
+                        <td class="px-2 py-1 text-center">${item.St}</td>
+                        <td class="px-2 py-1 text-center">${item.ot}</td>
+                        <td class="px-2 py-1 text-center">${item.status}</td>
+                        
                         <td class="px-2 py-1 text-center">${item.Approved_By}</td>
                     `;
                     tableBody.appendChild(row);
@@ -199,5 +208,55 @@
             console.error('Error:', error);
         });
     });
+    document.getElementById('saveBtn').addEventListener('click', function() {
+    // Get the table element
+    var table = document.querySelector('.table');
+
+    // Get the table rows
+    var rows = table.querySelectorAll('tbody tr');
+
+    // Create an array to store the table data
+    var tableData = [];
+
+    // Iterate over each row and extract the cell values
+    rows.forEach(function(row) {
+        var rowData = [];
+        var cells = row.querySelectorAll('td');
+        cells.forEach(function(cell) {
+            rowData.push(cell.textContent.trim());
+        });
+        tableData.push(rowData);
+    });
+
+    // Create a JSON object with the table data
+    var jsonData = {
+        'table_data': tableData
+    };
+    
+    // Send the table data to the server using an AJAX request
+    fetch("{% url 'download_list_data' %}", {
+    method: 'POST',
+    body: JSON.stringify(jsonData),
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token if needed
+
+    }
+})
+.then(response => response.blob())
+.then(blob => {
+    // Create a new object URL for the blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a link and click it to start the download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'list_data.csv';
+    link.click();
+
+    // Release the reference to the object URL
+    window.URL.revokeObjectURL(url);
+});
+});
 </script>
 {% endblock ScriptBlock %}
