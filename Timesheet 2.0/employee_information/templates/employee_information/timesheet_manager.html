@@ -74,7 +74,7 @@ padding: 0; /* Add this line */
     <div class="mdc-card py-2" style="background-color: #dcd0ff;">
         <div class="d-flex justify-content-start align-items-center">
             <label for="start_date" class="me-2">Project Name: </label>
-            <input type="text" id="project_name" name="project_name" class="me-4">
+            <input type="text" id="project_name_filter" name="project_name" class="me-4">
             <button type="button" id="applyFilterBtn" class="btn btn-primary"">Apply Filter</button>
         </div>
     </div>
@@ -91,12 +91,14 @@ padding: 0; /* Add this line */
                     <col width="11.5%">
                     <col width="11.5%">
                     <col width="11.5%">
+                    <col width="11.5%">
                     <col width="20%">
                     <col width="8%">
                 </colgroup>
                 <thead style="height: 10px;" >
                     <tr style="background-color: grey;">
                         <th class="text-center ">Project name</th>
+                        <th class="text-center ">Emp id</th>
                         <th class="text-center ">Start Date</th>
                         <th class="text-center ">End Date</th>
                         <th class="text-center ">ST</th>
@@ -110,25 +112,37 @@ padding: 0; /* Add this line */
                     
                     {% for position in data %}    
                         <tr class="highlight-row" >
-                        <td class=" text-center">{{ position.project_name }}</td>
-                        <td class=" text-center">{{ position.start_date }}</td>
-                        <td class=" text-center">{{ position.end_date }}</td>
-                        <td class=" text-center">{{ position.ST }}</td>
-                        <td class=" text-center">{{ position.OT }}</td>
-                        <td class="text-center">
-                            <select name="status" id="status" style="width: 100%; height: 100%;">
-                                <option class="me-4" value="Accepted">Accepted</option>
-                                <option class="me-4" value="Rejected">Rejected</option>
+                        <td id='project_name' class=" text-center">{{ position.project_name }}</td>
+                        
+                        <td id='username' class=" text-center">{{ position.username }}</td>
+                        <td  id='start_date' class=" text-center">{{ position.start_date }}</td>
+                        <td  id='end_date' class=" text-center">{{ position.end_date }}</td>
+                        <td  id='St' class=" text-center">{{ position.St }}</td>
+                        <td  id='ot' class=" text-center">{{ position.ot }}</td>
+                        {% if position.status == "Approved" %}
+                        <td id='status' class="text-center">Approved</td>
+                        {% elif position.status == "Rejected" %}
+                        <td id='status' class="text-center">Rejected</td>
+                        {% else %}
+                        <td id="status" class="text-center">
+                           <select name="status" id="status" style="width: 100%; height: 100%;">
+                               <option class="me-4" value="Approved">Approved</option>
+                               <option class="me-4" value="Rejected">Rejected</option>
                                 
-                            </select>
+                           </select>
                         </td>
+                        {% endif %}
                         <td class="text-center">
                             
-                            <input type="text" id="comment" name="comment" style="width: 100%;height: 100%;">
+                           <input type="text" id="comment" name="comment" style="width: 100%;height: 100%;">
                             
                         </td>
                         <td class="px-2 py-3 text-center">
-                            <button id="send-btn" onclick="submitForm()" style="background-color: red !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">SEND</button>
+                           {% if position.status == "Approved" or position.status == "Rejected" %}
+                           <button id="send-btn" style="background-color:green !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;" disabled>SEND</button>{% else %}
+                           <button id="send-btn" onclick="submitForm(event)" style="background-color:red !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">SEND</button>{% endif %}
+                            
+             
                             <button class="mdc-button mdc-button--raised p-1 icon-button mdc-ripple-upgraded view-data" type="button" title="View Details">
                                 <i class="material-icons mdc-button__icon">visibility</i>
                             </button>
@@ -147,20 +161,108 @@ padding: 0; /* Add this line */
     </div>
 </div>
 <script>
+    document.getElementById('applyFilterBtn').addEventListener('click', function() {
+        var project_name = document.getElementById('project_name_filter').value;
+        
+        fetch("{% url 'timesheet_manager' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'project_name': project_name,
+                
+            }) // Add closing parenthesis here
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data_list) { // Move the .then function call here
+            
+            var tableBody = document.querySelector('.table tbody');
+            var currentPage = 0;
+            var rowsPerPage = 10;
+
+            function displayPage() {
+                while (tableBody.firstChild) {
+                    tableBody.removeChild(tableBody.firstChild);
+                }
+
+                var start = currentPage * rowsPerPage;
+                var end = start + rowsPerPage;
+
+                data_list.slice(start, end).forEach(function(item) {
+                    var row = document.createElement('tr');
+                    row.classList.add('highlight-row')
+                    row.innerHTML = `
+                        <td class="px-2 py-1 text-center">${item.project_name}</td>
+                        <td class="px-2 py-1 text-center">${item.username}</td>
+                        <td class="px-2 py-1 text-center">${item.start_date}</td>
+                        <td class="px-2 py-1 text-center">${item.end_date}</td>
+                        <td class="px-2 py-1 text-center">${item.St}</td>
+                        <td class="px-2 py-1 text-center">${item.ot}</td>
+                        <td class="px-2 py-1 text-center">${item.status}</td>
+                        <td class="px-2 py-1 text-center">${item.comments}</td>
+                        <td class="px-2 py-3 text-center">
+                            <button id="send-btn" onclick="submitForm()" style="background-color: red !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">SEND</button>
+                            <button class="mdc-button mdc-button--raised p-1 icon-button mdc-ripple-upgraded view-data" type="button" title="View Details">
+                                <i class="material-icons mdc-button__icon">visibility</i>
+                            </button>
+                        </td>
+                        
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                document.getElementById('pageDisplay').textContent = 'Page ' + (currentPage + 1);
+
+                var prevBtn = document.getElementById('prevBtn');
+                var nextBtn = document.getElementById('nextBtn');
+
+                if (currentPage === 0) {
+                    prevBtn.disabled = true;
+                } else {
+                    prevBtn.disabled = false;
+                }
+
+                if (end >= data.length) {
+                    nextBtn.disabled = true;
+                } else {
+                    nextBtn.disabled = false;
+                }
+            }
+
+            displayPage();
+
+            document.getElementById('prevBtn').addEventListener('click', function() {
+                currentPage--;
+                displayPage();
+            });
+
+            document.getElementById('nextBtn').addEventListener('click', function() {
+                currentPage++;
+                displayPage();
+            });
+        }).catch(function(error) {
+            console.error('Error:', error);
+        });
+    });
+
+
     function submitForm(event) {
         event.preventDefault(); // Prevent form submission and page refresh
 
         var button = event.target;
         var row = button.parentNode.parentNode;
         var data = {
-            'project_name': row.querySelector('td:nth-child(1)').innerText,
-            'start_date': row.querySelector('td:nth-child(2)').innerText,
-            'end_date': row.querySelector('td:nth-child(3)').innerText,
-            'ST': row.querySelector('td:nth-child(4)').innerText,
-            'OT': row.querySelector('td:nth-child(5)').innerText,
-            'status': row.querySelector('td:nth-child(6) select').value,
-            'comment': row.querySelector('td:nth-child(7) input').value
-        };
+        'project_name': row.querySelector('td:nth-child(1)')?.innerText || '',
+        'username': row.querySelector('td:nth-child(2)')?.innerText || '',
+        'start_date': row.querySelector('td:nth-child(3)')?.innerText || '',
+        'end_date': row.querySelector('td:nth-child(4)')?.innerText || '',
+        'ST': row.querySelector('td:nth-child(5)')?.innerText || '',
+        'OT': row.querySelector('td:nth-child(6)')?.innerText || '',
+        'status': row.querySelector('td:nth-child(7) select')?.value || '',
+        'comment': row.querySelector('td:nth-child(8) input')?.value || ''
+    };
 
         fetch("{% url 'timesheet_manager' %}", {
             method: 'POST',
@@ -170,17 +272,25 @@ padding: 0; /* Add this line */
             },
             body: JSON.stringify(data)
         }).then(function(response) {
-            document.getElementById("send-btn").style.backgroundColor = "green";
-            return response.json();
+        return response.json();
+        }).then(function(data) {
+            if (data.message === "Update successful") {
+                button.style.backgroundColor = "green";
+                button.disabled = true;
+                
+             }
+            
         }).then(function(data) {
             console.log(data);
         });
-    }
+    }; 
 
     document.addEventListener('DOMContentLoaded', function() {
         var sendButton = document.getElementById("send-btn");
         sendButton.addEventListener('click', submitForm);
     });
+
+    
 </script>
 
 {% endblock pageContent %} {% block ScriptBlock %}

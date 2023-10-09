@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from User.models import  Employee
+from django.core import serializers
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
@@ -376,15 +377,21 @@ def time_sheet_status(request):
 @login_required
 def TimeSheetCreate(request):
     model = TimeSheet
+    current_user = request.user
 
     # template_name = 'employee_information/time_sheet_status.html'
     if request.method == 'POST':
         
         data = json.loads(request.body)
-        print(len(data))
-        if len(data) > 2:  # Loading the date into db
+        
+        data["username"] = current_user
+        print('length', len(data))
+        print(data)
+       #if data["method_1"] != "first_fetch":  # Loading the date into db
+        if len(data)>7:
             model.objects.create(**data)
-            print(data)
+            
+            data.pop("username", None)
             return JsonResponse(data, safe=False)
         else:    # Fetching the data with start and end date
             start_date = data.get('start_date')
@@ -392,8 +399,8 @@ def TimeSheetCreate(request):
             from datetime import datetime
 
             # Convert start_date and end_date to datetime objects
-            start_date = datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%S.%fZ").date()
-            end_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
             #import pdb
             #pdb.set_trace()
             try:
@@ -434,6 +441,8 @@ def TimeSheetCreate(request):
             #     "Approved_By": "",
 
             # }
+            print("in")
+            print(data)
             return JsonResponse(data, safe=False)
     if request.method == 'GET':
         #print('IN')
@@ -450,7 +459,8 @@ def home_employee( request ):
 
 @login_required
 def timesheet_manager( request ):
-     model = "" #Specify the mode
+     model = TimeSheet
+     data = model.objects.all()
     #  data =            [{
     #             "project_name": "DHL",
     #             "start_date": "30",
@@ -459,12 +469,52 @@ def timesheet_manager( request ):
     #             "OT": "7",
 
     #         }]
-     data=[{}]
+    
      
      if request.method == 'POST':
+        
         data = json.loads(request.body)
         #model.objects.create(**data)
-        return JsonResponse(data, safe=False)
+        
+        if len(data)<2:
+        
+            try:
+                print("in")
+                project_name = data.get('project_name')
+                data_result = model.objects.filter(project_name=project_name)
+                
+                print(data_result)
+                data_list = []
+                for value in data_result:
+                    
+                    data_list.append({
+                        "username": value.username,
+                        "project_name": value.project_name,
+                        "St": value.St,
+                        "ot": value.ot,
+                        "status": value.status,
+                        "comments": value.comments,
+                        "total_hour": value.total_hour,
+                    })
+            except Exception as e:
+                # Handle the exception here
+                print(f"An error occurred: {str(e)}")
+            
+            return JsonResponse(data_list, safe=False)
+        else:
+             if request.method == 'POST':
+                print(data)
+                data = json.loads(request.body)
+                emp_id = data['username']
+                project_name = data['project_name']
+                status = data['status']
+                comments = data['comment']
+                # Update the status and comments for the given emp_id and project_name
+                model.objects.filter(username=emp_id, project_name=project_name).update(status=status, comments=comments)
+                print(data)
+                return JsonResponse({"message": "Update successful"}, status=200)
+             else:
+                 return JsonResponse({"message": "Invalid request method"}, status=400)
 
      return render(request, 'employee_information/timesheet_manager.html', {"data":data} )
 

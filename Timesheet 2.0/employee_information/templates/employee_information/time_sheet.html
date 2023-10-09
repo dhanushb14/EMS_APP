@@ -234,7 +234,8 @@
             var formattedEndDate = endDate.toISOString().split('T')[0]; // Format the end date as YYYY-MM-DD
             document.getElementById('end_date').value = formattedEndDate;
             document.getElementById('start_date').value = formattedStartDate;
-
+            var formattedStartDate = startDate.toISOString().split('T')[0];
+            var formattedEndDate = endDate.toISOString().split('T')[0];
             fetch("{% url 'timesheets_create' %}", {
             method: 'POST',
             headers: {
@@ -242,8 +243,9 @@
                 'X-CSRFToken': '{{ csrf_token }}'
             },
             body: JSON.stringify({
-                'start_date': startDate,
-                'end_date': endDate
+                'start_date': formattedStartDate,
+                'end_date': formattedEndDate,
+                'method_1': "first_fetch"
             })
         })
         .then(response => response.json())
@@ -327,7 +329,8 @@
             });
 
         });    
-        
+        var formattedStartDate = startDate.toISOString().split('T')[0];
+        var formattedEndDate = endDate.toISOString().split('T')[0];
         fetch("{% url 'timesheets_create' %}", {
             method: 'POST',
             headers: {
@@ -335,8 +338,9 @@
                 'X-CSRFToken': '{{ csrf_token }}'
             },
             body: JSON.stringify({
-                'start_date': startDate,
-                'end_date': endDate
+                'start_date': formattedStartDate,
+                'end_date': formattedEndDate,
+                'method_1': "first_fetch"
             })
         })
         .then(response => response.json())
@@ -629,3 +633,4 @@ window.addEventListener('load', function() {
 });
 </script>
 {% endblock ScriptBlock %}
+
