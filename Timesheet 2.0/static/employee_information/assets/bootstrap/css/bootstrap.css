@@ -5467,7 +5467,7 @@ textarea.form-control-lg {
 
 .modal-dialog {
   position: relative;
-  width: auto;
+  width: 100px;
   margin: 0.5rem;
   pointer-events: none;
 }

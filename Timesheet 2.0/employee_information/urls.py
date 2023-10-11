@@ -33,5 +33,7 @@ urlpatterns = [
 
     path('timesheets_update', views.timesheet_update_view, name= "time-sheet-update"),
     path('download-list-data/', views.download_list_data, name='download_list_data'),
+    path('view_timesheet/', views.view_timesheet, name='view_timesheet'),
+
 
 ]

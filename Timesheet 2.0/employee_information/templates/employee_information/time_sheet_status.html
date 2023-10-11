@@ -113,9 +113,9 @@
                         <td class=" text-center">Pending</td>
                         {% endif %}
                         {% if position.Approved_by %}
-                        <td class=" text-center">{{ position.Approved_By }}</td>
+                        <td class=" text-center">Manager</td>
                         {% else %}
-                        <td class=" text-center">Pending</td>
+                        <td class=" text-center">Manager</td>
                         {% endif %}
                         </tr>
                     {% endfor %}
@@ -167,15 +167,19 @@
                     var row = document.createElement('tr');
                     row.classList.add('highlight-row')
                     row.innerHTML = `
-                        <td class="px-2 py-1 text-center">${item.project_name}</td>
-                        <td class="px-2 py-1 text-center">${item.username}</td>
-                        <td class="px-2 py-1 text-center">${item.start_date}</td>
-                        <td class="px-2 py-1 text-center">${item.end_date}</td>
-                        <td class="px-2 py-1 text-center">${item.St}</td>
-                        <td class="px-2 py-1 text-center">${item.ot}</td>
-                        <td class="px-2 py-1 text-center">${item.status}</td>
+                        <td class="text-center">${item.project_name}</td>
+                        <td class="text-center">${item.username}</td>
+                        <td class="text-center">${item.start_date}</td>
+                        <td class="text-center">${item.end_date}</td>
+                        <td class="text-center">${item.St}</td>
+                        <td class="text-center">${item.ot}</td>
+                        <td class="text-center">
+                            ${item.status == "Approved" || item.status == "Rejected" ? item.status : 
+                                "Pending"
+                            }
+                        </td>
                         
-                        <td class="px-2 py-1 text-center">${item.Approved_By}</td>
+                        <td class="px-2 py-1 text-center">Manager</td>
                     `;
                     tableBody.appendChild(row);
                 });
