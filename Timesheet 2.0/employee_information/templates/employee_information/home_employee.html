@@ -90,16 +90,24 @@
     
     <div class="bottom-portion">
       <div class="left-container">
-        <h2 style="text-align: center; margin-top: 10px;"> Alert</h2>
+        <h2 style="text-align: center; margin-top: 10px; margin-bottom: 18px;"><i class="fas fa-bell"></i> Alert</h2>
         {% for item in data %}
-          <p style="margin-left: 25px;">{{ item.alert }}</p>
+          {% if not item.alert %}
+          <p style="margin-left: 25px; font-size: 20px;">No Data</p>
+          {% else %}
+          <p style="margin-left: 25px; font-size: 20px;">Time Sheet {{ item.alert }} on ({{item.start_date}})</p>
+          {% endif %}
         {% endfor %}
       </div>
       <div class="gap"></div>
       <div class="right-container">
-        <h2 style="text-align: center; margin-top: 10px;">Comment Box</h2>
+        <h2 style="text-align: center; margin-top: 10px;margin-bottom: 18px;">Comment Box</h2>
         {% for item in data %}
-          <p style="margin-left: 25px;">{{ item.comment }}</p>
+          {% if not item.comment %}
+          <p style="margin-left: 25px;font-size: 20px;">No Data</p>
+          {% else %}
+          <p style="margin-left: 25px;font-size: 20px;">{{ item.comment }} on ({{item.start_date}})</p>
+          {% endif %}
         {% endfor %}
       </div>
     </div>

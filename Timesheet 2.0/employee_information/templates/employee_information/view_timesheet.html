@@ -84,9 +84,9 @@
             
             <div class="d-flex justify-content-start align-items-center">
                 <label for="start_date" class="me-2">Start Date </label>
-                <input  type="text" id="start_date" name="start_date" class="me-4" value={{position.start_date}} readonly>
+                <input  type="text" id="start_date" name="start_date" class="me-4" value={{position.start_date}} >
                 <label for="end_date" class="me-2">End Date</label>
-                <input  type="text" id="end_date" name="end_date" class="me-5" value={{position.end_date}} readonly>
+                <input  type="text" id="end_date" name="end_date" class="me-5" value={{position.end_date}} >
                 <label for="holiday" class="me-4">Holiday (*)</label>
             </div>
             <div class="table-responsive">
@@ -204,14 +204,21 @@
     </div>
 <script>
     document.getElementById("submitBtn").addEventListener("click", function(event) {
-        try{
-            var start_date = document.getElementById('start_date').value;
-            var end_date = document.getElementById('end_date').value;
+        
+        function getValue(id) {
+            var element = document.getElementById(id);
+            if (element) {
+                if (element.value !== undefined) {
+                    return element.value;
+                } else {
+                    return element.textContent;
+                }
+            }
+            return null;
         }
-        catch (error){
-            var start_date = document.getElementById('start_date').textContent;
-            var end_date = document.getElementById('end_date').textContent;
-        }
+
+        var start_date = getValue('start_date');
+        var end_date = getValue('end_date');
         var project_name = "{{position.project_name}}";
         console.log(start_date);
         var monday_value = document.getElementById('monday_value').value || '0';

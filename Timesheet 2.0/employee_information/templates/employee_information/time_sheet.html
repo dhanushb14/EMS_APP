@@ -85,7 +85,7 @@
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card">
         <div class="table-responsive">
-            <form id="timeSheetForm" method="post">
+            <form id="timeSheetForm" method="post" data-username="{{ user }}">
             <table class="table table-bordered spaced-table">
                 <colgroup>
                     <col width="15%">
@@ -236,6 +236,8 @@
             document.getElementById('start_date').value = formattedStartDate;
             var formattedStartDate = startDate.toISOString().split('T')[0];
             var formattedEndDate = endDate.toISOString().split('T')[0];
+            var username = document.body.getAttribute('data-username');
+            console.log(username);
             fetch("{% url 'timesheets_create' %}", {
             method: 'POST',
             headers: {
@@ -245,6 +247,7 @@
             body: JSON.stringify({
                 'start_date': formattedStartDate,
                 'end_date': formattedEndDate,
+                'username':username,
                 'method_1': "first_fetch"
             })
         })
@@ -312,7 +315,8 @@
 
                 }
                 else{
-                    location.reload();
+                    console.log("else partition")
+                    //location.reload();
                                 }
                             
 

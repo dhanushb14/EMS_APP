@@ -304,13 +304,15 @@ def view_employee(request):
 
 @login_required
 def time_sheet_status(request):
+    current_user = request.user
     model = TimeSheet
-    data_result = model.objects.all()
+    data_result = model.objects.filter(username=current_user)
     
     if request.method == 'POST':
         data = json.loads(request.body)
         start_date = data.get('start_date')
         end_date = data.get('end_date')
+        current_user = request.user.employee_id
         
 
         # Convert start_date and end_date to datetime objects
@@ -320,18 +322,19 @@ def time_sheet_status(request):
         
         data_result = []
         #print(data.status)
+        
         for data in data:
-            
-            data_dict = {
-                    "project_name": data.project_name,
-                    "username": data.username,
-                    "start_date": data.start_date,
-                    "end_date": data.end_date,
-                    "St": data.St,
-                    "ot": data.ot,
-                    "status": data.status,
-                }
-            data_result.append(data_dict)
+            if current_user == data.username:
+                data_dict = {
+                        "project_name": data.project_name,
+                        "username": data.username,
+                        "start_date": data.start_date,
+                        "end_date": data.end_date,
+                        "St": data.St,
+                        "ot": data.ot,
+                        "status": data.status,
+                    }
+                data_result.append(data_dict)
 
         
         # data={n
@@ -382,7 +385,12 @@ def time_sheet_status(request):
 @login_required
 def TimeSheetCreate(request):
     model = TimeSheet
+    
     current_user = request.user
+    context = {
+        'user': current_user,
+        # other context variables...
+    }
 
     # template_name = 'employee_information/time_sheet_status.html'
     if request.method == 'POST':
@@ -390,8 +398,7 @@ def TimeSheetCreate(request):
         data = json.loads(request.body)
         
         data["username"] = current_user
-        print('length', len(data))
-        print(data)
+        
        #if data["method_1"] != "first_fetch":  # Loading the date into db
         if len(data)>7:
             model.objects.create(**data)
@@ -401,6 +408,8 @@ def TimeSheetCreate(request):
         else:    # Fetching the data with start and end date
             start_date = data.get('start_date')
             end_date = data.get('end_date')
+            username = current_user
+            
             from datetime import datetime
 
             # Convert start_date and end_date to datetime objects
@@ -410,30 +419,30 @@ def TimeSheetCreate(request):
             #pdb.set_trace()
             try:
             # Filter data based on start_date and end_date
-                data = model.objects.get(start_date=start_date, end_date=end_date)
-                
-                print(dir(data))
+                data = model.objects.filter(start_date=start_date, username=username)
+                print("worked")
+                print("project:",data[0].project_name)
                 data = {
-                    "start_date": data.start_date,
-                    "end_date" : data.end_date,
-                    "project_name": data.project_name,
-                    "monday_value": data.monday_value,
-                    "tuesday_value": data.tuesday_value,
-                    "wednesday_value": data.wednesday_value,
-                    "thursday_value": data.thursday_value,
-                    "friday_value": data.friday_value,
-                    "saturday_value": data.saturday_value,
-                    "sunday_value": data.sunday_value,
-                    "ovt_monday": data.ovt_monday,
-                    "ovt_tuesday": data.ovt_tuesday,
-                    "ovt_wednesday": data.ovt_wednesday,
-                    "ovt_thursday": data.ovt_thursday,
-                    "ovt_friday": data.ovt_friday,
-                    "ovt_saturday": data.ovt_saturday,
-                    "ovt_sunday": data.ovt_sunday,
-                    "St": data.St,
-                    "ot": data.ot,
-                    "total_hour": data.total_hour
+                    "start_date": data[0].start_date,
+                    "end_date" : data[0].end_date,
+                    "project_name": data[0].project_name,
+                    "monday_value": data[0].monday_value,
+                    "tuesday_value": data[0].tuesday_value,
+                    "wednesday_value": data[0].wednesday_value,
+                    "thursday_value": data[0].thursday_value,
+                    "friday_value": data[0].friday_value,
+                    "saturday_value": data[0].saturday_value,
+                    "sunday_value": data[0].sunday_value,
+                    "ovt_monday": data[0].ovt_monday,
+                    "ovt_tuesday": data[0].ovt_tuesday,
+                    "ovt_wednesday": data[0].ovt_wednesday,
+                    "ovt_thursday": data[0].ovt_thursday,
+                    "ovt_friday": data[0].ovt_friday,
+                    "ovt_saturday": data[0].ovt_saturday,
+                    "ovt_sunday": data[0].ovt_sunday,
+                    "St": data[0].St,
+                    "ot": data[0].ot,
+                    "total_hour": data[0].total_hour
                 }
             except Exception:
                 data = 0
@@ -451,15 +460,16 @@ def TimeSheetCreate(request):
             return JsonResponse(data, safe=False)
     if request.method == 'GET':
         #print('IN')
-        return render(request, 'employee_information/time_sheet.html')
-    return render(request, 'employee_information/time_sheet.html')
+        return render(request, 'employee_information/time_sheet.html', context)
+    return render(request, 'employee_information/time_sheet.html', context)
 
 @login_required
 def home_employee( request ):
      model = TimeSheet
      model_user = Employee
-     data = model.objects.filter(username=request.user)
-     data_user = model_user.objects.filter(employee_id=request.user).first()
+     
+     data = model.objects.filter(username=request.user.employee_id)
+     data_user = model_user.objects.filter(employee_id=request.user.employee_id).first()
      
      data_list = []
      for value in data:
@@ -540,7 +550,7 @@ def timesheet_manager( request ):
 
      return render(request, 'employee_information/timesheet_manager.html', {"data":data} )
 
-
+@login_required
 def timesheet_update_view(request, timesheet_id):
     timesheet = get_object_or_404(TimeSheet, id=timesheet_id)
 
@@ -556,7 +566,7 @@ def timesheet_update_view(request, timesheet_id):
     return render(request, 'timesheet_update.html', {'form': form, 'timesheet': timesheet})
 
 
-
+@login_required
 def download_list_data(request):
     if request.method == 'POST':
         # Get the JSON data from the request body
@@ -576,7 +586,7 @@ def download_list_data(request):
 
         return response
 
-
+@login_required
 def view_timesheet(request):
     model=TimeSheet
     print("view_timesheet")
@@ -631,8 +641,7 @@ def view_timesheet(request):
         model= TimeSheet
         data=json.loads(request.body)
         print("post data", data["project_name"])  
-        print("start_date", data["start_date"])
-        print("end_date", data["end_date"])
+        
         print(data) 
         ## Converting time
         date_string_start = data["start_date"]
