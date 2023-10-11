@@ -31,6 +31,7 @@ class TimeSheet(models.Model):
     St =  models.IntegerField(null=True)
     ot = models.IntegerField(null=True)
     total_hour = models.IntegerField()
+    username = models.CharField(max_length=255)
 
     comments = models.CharField(max_length=100)
     timesheet_status = (

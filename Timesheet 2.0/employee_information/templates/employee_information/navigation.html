@@ -19,21 +19,28 @@
     <div class="mdc-drawer__content">
         <div class="mdc-list-group">
             <nav class="mdc-list mdc-drawer-menu">
+                {% if request.user.role == "superadmin" %}
                 <div class="mdc-list-item mdc-drawer-item ">
                     <a class="mdc-drawer-link" href="{% url 'home-page' %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">home</i> Home
                     </a>
                 </div>
+                {% endif %}
+                {% if request.user.role != "superadmin" %}
                 <div class="mdc-list-item mdc-drawer-item ">
                     <a class="mdc-drawer-link" href="{% url 'home_employee' %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">home</i> Home_employee
                     </a>
                 </div>
+                {% endif %}
+                {% if request.user.role == "superadmin" %}
                 <div class="mdc-list-item mdc-drawer-item">
                     <a class="mdc-drawer-link" href="{% url 'employee-page' %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">group</i> Employee List
                     </a>
                 </div>
+                {% endif %}
+                {% if request.user.role != "superadmin" %}
                 <div class="mdc-list-item mdc-drawer-item">
                     <span class="mdc-drawer-link">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true" style="color:white">group</i> 
@@ -44,11 +51,14 @@
                         </select>
                     </span>
                 </div>
+                {% endif %}
+                {% if request.user.role == "superadmin" %}
                 <div class="mdc-list-item mdc-drawer-item">
                     <a class="mdc-drawer-link" href="{% url 'timesheet_manager' %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">group</i> TimeSheet_manager
                     </a>
                 </div>
+                {% endif %}
                 <script>
                     /// JavaScript function to handle the redirection
 

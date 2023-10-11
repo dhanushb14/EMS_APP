@@ -82,10 +82,12 @@
                     <col width="11.5%">
                     <col width="11.5%">
                     <col width="11.5%">
+                    <col width="11.5%">
                 </colgroup>
                 <thead style="height: 10px;" >
                     <tr style="background-color: grey;">
                         <th class="text-center ">Project name</th>
+                        <th class="text-center ">Emp id</th>
                         <th class="text-center ">Start Date</th>
                         <th class="text-center ">End Date</th>
                         <th class="text-center ">ST</th>
@@ -99,6 +101,8 @@
                     {% for position in data_result %}    
                         <tr class="highlight-row" >
                         <td class=" text-center">{{ position.project_name }}</td>
+                        
+                        <td class=" text-center">{{ position.username }}</td>
                         <td class=" text-center">{{ position.start_date }}</td>
                         <td class=" text-center">{{ position.end_date }}</td>
                         <td class=" text-center">{{ position.St }}</td>
@@ -109,9 +113,9 @@
                         <td class=" text-center">Pending</td>
                         {% endif %}
                         {% if position.Approved_by %}
-                        <td class=" text-center">{{ position.Approved_By }}</td>
+                        <td class=" text-center">Manager</td>
                         {% else %}
-                        <td class=" text-center">Pending</td>
+                        <td class=" text-center">Manager</td>
                         {% endif %}
                         </tr>
                     {% endfor %}
@@ -163,14 +167,19 @@
                     var row = document.createElement('tr');
                     row.classList.add('highlight-row')
                     row.innerHTML = `
-                        <td class="px-2 py-1 text-center">${item.project_name}</td>
-                        <td class="px-2 py-1 text-center">${item.start_date}</td>
-                        <td class="px-2 py-1 text-center">${item.end_date}</td>
-                        <td class="px-2 py-1 text-center">${item.St}</td>
-                        <td class="px-2 py-1 text-center">${item.ot}</td>
-                        <td class="px-2 py-1 text-center">${item.status}</td>
+                        <td class="text-center">${item.project_name}</td>
+                        <td class="text-center">${item.username}</td>
+                        <td class="text-center">${item.start_date}</td>
+                        <td class="text-center">${item.end_date}</td>
+                        <td class="text-center">${item.St}</td>
+                        <td class="text-center">${item.ot}</td>
+                        <td class="text-center">
+                            ${item.status == "Approved" || item.status == "Rejected" ? item.status : 
+                                "Pending"
+                            }
+                        </td>
                         
-                        <td class="px-2 py-1 text-center">${item.Approved_By}</td>
+                        <td class="px-2 py-1 text-center">Manager</td>
                     `;
                     tableBody.appendChild(row);
                 });

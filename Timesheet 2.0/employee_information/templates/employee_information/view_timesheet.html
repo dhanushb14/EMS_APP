@@ -1,0 +1,305 @@
+{% load humanize %}
+<style>
+    #uni_modal .modal-footer {
+        display: none;
+    }
+    .modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 10px;
+  border: 1px solid #888;
+  width: 500%; /* Adjust this value to change the size of the modal */
+}
+    .italic-text {
+        
+        white-space: nowrap;
+    }
+    .spaced-table {
+        border-collapse: separate;
+        border-spacing: 0 6px;
+    }
+    .spaced-table th {
+        color: white !important;
+    }
+    .button-group {
+    display: flex;
+    justify-content: flex-end;
+    }
+    .no-border {
+    border: none !important;
+    }
+
+    .message-box {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: black;
+        color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .message-box.show {
+        opacity: 1;
+        display: block;
+        animation: fadeOut 0.5s ease-in-out;
+    }
+    .message1-box {
+        position: relative;
+        background-color: transparent;
+        color: black;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        white-space: nowrap; /* Prevents the text from wrapping onto the next line */
+        width: 100%; /* Ensures the div takes up the full width of the parent */
+        text-align: center; /* Centers the text within the div */
+        border: none;
+        
+    }
+
+    .message1-box.show {
+        opacity: 1;
+        display: block;
+        animation: fadeOut 0.5s ease-in-out;
+    }
+
+
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+}
+</style>
+<div class="container-fluid">
+    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+        <div class="mdc-card">
+            
+            <div class="d-flex justify-content-start align-items-center">
+                <label for="start_date" class="me-2">Start Date </label>
+                <input  type="text" id="start_date" name="start_date" class="me-4" value={{position.start_date}} >
+                <label for="end_date" class="me-2">End Date</label>
+                <input  type="text" id="end_date" name="end_date" class="me-5" value={{position.end_date}} >
+                <label for="holiday" class="me-4">Holiday (*)</label>
+            </div>
+            <div class="table-responsive">
+                <form id="timeSheetForm" method="post">
+                <table class="table table-bordered spaced-table">
+                    <colgroup>
+                        <col width="15%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                    </colgroup>
+                    <thead>
+                        <tr style="background-color: grey; height: 35px;">
+                            <th class="text-center py-1">Project name</th>
+                            <th class="text-center py-1">Monday</th>
+                            <th class="text-center py-1">Tuesday</th>
+                            <th class="text-center py-1">Wednesday</th>
+                            <th class="text-center py-1">Thursday</th>
+                            <th class="text-center py-1">Friday</th>
+                            <th class="text-center py-1">Saturday</th>
+                            <th class="text-center py-1">Sunday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background-color: #e0e0e0;">
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="project_name" name="project_name" placeholder="Enter Project name" style="width: 100%; text-align: center;" value={{position.project_name}}> 
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="monday_value" name="monday_value" placeholder="0"  style="width: 50px" value={{position.monday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="tuesday_value" name="tuesday_value" placeholder="0"  style="width: 50px" value={{position.tuesday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px" value={{position.wednesday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px" value={{position.thursday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="friday_value" name="friday_value" placeholder="0"  style="width: 50px" value={{position.friday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="saturday_value" name="saturday_value" placeholder="0"  style="width: 50px" value={{position.saturday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="sunday_value" name="sunday_value" placeholder="0"  style="width: 50px" value={{position.sunday_value}}>
+                            </td>
+                        </tr>
+                        <tr style="background-color: #e0e0e0;">
+                            <td class="px-2 py-1 text-center">
+                                Overtime Hours 
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_monday" name="ovt_monday" placeholder="0" style="width: 50px" value={{position.ovt_monday}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_tuesday" name="ovt_tuesday" placeholder="0"  style="width: 50px" value={{position.ovt_tuesday}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_wednesday" name="ovt_wednesday" placeholder="0"  style="width: 50px" value={{position.ovt_wednesday}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_thursday" name="ovt_thursday" placeholder="0" style="width: 50px" value={{position.ovt_thursday}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_friday" name="ovt_friday" placeholder="0" style="width: 50px" value={{position.ovt_friday}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_saturday" name="ovt_saturday" placeholder="0" style="width: 50px" value={{position.ovt_saturday}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_sunday" name="ovt_sunday" placeholder="0" style="width: 50px" value={{position.ovt_sunday}}>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
+                        </tr>
+                        <tr style="background-color: #e0e0e0;">
+                            <td class="px-2 py-1 text-center">
+                                Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
+                                <input  type="text" id="St" name="ST" placeholder="0"  style="width: 50px;" value={{position.St}} readonly >
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                Over Time: &nbsp;&nbsp;&nbsp&nbsp;
+                                <input  type="text" id="ot" name="ST" placeholder="0"  style="width: 50px" value={{position.ot}} readonly>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                Total Hours: &nbsp;&nbsp;&nbsp&nbsp;
+                                <input type="text" id="total_hour" name="total_hour" placeholder="0" value={{position.total_hour}} style="width: 50px" readonly>
+                            </td>
+                        </tr>
+                        <tr id="message">
+                            <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="parent">
+                
+                <button type="submit" id="submitBtn" class="btn btn-success" style="float: right;">Submit</button>
+            </div>
+            </form>
+        </div>
+    </div>
+    <div class="clear-fix py-3"></div>
+    <div class="d-flex w-100 align-items-center justify-content-end">
+        <button class="btn btn-default border btn-sm rounded-0 d-flex align-items-center" type="button" data-bs-dismiss="modal"><i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">close</i> Close</button>
+    </div>
+<script>
+    document.getElementById("submitBtn").addEventListener("click", function(event) {
+        
+        function getValue(id) {
+            var element = document.getElementById(id);
+            if (element) {
+                if (element.value !== undefined) {
+                    return element.value;
+                } else {
+                    return element.textContent;
+                }
+            }
+            return null;
+        }
+
+        var start_date = getValue('start_date');
+        var end_date = getValue('end_date');
+        var project_name = "{{position.project_name}}";
+        console.log(start_date);
+        var monday_value = document.getElementById('monday_value').value || '0';
+        var tuesday_value = document.getElementById('tuesday_value').value || '0';
+        var wednesday_value = document.getElementById('wednesday_value').value || '0';
+        var thursday_value = document.getElementById('thursday_value').value || '0';
+        var friday_value = document.getElementById('friday_value').value || '0';
+        var saturday_value = document.getElementById('saturday_value').value || '0';
+        var sunday_value = document.getElementById('sunday_value').value || '0';
+        var ovt_monday = document.getElementById('ovt_monday').value || '0';
+        var ovt_tuesday = document.getElementById('ovt_tuesday').value || '0';
+        var ovt_wednesday = document.getElementById('ovt_wednesday').value || '0';
+        var ovt_thursday = document.getElementById('ovt_thursday').value || '0';
+        var ovt_friday = document.getElementById('ovt_friday').value || '0';
+        var ovt_saturday = document.getElementById('ovt_saturday').value || '0';
+        var ovt_sunday = document.getElementById('ovt_sunday').value || '0';
+        var St = document.getElementById('St').value || '0';
+        var ot = document.getElementById('ot').value || '0';
+        var total_hour = document.getElementById('total_hour').value || '0';
+
+        
+        // Get the form data
+        //var formData = new FormData(document.getElementById("timeSheetForm"));
+
+    // Send the form data to the server using fetch
+    fetch("{% url 'view_timesheet' %}", {
+                  // enter your url
+        method: "POST",
+        headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+        body: JSON.stringify({
+                'start_date': start_date,
+                'end_date': end_date,
+                'project_name': project_name,
+                'monday_value': monday_value,
+                'tuesday_value': tuesday_value,
+                'wednesday_value': wednesday_value,
+                'thursday_value': thursday_value,
+                'friday_value': friday_value,
+                'saturday_value': saturday_value,
+                'sunday_value': sunday_value,
+                'ovt_monday': ovt_monday,
+                'ovt_tuesday': ovt_tuesday,
+                'ovt_wednesday': ovt_wednesday,
+                'ovt_thursday': ovt_thursday,
+                'ovt_friday': ovt_friday,
+                'ovt_saturday': ovt_saturday,
+                'ovt_sunday': ovt_sunday,
+                'St': St,
+                'ot': ot,
+                'total_hour': total_hour
+
+            })
+    })
+    .then(function(response) {
+        // Handle the response from the server
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error("Error: " + response.status);
+        }
+    })
+    .then(function(data) {
+        // Do something with the response data
+    })
+    .catch(function(error) {
+        // Handle any errors that occurred during the request
+        console.error(error);
+    });
+        var messageBox_submit = document.createElement("div");
+        messageBox_submit.textContent = "Time Sheet Edited";
+        messageBox_submit.classList.add("message-box");
+        document.body.appendChild(messageBox_submit);
+
+        // Show the message box
+        setTimeout(function() {
+            messageBox_submit.remove();
+        }, 1700);
+});
+
+</script>
+</div>

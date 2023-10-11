@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from User.models import  Employee
+from django.core import serializers
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
@@ -12,7 +13,11 @@ from .models import TimeSheet
 from .forms import EmployeeForm 
 import json
 from django.views.decorators.http import require_http_methods
+from User.models import Employee
+from django.http import HttpResponse
+import csv
 
+import json
 import openpyxl
 import pandas as pd
 import re
@@ -299,13 +304,15 @@ def view_employee(request):
 
 @login_required
 def time_sheet_status(request):
+    current_user = request.user
     model = TimeSheet
-    data_result = model.objects.all()
+    data_result = model.objects.filter(username=current_user)
     
     if request.method == 'POST':
         data = json.loads(request.body)
         start_date = data.get('start_date')
         end_date = data.get('end_date')
+        current_user = request.user.employee_id
         
 
         # Convert start_date and end_date to datetime objects
@@ -315,17 +322,19 @@ def time_sheet_status(request):
         
         data_result = []
         #print(data.status)
+        
         for data in data:
-            
-            data_dict = {
-                    "project_name": data.project_name,
-                    "start_date": data.start_date,
-                    "end_date": data.end_date,
-                    "St": data.St,
-                    "ot": data.ot,
-                    "status": data.status,
-                }
-            data_result.append(data_dict)
+            if current_user == data.username:
+                data_dict = {
+                        "project_name": data.project_name,
+                        "username": data.username,
+                        "start_date": data.start_date,
+                        "end_date": data.end_date,
+                        "St": data.St,
+                        "ot": data.ot,
+                        "status": data.status,
+                    }
+                data_result.append(data_dict)
 
         
         # data={n
@@ -376,52 +385,64 @@ def time_sheet_status(request):
 @login_required
 def TimeSheetCreate(request):
     model = TimeSheet
+    
+    current_user = request.user
+    context = {
+        'user': current_user,
+        # other context variables...
+    }
 
     # template_name = 'employee_information/time_sheet_status.html'
     if request.method == 'POST':
         
         data = json.loads(request.body)
-        print(len(data))
-        if len(data) > 2:  # Loading the date into db
+        
+        data["username"] = current_user
+        
+       #if data["method_1"] != "first_fetch":  # Loading the date into db
+        if len(data)>7:
             model.objects.create(**data)
-            print(data)
+            
+            data.pop("username", None)
             return JsonResponse(data, safe=False)
         else:    # Fetching the data with start and end date
             start_date = data.get('start_date')
             end_date = data.get('end_date')
+            username = current_user
+            
             from datetime import datetime
 
             # Convert start_date and end_date to datetime objects
-            start_date = datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%S.%fZ").date()
-            end_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
             #import pdb
             #pdb.set_trace()
             try:
             # Filter data based on start_date and end_date
-                data = model.objects.get(start_date=start_date, end_date=end_date)
-                
-                print(dir(data))
+                data = model.objects.filter(start_date=start_date, username=username)
+                print("worked")
+                print("project:",data[0].project_name)
                 data = {
-                    "start_date": data.start_date,
-                    "end_date" : data.end_date,
-                    "project_name": data.project_name,
-                    "monday_value": data.monday_value,
-                    "tuesday_value": data.tuesday_value,
-                    "wednesday_value": data.wednesday_value,
-                    "thursday_value": data.thursday_value,
-                    "friday_value": data.friday_value,
-                    "saturday_value": data.saturday_value,
-                    "sunday_value": data.sunday_value,
-                    "ovt_monday": data.ovt_monday,
-                    "ovt_tuesday": data.ovt_tuesday,
-                    "ovt_wednesday": data.ovt_wednesday,
-                    "ovt_thursday": data.ovt_thursday,
-                    "ovt_friday": data.ovt_friday,
-                    "ovt_saturday": data.ovt_saturday,
-                    "ovt_sunday": data.ovt_sunday,
-                    "St": data.St,
-                    "ot": data.ot,
-                    "total_hour": data.total_hour
+                    "start_date": data[0].start_date,
+                    "end_date" : data[0].end_date,
+                    "project_name": data[0].project_name,
+                    "monday_value": data[0].monday_value,
+                    "tuesday_value": data[0].tuesday_value,
+                    "wednesday_value": data[0].wednesday_value,
+                    "thursday_value": data[0].thursday_value,
+                    "friday_value": data[0].friday_value,
+                    "saturday_value": data[0].saturday_value,
+                    "sunday_value": data[0].sunday_value,
+                    "ovt_monday": data[0].ovt_monday,
+                    "ovt_tuesday": data[0].ovt_tuesday,
+                    "ovt_wednesday": data[0].ovt_wednesday,
+                    "ovt_thursday": data[0].ovt_thursday,
+                    "ovt_friday": data[0].ovt_friday,
+                    "ovt_saturday": data[0].ovt_saturday,
+                    "ovt_sunday": data[0].ovt_sunday,
+                    "St": data[0].St,
+                    "ot": data[0].ot,
+                    "total_hour": data[0].total_hour
                 }
             except Exception:
                 data = 0
@@ -434,23 +455,41 @@ def TimeSheetCreate(request):
             #     "Approved_By": "",
 
             # }
+            print("in")
+            print(data)
             return JsonResponse(data, safe=False)
     if request.method == 'GET':
         #print('IN')
-        return render(request, 'employee_information/time_sheet.html')
-    return render(request, 'employee_information/time_sheet.html')
+        return render(request, 'employee_information/time_sheet.html', context)
+    return render(request, 'employee_information/time_sheet.html', context)
 
 @login_required
 def home_employee( request ):
-     data=[{
-         "alert":"success",
-         "comment":"This is the comment."
-     }]
-     return render(request, 'employee_information/home_employee.html', {"data":data} )
+     model = TimeSheet
+     model_user = Employee
+     
+     data = model.objects.filter(username=request.user.employee_id)
+     data_user = model_user.objects.filter(employee_id=request.user.employee_id).first()
+     
+     data_list = []
+     for value in data:
+        data_dict={
+            "alert":value.status,
+            "comment":value.comments,
+            "project_name":value.project_name,
+            "start_date":value.start_date,
+            "employee_name":data_user.employee_name
+        }
+     
+        data_list.append(data_dict)
+     print(data_list)
+     return render(request, 'employee_information/home_employee.html', {"data":data_list} )
 
 @login_required
 def timesheet_manager( request ):
-     model = "" #Specify the mode
+     print("timesheet manager")
+     model = TimeSheet
+     data = model.objects.all()
     #  data =            [{
     #             "project_name": "DHL",
     #             "start_date": "30",
@@ -459,16 +498,59 @@ def timesheet_manager( request ):
     #             "OT": "7",
 
     #         }]
-     data=[{}]
+    
      
      if request.method == 'POST':
+        
         data = json.loads(request.body)
         #model.objects.create(**data)
-        return JsonResponse(data, safe=False)
+        
+        if len(data)<2:
+        
+            try:
+                print("in")
+                project_name = data.get('project_name')
+                data_result = model.objects.filter(project_name=project_name)
+                
+                print(data_result)
+                data_list = []
+                for value in data_result:
+                    
+                    data_list.append({
+                        "username": value.username,
+                        "start_date": value.start_date,
+                        "end_date": value.end_date,
+                        "project_name": value.project_name,
+                        "St": value.St,
+                        "ot": value.ot,
+                        "status": value.status,
+                        "comments": value.comments,
+                        "total_hour": value.total_hour,
+                    })
+            except Exception as e:
+                # Handle the exception here
+                print(f"An error occurred: {str(e)}")
+            
+            return JsonResponse(data_list, safe=False)
+        else:
+             if request.method == 'POST':
+                
+                data = json.loads(request.body)
+                print("data", data)
+                emp_id = data['username']
+                project_name = data['project_name']
+                status = data['status']
+                comments = data['comment']
+                # Update the status and comments for the given emp_id and project_name
+                model.objects.filter(username=emp_id, project_name=project_name).update(status=status, comments=comments)
+                print(data)
+                return JsonResponse({"message": "Update successful"}, status=200)
+             else:
+                 return JsonResponse({"message": "Invalid request method"}, status=400)
 
      return render(request, 'employee_information/timesheet_manager.html', {"data":data} )
 
-
+@login_required
 def timesheet_update_view(request, timesheet_id):
     timesheet = get_object_or_404(TimeSheet, id=timesheet_id)
 
@@ -483,11 +565,8 @@ def timesheet_update_view(request, timesheet_id):
 
     return render(request, 'timesheet_update.html', {'form': form, 'timesheet': timesheet})
 
-from django.http import HttpResponse
-import csv
-import pandas as pd
-import json
 
+@login_required
 def download_list_data(request):
     if request.method == 'POST':
         # Get the JSON data from the request body
@@ -507,4 +586,108 @@ def download_list_data(request):
 
         return response
 
-
+@login_required
+def view_timesheet(request):
+    model=TimeSheet
+    print("view_timesheet")
+    if request.method == 'GET':
+        data = request.GET
+        print(data["id"])
+        print(data["data-project"])
+        print(data["data-start_date"])
+        date_string_start = data["data-start_date"]
+        try:
+            date_string_start = date_string_start.replace("Sept", "Sep")
+            
+            date_object = datetime.strptime(date_string_start, "%b. %d, %Y")
+            formatted_date_start = date_object.strftime("%Y-%m-%d")
+            data_retrived = model.objects.filter(username=data["id"],project_name=data["data-project"], start_date=formatted_date_start)
+        except Exception:
+            data_retrived = model.objects.filter(username=data["id"],project_name=data["data-project"], start_date=date_string_start)
+            formatted_date_start = data["data-start_date"]
+        try:
+            date_string_end = data["data-end_date"]
+            date_string_end = date_string_end.replace("Sept", "Sep")
+            date_object = datetime.strptime(date_string_start, "%b. %d, %Y")
+            formatted_date_end = date_object.strftime("%Y-%m-%d")
+        except Exception:
+            formatted_date_end = data["data-end_date"]
+        position = {
+                    "start_date": formatted_date_start,
+                    "end_date" : formatted_date_end,
+                    "project_name": data_retrived[0].project_name,
+                    "monday_value": data_retrived[0].monday_value,
+                    "tuesday_value": data_retrived[0].tuesday_value,
+                    "wednesday_value": data_retrived[0].wednesday_value,
+                    "thursday_value": data_retrived[0].thursday_value,
+                    "friday_value": data_retrived[0].friday_value,
+                    "saturday_value": data_retrived[0].saturday_value,
+                    "sunday_value": data_retrived[0].sunday_value,
+                    "ovt_monday": data_retrived[0].ovt_monday,
+                    "ovt_tuesday": data_retrived[0].ovt_tuesday,
+                    "ovt_wednesday": data_retrived[0].ovt_wednesday,
+                    "ovt_thursday": data_retrived[0].ovt_thursday,
+                    "ovt_friday": data_retrived[0].ovt_friday,
+                    "ovt_saturday": data_retrived[0].ovt_saturday,
+                    "ovt_sunday": data_retrived[0].ovt_sunday,
+                    "St": data_retrived[0].St,
+                    "ot": data_retrived[0].ot,
+                    "total_hour": data_retrived[0].total_hour
+                }
+        print(data_retrived[0].St)
+        return render(request, 'employee_information/view_timesheet.html', {"position":position})
+        #print(formatted_date)
+    if request.method == "POST":
+        model= TimeSheet
+        data=json.loads(request.body)
+        print("post data", data["project_name"])  
+        
+        print(data) 
+        ## Converting time
+        date_string_start = data["start_date"]
+        try:
+            date_string_start = date_string_start.replace("Sept", "Sep")
+            
+            date_object = datetime.strptime(date_string_start, "%b. %d, %Y")
+            formatted_date_start = date_object.strftime("%Y-%m-%d")
+            
+        except Exception:
+            
+            formatted_date_start = data["start_date"]
+        try:
+            date_string_end = data["end_date"]
+            date_string_end = date_string_end.replace("Sept", "Sep")
+            date_object = datetime.strptime(date_string_start, "%b. %d, %Y")
+            formatted_date_end = date_object.strftime("%Y-%m-%d")
+        except Exception:
+            formatted_date_end = data["end_date"]
+        print("dateformatted_date_start: ", formatted_date_start)
+        # retrived = model.objects.filter(project_name=data["project_name"],
+        #                      start_date=formatted_date_start,
+        #                      end_date=formatted_date_end
+        #                      )
+        # print("retrived: ", retrived[0].project_name)
+        model.objects.filter(project_name=data["project_name"],
+                             start_date=formatted_date_start,
+                             
+                             ).update(
+                                monday_value=data["monday_value"],
+                                tuesday_value=data["tuesday_value"],
+                                wednesday_value=data["wednesday_value"],
+                                thursday_value=data["thursday_value"],
+                                friday_value=data["friday_value"],
+                                saturday_value=data["saturday_value"],
+                                sunday_value=data["sunday_value"],
+                                ovt_monday=data["ovt_monday"],
+                                ovt_tuesday=data["ovt_tuesday"],
+                                ovt_wednesday=data["ovt_wednesday"],
+                                ovt_thursday=data["ovt_thursday"],
+                                ovt_friday=data["ovt_friday"],
+                                ovt_saturday=data["ovt_saturday"],
+                                ovt_sunday=data["ovt_sunday"],
+                                St=data["St"],
+                                ot=data["ot"],
+                                total_hour=data["total_hour"]
+                             )
+        return JsonResponse(data, safe=False)
+    
