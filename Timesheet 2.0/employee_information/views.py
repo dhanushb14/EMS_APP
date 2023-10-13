@@ -304,7 +304,7 @@ def view_employee(request):
 
 @login_required
 def time_sheet_status(request):
-    current_user = request.user
+    current_user = request.user.employee_name
     model = TimeSheet
     data_result = model.objects.filter(username=current_user)
     
@@ -312,7 +312,7 @@ def time_sheet_status(request):
         data = json.loads(request.body)
         start_date = data.get('start_date')
         end_date = data.get('end_date')
-        current_user = request.user.employee_id
+        current_user = request.user.employee_name
         
 
         # Convert start_date and end_date to datetime objects
@@ -397,7 +397,7 @@ def TimeSheetCreate(request):
         
         data = json.loads(request.body)
         
-        data["username"] = current_user
+        data["username"] = request.user.employee_name
         
        #if data["method_1"] != "first_fetch":  # Loading the date into db
         if len(data)>7:
@@ -408,7 +408,7 @@ def TimeSheetCreate(request):
         else:    # Fetching the data with start and end date
             start_date = data.get('start_date')
             end_date = data.get('end_date')
-            username = current_user
+            username = request.user.employee_name
             
             from datetime import datetime
 
@@ -468,7 +468,7 @@ def home_employee( request ):
      model = TimeSheet
      model_user = Employee
      
-     data = model.objects.filter(username=request.user.employee_id)
+     data = model.objects.filter(username=request.user.employee_name)
      data_user = model_user.objects.filter(employee_id=request.user.employee_id).first()
      
      data_list = []
@@ -489,6 +489,11 @@ def home_employee( request ):
 def timesheet_manager( request ):
      print("timesheet manager")
      model = TimeSheet
+     model_user = Employee
+     data_user = model_user.objects.filter(employee_id=request.user.employee_id)
+     print(request.user.employee_name)
+     for i in data_user:
+        user_name = i.employee_name
      data = model.objects.all()
     #  data =            [{
     #             "project_name": "DHL",
@@ -570,8 +575,8 @@ def timesheet_update_view(request, timesheet_id):
 def download_list_data(request):
     if request.method == 'POST':
         # Get the JSON data from the request body
-        table_data = json.loads(request.body)
-        df = pd.DataFrame(table_data)
+        table_data = json.loads(request.body)['table_data']
+        print("table_data: " , table_data)
 
         # Create a HttpResponse object with the appropriate CSV header.
         response = HttpResponse(content_type='text/csv')
@@ -580,9 +585,14 @@ def download_list_data(request):
         # Create a CSV writer.
         writer = csv.writer(response)
 
+        # Write your headers
+        headers = ['Project Name', 'Employee Name', 'Start Date', 'End Date', 'ST', 'OT', 'Status', 'Approved_by']
+        writer.writerow(headers)
+
         # Write your data to the CSV writer.
-        for row in df.values:
-            writer.writerow(row)
+        for row in table_data:
+            # Ensure each row is a list of individual values
+            writer.writerow(list(row))
 
         return response
 
