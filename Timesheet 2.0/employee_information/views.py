@@ -575,8 +575,8 @@ def timesheet_update_view(request, timesheet_id):
 def download_list_data(request):
     if request.method == 'POST':
         # Get the JSON data from the request body
-        table_data = json.loads(request.body)
-        df = pd.DataFrame(table_data)
+        table_data = json.loads(request.body)['table_data']
+        print("table_data: " , table_data)
 
         # Create a HttpResponse object with the appropriate CSV header.
         response = HttpResponse(content_type='text/csv')
@@ -585,9 +585,14 @@ def download_list_data(request):
         # Create a CSV writer.
         writer = csv.writer(response)
 
+        # Write your headers
+        headers = ['Project Name', 'Employee Name', 'Start Date', 'End Date', 'ST', 'OT', 'Status', 'Approved_by']
+        writer.writerow(headers)
+
         # Write your data to the CSV writer.
-        for row in df.values:
-            writer.writerow(row)
+        for row in table_data:
+            # Ensure each row is a list of individual values
+            writer.writerow(list(row))
 
         return response
 
