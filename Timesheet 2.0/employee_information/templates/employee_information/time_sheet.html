@@ -275,7 +275,8 @@
                 document.getElementById("ot").value = data?.ot || '';
                 document.getElementById("total_hour").value = data?.total_hour || '';
 
-                if (data?.project_name ) {
+                if (data?.project_name && data?.status!="Rejected") {
+
                     // Removing buttons
                     document.getElementById("submitBtn").remove();
                     document.getElementById("discardBtn").remove();
@@ -371,7 +372,7 @@
                 document.getElementById("ot").value = data?.ot || '';
                 document.getElementById("total_hour").value = data?.total_hour || '';
 
-                if (data?.project_name ) {
+                if (data?.project_name && data?.status!="Rejected") {
                     // Removing buttons
                     document.getElementById("submitBtn").remove();
                     document.getElementById("discardBtn").remove();
@@ -584,12 +585,13 @@
         // Handle the response from the server
         if (response.ok) {
             return response.json();
+            
         } else {
             throw new Error("Error: " + response.status);
         }
     })
     .then(function(data) {
-        // Do something with the response data
+        location.reload();
     })
     .catch(function(error) {
         // Handle any errors that occurred during the request

@@ -11,22 +11,16 @@
                     <span class="d-flex align-items-center">
                     <span class="figure">
                         <img src="{% static 'employee_information/assets/material-admin/images/faces/ava.jpg' %}" alt="user" class="user">
+                        
                     </span>
-                    
+                    <h1 class="item-subject font-weight-normal">
+                        <a style="font-size: 20px; font-family: Arial, Helvetica, sans-serif;">{{ request.user.employee_name }}</a>
+                    </h1>
                     </span>
                 </button>
                 <div class="mdc-menu mdc-menu-surface" tabindex="-1">
                     <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
-                        <li class="mdc-list-item" role="menuitem">
-                            <div class="item-thumbnail item-thumbnail-icon-only">
-                                <i class="mdi mdi-settings-outline text-primary"></i>
-                            </div>
-                            <div class="item-content d-flex align-items-start flex-column justify-content-center">
-                                <h6 class="item-subject font-weight-normal">
-                                    <a >{{ request.user.employee_name }}</a>
-                                </h6>
-                            </div>
-                        </li>
+                        
                         <li class="mdc-list-item" role="menuitem">
                             <div class="item-thumbnail item-thumbnail-icon-only">
                                 <i class="mdi mdi-logout text-primary"></i>

@@ -139,7 +139,7 @@ padding: 0; /* Add this line */
                          </td>
                         <td class="px-2 py-3 text-center">
                            {% if position.status == "Approved" or position.status == "Rejected" %}
-                           <button id="send-btn" style="background-color:green !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;" disabled>SEND</button>{% else %}
+                           <button id="send-btn" class="undo-btn" style="background-color:green !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;" >Undo</button>{% else %}
                            <button id="send-btn" onclick="submitForm(event)" style="background-color:red !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">SEND</button>{% endif %}
                             
              
@@ -237,7 +237,7 @@ padding: 0; /* Add this line */
                          </td>
                         <td class="text-center">
                             ${item.status == "Approved" || item.status == "Rejected" ? 
-                            `<button id="send-btn" style="background-color: green !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;" disabled>SEND</button>` :
+                            `<button id="send-btn" class="undo-btn" style="background-color: green !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;" disabled>SEND</button>` :
                             `<button id="send-btn" onclick="submitForm(event)" style="background-color: red !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">SEND</button>`}
                             <button id="visibility" class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="button" data-id="${item.username}" data-project="${item.project_name}" data-start_date="${item.start_date}" data-end_date="${item.end_date}" title="Edit">
                                 <i class="material-icons mdc-button__icon">visibility</i>
@@ -296,7 +296,8 @@ padding: 0; /* Add this line */
         'ST': row.querySelector('td:nth-child(5)')?.innerText || '',
         'OT': row.querySelector('td:nth-child(6)')?.innerText || '',
         'status': row.querySelector('td:nth-child(7) select')?.value || '',
-        'comment': row.querySelector('td:nth-child(8) input')?.value || ''
+        'comment': row.querySelector('td:nth-child(8) input')?.value || '',
+        
     };
 
         fetch("{% url 'timesheet_manager' %}", {
@@ -311,7 +312,27 @@ padding: 0; /* Add this line */
         }).then(function(data) {
             if (data.message === "Update successful") {
                 button.style.backgroundColor = "green";
-                button.disabled = true;
+                button.textContent = "Undo";
+
+                // Find the status field and update it
+                var statusField = row.querySelector('td:nth-child(7)');
+                if (data.status){
+                statusField.innerHTML = data.status;} // Assuming the server returns the new status
+                else if (data.data){
+                    statusField.innerHTML = data.data;}
+                else {
+                    statusField.innerHTML = `
+                            <select name="status" id="status" style="width: 100%; height: 100%;">
+                                <option class="me-4" value="Approved">Approved</option>
+                                <option class="me-4" value="Rejected">Rejected</option>
+                            </select>
+                            `;
+                            var sendButton = row.querySelector('#send-btn');
+                            sendButton.addEventListener('click', submitForm);
+                            button.style.backgroundColor = "red";
+                            button.textContent = "SEND";
+                }
+                
                 
              }
             
@@ -319,6 +340,49 @@ padding: 0; /* Add this line */
             console.log(data);
         });
     }; 
+    document.addEventListener('click', function(event) {
+        var button = event.target;
+        if (button.classList.contains("undo-btn") && button.textContent === "Undo") {
+            event.preventDefault();
+            console.log("got in")
+            var row = button.closest('tr'); 
+                var data = {
+                    'project_name': row.querySelector('td:nth-child(1)').innerText,
+                    'username': row.querySelector('td:nth-child(2)').innerText,
+                    'start_date': row.querySelector('td:nth-child(3)').innerText,
+                    
+                };
+
+                fetch("{% url 'timesheet_manager' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify(data)
+                }).then(function(response) {
+                    return response.json();
+                }).then(function(data) {
+                    if (data.message === "Update successful") {
+                        button.textContent = "Send";
+                        button.style.backgroundColor = "red";
+
+                        // Find the status field and replace it with a select field
+                        var statusField = row.querySelector('td:nth-child(7)');
+                        statusField.innerHTML = `
+                            <select name="status" id="status" style="width: 100%; height: 100%;">
+                                <option class="me-4" value="Approved">Approved</option>
+                                <option class="me-4" value="Rejected">Rejected</option>
+                            </select>
+                            `;
+
+                        // Set up event listener for the new "Send" button
+                        var sendButton = row.querySelector('#send-btn');
+                        sendButton.addEventListener('click', submitForm);
+                    }
+                });
+            }
+        });
 
     document.addEventListener('DOMContentLoaded', function() {
         var sendButton = document.getElementById("send-btn");
