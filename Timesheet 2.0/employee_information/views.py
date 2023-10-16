@@ -305,6 +305,7 @@ def view_employee(request):
 @login_required
 def time_sheet_status(request):
     current_user = request.user.employee_name
+    print("current_user", current_user)
     model = TimeSheet
     data_result = model.objects.filter(username=current_user)
     
@@ -422,6 +423,7 @@ def TimeSheetCreate(request):
                 data = model.objects.filter(start_date=start_date, username=username)
                 print("worked")
                 print("project:",data[0].project_name)
+                print("status",data[0].status)
                 data = {
                     "start_date": data[0].start_date,
                     "end_date" : data[0].end_date,
@@ -442,7 +444,8 @@ def TimeSheetCreate(request):
                     "ovt_sunday": data[0].ovt_sunday,
                     "St": data[0].St,
                     "ot": data[0].ot,
-                    "total_hour": data[0].total_hour
+                    "total_hour": data[0].total_hour,
+                    "status": data[0].status
                 }
             except Exception:
                 data = 0
@@ -507,51 +510,66 @@ def timesheet_manager( request ):
      
      if request.method == 'POST':
         
-        data = json.loads(request.body)
-        #model.objects.create(**data)
-        
-        if len(data)<2:
-        
-            try:
-                print("in")
-                project_name = data.get('project_name')
-                data_result = model.objects.filter(project_name=project_name)
-                
-                print(data_result)
-                data_list = []
-                for value in data_result:
-                    
-                    data_list.append({
-                        "username": value.username,
-                        "start_date": value.start_date,
-                        "end_date": value.end_date,
-                        "project_name": value.project_name,
-                        "St": value.St,
-                        "ot": value.ot,
-                        "status": value.status,
-                        "comments": value.comments,
-                        "total_hour": value.total_hour,
-                    })
-            except Exception as e:
-                # Handle the exception here
-                print(f"An error occurred: {str(e)}")
+            data = json.loads(request.body)
+            print(len(data))
+            if len(data) ==3:
+                try:
+                    date_string_start = data["start_date"].replace("Sept", "Sep")
+                    date_object = datetime.strptime(date_string_start, "%b. %d, %Y")
+                    formatted_date_start = date_object.strftime("%Y-%m-%d")
+                    model.objects.filter(start_date=formatted_date_start, project_name=data["project_name"]).update(status="Pending", comments=" ")
+                    return JsonResponse({"message": "Update successful", "data": "Pending"}, status=200)
+                except Exception:
+                    date_object = datetime.strptime(data["start_date"], "%b. %d, %Y")
+                    formatted_date_start = date_object.strftime("%Y-%m-%d")
+                    model.objects.filter(start_date=formatted_date_start, project_name=data["project_name"]).update(status="Pending", comments=" ")
+                    return JsonResponse({"message": "Update successful", "data": "Pending"}, status=200)
             
-            return JsonResponse(data_list, safe=False)
-        else:
-             if request.method == 'POST':
+            
+        
+            
+            elif len(data)<2:
+            
+                try:
+                    print("in")
+                    project_name = data.get('project_name')
+                    data_result = model.objects.filter(project_name=project_name)
+                    
+                    print(data_result)
+                    data_list = []
+                    for value in data_result:
+                        
+                        data_list.append({
+                            "username": value.username,
+                            "start_date": value.start_date,
+                            "end_date": value.end_date,
+                            "project_name": value.project_name,
+                            "St": value.St,
+                            "ot": value.ot,
+                            "status": value.status,
+                            "comments": value.comments,
+                            "total_hour": value.total_hour,
+                        })
+                except Exception as e:
+                    # Handle the exception here
+                    print(f"An error occurred: {str(e)}")
                 
-                data = json.loads(request.body)
-                print("data", data)
-                emp_id = data['username']
-                project_name = data['project_name']
-                status = data['status']
-                comments = data['comment']
-                # Update the status and comments for the given emp_id and project_name
-                model.objects.filter(username=emp_id, project_name=project_name).update(status=status, comments=comments)
-                print(data)
-                return JsonResponse({"message": "Update successful"}, status=200)
-             else:
-                 return JsonResponse({"message": "Invalid request method"}, status=400)
+                return JsonResponse(data_list, safe=False)
+            else:
+                if request.method == 'POST':
+                    
+                    data = json.loads(request.body)
+                    print("data", data)
+                    emp_id = data['username']
+                    project_name = data['project_name']
+                    status = data['status']
+                    comments = data['comment']
+                    # Update the status and comments for the given emp_id and project_name
+                    model.objects.filter(username=emp_id, project_name=project_name).update(status=status, comments=comments)
+                    print(data)
+                    return JsonResponse({"message": "Update successful", "data": status}, status=200)
+                else:
+                    return JsonResponse({"message": "Invalid request method"}, status=400)
 
      return render(request, 'employee_information/timesheet_manager.html', {"data":data} )
 
