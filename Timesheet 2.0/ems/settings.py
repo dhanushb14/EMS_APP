@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'employee_information.apps.EmployeeInformationConfig',
     'django.contrib.humanize',
     'User',
+    'whitenoise'
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'ems.urls'
@@ -119,8 +121,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Change to 'staticfiles'
+
+# Use WhiteNoise to serve static files in production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+# STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     # location of your application, should not be public web accessible 
     './static',
