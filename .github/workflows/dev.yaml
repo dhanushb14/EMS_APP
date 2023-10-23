@@ -52,4 +52,4 @@ jobs:
             docker rm timesheet || true
             docker rmi ${{ env.DOCKER_HUB_USERNAME }}/timesheet:latest || true
             docker pull ${{ env.DOCKER_HUB_USERNAME }}/timesheet:latest
-            docker run -d --name timesheet -p  8080:8080 ${{ env.DOCKER_HUB_USERNAME }}/timesheet:latest 
+            docker run -d --name timesheet -p  8081:8081 ${{ env.DOCKER_HUB_USERNAME }}/timesheet:latest 
