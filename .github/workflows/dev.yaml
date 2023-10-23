@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: "Timesheet 2.0\Dockerfile"
+          file: Dockerfile
           push: true
           tags: ${{ env.DOCKER_HUB_USERNAME }}/timesheet:latest
 
