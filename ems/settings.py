@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure--w(dug*va_megpa25w$gmv8o6+f8!fg_*m1^u$)z25pab0hicm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ems-bwyn.onrender.com', '3.226.14.5']
+ALLOWED_HOSTS = ['ems-bwyn.onrender.com', '3.226.14.5', '*']
 
 
 # Application definition
@@ -79,15 +79,21 @@ WSGI_APPLICATION = 'ems.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'ems',
+#         'USER': 'ems',
+#         'PASSWORD': 'igs-dev',
+#         'HOST': '3.226.14.5'
+#         # 'PASSWORD': '12345',
+#         # 'HOST': 'localhost'
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ems',
-        'USER': 'postgres',
-        'PASSWORD': 'igs-dev',
-        'HOST': '3.226.14.5'
-        # 'PASSWORD': '12345',
-        # 'HOST': 'localhost'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
