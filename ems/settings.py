@@ -81,8 +81,13 @@ WSGI_APPLICATION = 'ems.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'IGS_CE',
+        'USER': 'postgres',
+        'PASSWORD': 'igs-dev',
+        'HOST': '3.226.14.5'
+        # 'PASSWORD': '12345',
+        # 'HOST': 'localhost'
     }
 }
 
