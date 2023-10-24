@@ -24,6 +24,7 @@ class EmployeeManager(BaseUserManager):
         return self.create_user(employee_id, password, role, **extra_fields)
 
 class Employee(AbstractBaseUser, PermissionsMixin):
+    id = models.AutoField(primary_key=True)
     employee_name = models.CharField(max_length=100)
     email_id = models.EmailField(blank=False, unique=True)  
     phonenumber = models.CharField(max_length=20, unique=True)
