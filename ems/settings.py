@@ -79,23 +79,23 @@ WSGI_APPLICATION = 'ems.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'ems',
-#         'USER': 'ems',
-#         'PASSWORD': 'igs-dev',
-#         'HOST': '3.226.14.5'
-#         # 'PASSWORD': '12345',
-#         # 'HOST': 'localhost'
-#     }
-# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ems',
+        'USER': 'postgres',
+        'PASSWORD': 'igs-dev',
+        'HOST': '3.226.14.5'
+        # 'PASSWORD': '12345',
+        # 'HOST': 'localhost'
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
