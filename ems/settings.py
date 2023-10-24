@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'ems.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'IGS_CE',
+        'NAME': 'ems',
         'USER': 'postgres',
         'PASSWORD': 'igs-dev',
         'HOST': '3.226.14.5'
