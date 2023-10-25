@@ -34,5 +34,17 @@
             </div>
         </div>
     </div>
+    <script>
+        $('.menu-button-container').on('click', function() {
+    // Toggle the visibility of the dropdown menu
+    $(this).find('.mdc-menu').toggleClass('mdc-menu-surface--open');
+});
+
+$('.menu-button-container .mdc-list-item').on('click', function() {
+    // Handle the logout functionality here
+    window.location.href = "{% url 'logout' %}";
+});
+
+    </script>
 </header>
 <!-- partial -->
