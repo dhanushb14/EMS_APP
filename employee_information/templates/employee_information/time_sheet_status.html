@@ -112,10 +112,10 @@
                         {% else %}
                         <td class=" text-center">Pending</td>
                         {% endif %}
-                        {% if position.Approved_by %}
+                        {% if position.status == "Approved" or position.status == "Rejected" %}
                         <td class=" text-center">Manager</td>
                         {% else %}
-                        <td class=" text-center">Manager</td>
+                        <td class=" text-center"></td>
                         {% endif %}
                         </tr>
                     {% endfor %}
