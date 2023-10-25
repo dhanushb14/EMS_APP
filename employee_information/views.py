@@ -662,7 +662,7 @@ def view_timesheet(request):
                     "ot": data_retrived[0].ot,
                     "total_hour": data_retrived[0].total_hour
                 }
-        print(data_retrived[0].St)
+        print(position)
         return render(request, 'employee_information/view_timesheet.html', {"position":position})
         #print(formatted_date)
     if request.method == "POST":

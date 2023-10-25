@@ -99,4 +99,31 @@
             })
         })
     })
+    $(function() {
+        // Calculate total hours
+        function calculateTotalHours() {
+            console.log('calculateTotalHours is running');
+            var total = 0;
+            var st = 0;
+            var ot = 0;
+            $('input[id$="_value"], input[id^="ovt_"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                total += value;
+            });
+            $('input[id$="_value"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                st += value;
+            });
+            $('input[id^="ovt_"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                ot += value;
+            });
+            $('#St').val(st);
+            $('#ot').val(ot);
+            $('#total_hour').val(total);
+        }
+
+        // Trigger calculation on input change
+        $('input[id$="_value"], input[id^="ovt_"]').on('input', calculateTotalHours);
+        });
 </script>

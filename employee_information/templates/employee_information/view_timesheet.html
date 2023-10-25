@@ -173,11 +173,11 @@
                         <tr style="background-color: #e0e0e0;">
                             <td class="px-2 py-1 text-center">
                                 Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
-                                <input  type="text" id="St" name="ST" placeholder="0"  style="width: 50px;" value={{position.St}} readonly >
+                                <input  type="text" id="St1" name="St" placeholder="0"  style="width: 50px;" value={{position.St}} readonly >
                             </td>
                             <td class="px-2 py-1 text-center">
                                 Over Time: &nbsp;&nbsp;&nbsp&nbsp;
-                                <input  type="text" id="ot" name="ST" placeholder="0"  style="width: 50px" value={{position.ot}} readonly>
+                                <input  type="text" id="ot1" name="ot" placeholder="0"  style="width: 50px" value={{position.ot}} readonly>
                             </td>
                             <td class="px-2 py-1 text-center">
                                 Total Hours: &nbsp;&nbsp;&nbsp&nbsp;
@@ -203,6 +203,35 @@
         <button class="btn btn-default border btn-sm rounded-0 d-flex align-items-center" type="button" data-bs-dismiss="modal"><i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">close</i> Close</button>
     </div>
 <script>
+    $(function() {
+
+
+// Calculate total hours
+function calculateTotalHours() {
+    console.log("calculateTotalHours function is called");
+    var total = 0;
+    var st = 0;
+    var ot = 0;
+    $('input[id$="_value"], input[id^="ovt_"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        total += value;
+    });
+    $('input[id$="_value"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        st += value;
+    });
+    $('input[id^="ovt_"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        ot += value;
+    });
+    $('#St1').val(st);
+    $('#ot1').val(ot);
+    $('#total_hour').val(total);
+}
+
+// Trigger calculation on input change
+$('input[id$="_value"], input[id^="ovt_"]').on('input', calculateTotalHours);
+});
     document.getElementById("submitBtn").addEventListener("click", function(event) {
         
         function getValue(id) {
@@ -235,8 +264,8 @@
         var ovt_friday = document.getElementById('ovt_friday').value || '0';
         var ovt_saturday = document.getElementById('ovt_saturday').value || '0';
         var ovt_sunday = document.getElementById('ovt_sunday').value || '0';
-        var St = document.getElementById('St').value || '0';
-        var ot = document.getElementById('ot').value || '0';
+        var St = document.getElementById('St1').value || '0';
+        var ot = document.getElementById('ot1').value || '0';
         var total_hour = document.getElementById('total_hour').value || '0';
 
         
