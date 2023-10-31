@@ -67,6 +67,19 @@
             opacity: 0;
         }
 }
+.my-table {
+        table-layout: fixed;
+        width: 100%;
+        
+    }
+    .my-table th, .my-table td {
+    width: 100px;
+    
+}
+.mdc-card {
+    padding: 10px; /* Adjust this value */
+}
+
 </style>
 <div class="italic-text">
     <h2> Time Sheet </h2>
@@ -86,16 +99,17 @@
     <div class="mdc-card">
         <div class="table-responsive">
             <form id="timeSheetForm" method="post" data-username="{{ user }}">
-            <table class="table table-bordered spaced-table">
+            <table class="table table-bordered spaced-table my-table">
                 <colgroup>
-                    <col width="15%">
-                    <col width="11.5%">
-                    <col width="11.5%">
-                    <col width="11.5%">
-                    <col width="11.5%">
-                    <col width="11.5%">
-                    <col width="11.5%">
-                    <col width="11.5%">
+                    <col width="11%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="2.3%">
                 </colgroup>
                 <thead>
                     <tr style="background-color: grey; height: 35px;">
@@ -107,6 +121,7 @@
                         <th class="text-center py-1">Friday</th>
                         <th class="text-center py-1">Saturday</th>
                         <th class="text-center py-1">Sunday</th>
+                        <th style="border: none; background-color: white !important;"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -162,19 +177,51 @@
                             <input type="text" id="ovt_sunday" name="ovt_sunday" placeholder="0" style="width: 50px">
                         </td>
                     </tr>
+                    <tr style="background-color: #e0e0e0;" id="tasknamerow">
+                        <td class="px-2 py-1 text-center">
+                            Task Name 
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input class="task-input" type="text" id="monday_task" name="monday_task" placeholder="" style="width: 100%">
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input class="task-input" type="text" id="tuesday_task" name="tuesday_task" placeholder=""  style="width: 100%">
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input class="task-input" type="text" id="wednesday_task" name="wednesday_task" placeholder=""  style="width: 100%">
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input class="task-input" type="text" id="thursday_task" name="thursday_task" placeholder="" style="width: 100%">
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input class="task-input" type="text" id="friday_task" name="friday_task" placeholder="" style="width: 100%">
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input class="task-input" type="text" id="saturday_task" name="saturday_task" placeholder="" style="width: 100%">
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input class="task-input" type="text" id="sunday_task" name="sunday_task" placeholder="" style="width: 100%">
+                        </td>
+                        <td class="px-2 py-1 text-center" style="background-color: white; border: none;">
+                            <button type="button" id="addRow">+</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
+                    </tr>
                     <tr>
                         <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
                     </tr>
                     <tr style="background-color: #e0e0e0;">
-                        <td class="px-2 py-1 text-center">
+                        <td class="px-2 py-1 text-center" colspan="2">
                             Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
                             <input type="text" id="St" name="ST" placeholder="0" value="0" style="width: 50px;" readonly>
                         </td>
-                        <td class="px-2 py-1 text-center">
+                        <td class="px-2 py-1 text-center" colspan="2">
                             Over Time: &nbsp;&nbsp;&nbsp&nbsp;
                             <input type="text" id="ot" name="ST" placeholder="0" value="0" style="width: 50px" readonly>
                         </td>
-                        <td class="px-2 py-1 text-center">
+                        <td class="px-2 py-1 text-center" colspan="2">
                             Total Hours: &nbsp;&nbsp;&nbsp&nbsp;
                             <input type="text" id="total_hour" name="total_hour" placeholder="0" value="0" style="width: 50px" readonly>
                         </td>
@@ -182,19 +229,46 @@
                     <tr id="message">
                         <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
                     </tr>
+                     
                 </tbody>
+                
             </table>
+                  
         </div>
+        
         <div id="parent">
             <button type="button" id="saveBtn" class="btn btn-primary" style="float: left; margin-right: 10px;">Save</button>
             <button type="button" id="discardBtn" class="btn btn-secondary" style="float: left;">Discard</button>
             <button type="submit" id="submitBtn" class="btn btn-success" style="float: right;">Submit</button>
         </div>
+        
         </form>
+        
     </div>
 </div>
 {% endblock pageContent %} {% block ScriptBlock %}
 <script>
+    document.getElementById("addRow").addEventListener("click", function() {
+    
+    var rows = document.getElementById("tasknamerow").parentNode.getElementsByTagName("tr");
+    var taskNameRow = rows[rows.length - 5];
+    var newRow = document.createElement("tr");
+    
+    newRow.style.backgroundColor = "#e0e0e0";
+    newRow.innerHTML = `
+        <td class="px-2 py-1 text-center">Task Name</td>
+        <td class="px-2 py-1 text-center"><input class="task-input" type="text" placeholder="" style="width: 100%"></td>
+        <td class="px-2 py-1 text-center"><input class="task-input" type="text" placeholder="" style="width: 100%"></td>
+        <td class="px-2 py-1 text-center"><input class="task-input" type="text" placeholder="" style="width: 100%"></td>
+        <td class="px-2 py-1 text-center"><input class="task-input" type="text" placeholder="" style="width: 100%"></td>
+        <td class="px-2 py-1 text-center"><input class="task-input" type="text" placeholder="" style="width: 100%"></td>
+        <td class="px-2 py-1 text-center"><input class="task-input" type="text" placeholder="" style="width: 100%"></td>
+        <td class="px-2 py-1 text-center"><input class="task-input" type="text" placeholder="" style="width: 100%"></td>
+        
+    `;
+    taskNameRow.parentNode.insertBefore(newRow, taskNameRow.nextSibling);
+    
+});
     
     function getPreviousMonday() {
         var date = new Date();
@@ -253,7 +327,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log('first')
+            
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
                 document.getElementById("project_name").value = data?.project_name || '';
@@ -274,6 +348,8 @@
                 document.getElementById("St").value = data?.St || '';
                 document.getElementById("ot").value = data?.ot || '';
                 document.getElementById("total_hour").value = data?.total_hour || '';
+
+                
 
                 if (data?.project_name && data?.status!="Rejected") {
 
@@ -333,7 +409,10 @@
                 
             });
 
-        });    
+        });
+
+
+        var savedTableData = localStorage.getItem('tableData');         
         var formattedStartDate = startDate.toISOString().split('T')[0];
         var formattedEndDate = endDate.toISOString().split('T')[0];
         fetch("{% url 'timesheets_create' %}", {
@@ -350,7 +429,8 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log('first')
+            if (data ) {
+            console.log('second')
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
                 document.getElementById("project_name").value = data?.project_name || '';
@@ -371,6 +451,55 @@
                 document.getElementById("St").value = data?.St || '';
                 document.getElementById("ot").value = data?.ot || '';
                 document.getElementById("total_hour").value = data?.total_hour || '';
+
+                console.log(data.tasks.length)
+                console.log(data.tasks)
+                if (data.tasks.length <= 7) {
+                    document.getElementById("monday_task").value = data?.tasks[0] || '';
+                    document.getElementById("tuesday_task").value = data?.tasks[1] || '';
+                    document.getElementById("wednesday_task").value = data?.tasks[2] || '';
+                    document.getElementById("thursday_task").value = data?.tasks[3] || '';
+                    document.getElementById("friday_task").value = data?.tasks[4] || '';
+                    document.getElementById("saturday_task").value = data?.tasks[5] || '';
+                    document.getElementById("sunday_task").value = data?.tasks[6] || '';
+
+                }
+                else{
+                    document.getElementById("monday_task").value = data?.tasks[0] || '';
+                    document.getElementById("tuesday_task").value = data?.tasks[1] || '';
+                    document.getElementById("wednesday_task").value = data?.tasks[2] || '';
+                    document.getElementById("thursday_task").value = data?.tasks[3] || '';
+                    document.getElementById("friday_task").value = data?.tasks[4] || '';
+                    document.getElementById("saturday_task").value = data?.tasks[5] || '';
+                    document.getElementById("sunday_task").value = data?.tasks[6] || '';
+                    var totallength = data.tasks.length
+                    var totalrow = data.tasks.length/7
+                    console.log(totalrow)
+                    var taskNameRow = document.getElementById("tasknamerow");
+                    for (var i = 0; i < data.tasks.length; i += 7) {
+                        if (!data.tasks[i] && !data.tasks[i+1] && !data.tasks[i+2] && !data.tasks[i+3] && !data.tasks[i+4] && !data.tasks[i+5] && !data.tasks[i+6]) {
+                            totalrow = totalrow - 1;
+                        }
+                    }
+
+
+                    for (var i = 0, k = 14, j=7; i <= totalrow-2; i++, k=k+7, j=j+7) {
+                        
+                        
+                        var newRow = document.createElement("tr");
+                        newRow.style.backgroundColor = "#e0e0e0";
+                        newRow.innerHTML = `<td class="px-2 py-1 text-center">Task Name</td>`;
+                        console.log(k)
+                        for (var x = j; x < k; x++) {
+                            console.log(j)
+                            newRow.innerHTML += `<td class="px-2 py-1 text-center"><input class="task-input" type="text" placeholder="" style="width: 100%" value="${data.tasks[x]}"></td>`;
+                        }
+                        
+                        //taskNameRow.insertAdjacentElement("afterend", newRow);
+                        taskNameRow.parentNode.insertBefore(newRow, taskNameRow.nextSibling);
+                        taskNameRow = newRow;
+                    }
+                }
 
                 if (data?.project_name && data?.status!="Rejected") {
                     // Removing buttons
@@ -411,10 +540,10 @@
                     messageCell.appendChild(messageBox1);
 
                 }
+            }
             });   
-            
-        
-    });
+
+            });
     
     // Add event listener to project name input field
     var inputFields = document.querySelectorAll('input');
@@ -481,11 +610,24 @@
         document.getElementById("St").value = "";
         document.getElementById("ot").value = "";
         document.getElementById("total_hour").value = "";
-        // Remove the table data from local storage
+       // Reset the task inputs to their initial values
+       var taskInputs = document.querySelectorAll('.task-input');
+        taskInputs.forEach((input) => {
+            input.value = "";
+        });
+        // Remove the newly created rows
+        var taskRows = document.querySelectorAll('#tasknamerow ~ tr');
+        taskRows.forEach((row) => {
+            row.remove();
+        });
+
+        // Remove the table data and task inputs from local storage
         localStorage.removeItem('tableData');
+        localStorage.removeItem('taskInputs');
 }});
     document.getElementById("saveBtn").addEventListener("click", function() {
         // Get the table data
+        
         var tableData = {
             start_date: document.getElementById('start_date').value,
             end_date: document.getElementById('end_date').value,
@@ -506,10 +648,14 @@
             ovt_sunday: document.getElementById('ovt_sunday').value,
             St: document.getElementById('St').value,
             ot: document.getElementById('ot').value,
-            total_hour: document.getElementById('total_hour').value
+            total_hour: document.getElementById('total_hour').value,
+            
         };
+        
         // Store the table data in local storage
         localStorage.setItem('tableData', JSON.stringify(tableData));
+        var taskInputs = Array.from(document.querySelectorAll('.task-input')).map(input => input.value);
+        localStorage.setItem('taskInputs', JSON.stringify(taskInputs));
 
         var messageBox = document.createElement("div");
         messageBox.textContent = "The Values are Saved";
@@ -524,6 +670,8 @@
 
     document.getElementById("submitBtn").addEventListener("click", function() {
         event.preventDefault();
+        var taskInputs = document.querySelectorAll('.task-input');
+        var tasks = Array.from(taskInputs).map(input => input.value);
         var start_date = document.getElementById('start_date').value;
         var end_date = document.getElementById('end_date').value;
         var project_name = document.getElementById('project_name').value || '0';
@@ -544,7 +692,10 @@
         var St = document.getElementById('St').value || '0';
         var ot = document.getElementById('ot').value || '0';
         var total_hour = document.getElementById('total_hour').value || '0';
+        
 
+        
+        
         
         // Get the form data
         //var formData = new FormData(document.getElementById("timeSheetForm"));
@@ -577,7 +728,9 @@
                 'ovt_sunday': ovt_sunday,
                 'St': St,
                 'ot': ot,
-                'total_hour': total_hour
+                'total_hour': total_hour,
+                'tasks': tasks,
+                
 
             })
     })
@@ -635,6 +788,58 @@ window.addEventListener('load', function() {
         document.getElementById('St').value = tableData.St;
         document.getElementById('ot').value = tableData.ot;
         document.getElementById('total_hour').value = tableData.total_hour;
+        var savedTaskInputs = JSON.parse(localStorage.getItem('taskInputs'));
+        console.log("local", savedTaskInputs)
+        if (savedTaskInputs.length <= 7) {
+                    document.getElementById("monday_task").value = savedTaskInputs[0] || '';
+                    document.getElementById("tuesday_task").value = savedTaskInputs[1] || '';
+                    document.getElementById("wednesday_task").value = savedTaskInputs[2] || '';
+                    document.getElementById("thursday_task").value = savedTaskInputs[3] || '';
+                    document.getElementById("friday_task").value = savedTaskInputs[4] || '';
+                    document.getElementById("saturday_task").value = savedTaskInputs[5] || '';
+                    document.getElementById("sunday_task").value = savedTaskInputs[6] || '';
+
+        }
+        else{
+                    document.getElementById("monday_task").value = savedTaskInputs[0] || '';
+                    document.getElementById("tuesday_task").value = savedTaskInputs[1] || '';
+                    document.getElementById("wednesday_task").value = savedTaskInputs[2] || '';
+                    document.getElementById("thursday_task").value = savedTaskInputs[3] || '';
+                    document.getElementById("friday_task").value = savedTaskInputs[4] || '';
+                    document.getElementById("saturday_task").value = savedTaskInputs[5] || '';
+                    document.getElementById("sunday_task").value = savedTaskInputs[6] || '';
+                    var totallength = savedTaskInputs.length
+                    var totalrow = savedTaskInputs.length/7
+                    console.log(totalrow)
+        
+                    // Get the task name row
+                    var taskNameRow = document.getElementById("tasknamerow");
+                    for (var i = 0; i < savedTaskInputs.length; i += 7) {
+                        if (!savedTaskInputs[i] && !savedTaskInputs[i+1] && !savedTaskInputs[i+2] && !savedTaskInputs[i+3] && !savedTaskInputs[i+4] && !savedTaskInputs[i+5] && !savedTaskInputs[i+6]) {
+                            totalrow = totalrow - 1;
+                        }
+                    }
+
+
+                    for (var i = 0, k = 14, j=7; i <= totalrow-2; i++, k=k+7, j=j+7) {
+                        
+                        
+                        var newRow = document.createElement("tr");
+                        newRow.style.backgroundColor = "#e0e0e0";
+                        newRow.innerHTML = `<td class="px-2 py-1 text-center">Task Name</td>`;
+                        console.log(k)
+                        for (var x = j; x < k; x++) {
+                            console.log(j)
+                            newRow.innerHTML += `<td class="px-2 py-1 text-center"><input class="task-input" type="text" placeholder="" style="width: 100%" value="${savedTaskInputs[x] || ''}"></td>`;
+                        }
+
+                        // Insert the new row after the task name row
+                        taskNameRow.parentNode.insertBefore(newRow, taskNameRow.nextSibling);
+                        taskNameRow = newRow;
+                    }
+        }
+
+        
     }
 });
 </script>

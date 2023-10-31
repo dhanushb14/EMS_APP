@@ -402,6 +402,9 @@ def TimeSheetCreate(request):
         
        #if data["method_1"] != "first_fetch":  # Loading the date into db
         if len(data)>7:
+            # import pdb
+            # pdb.set_trace()
+
             model.objects.create(**data)
             
             data.pop("username", None)
@@ -445,7 +448,9 @@ def TimeSheetCreate(request):
                     "St": data[0].St,
                     "ot": data[0].ot,
                     "total_hour": data[0].total_hour,
-                    "status": data[0].status
+                    "status": data[0].status,
+                    "tasks": data[0].tasks
+
                 }
             except Exception:
                 data = 0
@@ -640,6 +645,19 @@ def view_timesheet(request):
             formatted_date_end = date_object.strftime("%Y-%m-%d")
         except Exception:
             formatted_date_end = data["data-end_date"]
+
+        result = list(range(0, len(data_retrived[0].tasks), 7))
+        
+        
+        split_list = [data_retrived[0].tasks[i:i+7] for i in range(0, len(data_retrived[0].tasks), 7)]
+
+        print(split_list)
+        if len(data_retrived[0].tasks) < 7:
+            tasks = []
+        else:
+            tasks = data_retrived[0].tasks
+
+        print(result)
         position = {
                     "start_date": formatted_date_start,
                     "end_date" : formatted_date_end,
@@ -660,9 +678,14 @@ def view_timesheet(request):
                     "ovt_sunday": data_retrived[0].ovt_sunday,
                     "St": data_retrived[0].St,
                     "ot": data_retrived[0].ot,
-                    "total_hour": data_retrived[0].total_hour
+                    "total_hour": data_retrived[0].total_hour,
+                    "tasks": tasks,
+                    "length": result,
+                    "split_list": split_list
+                   
+                    
                 }
-        print(position)
+        print(position["tasks"])
         return render(request, 'employee_information/view_timesheet.html', {"position":position})
         #print(formatted_date)
     if request.method == "POST":

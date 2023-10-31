@@ -1,4 +1,5 @@
 {% load humanize %}
+
 <style>
     #uni_modal .modal-footer {
         display: none;
@@ -67,6 +68,25 @@
         display: block;
         animation: fadeOut 0.5s ease-in-out;
     }
+    .my-table {
+        table-layout: fixed;
+        width: 200%;
+        
+    }
+    .my-table th, .my-table td {
+    width: 200px;
+    
+}
+.mdc-card {
+    padding: 10px; /* Adjust this value */
+}
+.modal-dialog {
+  max-width: 95%; /* Adjust this value to change the maximum width of the modal */
+}
+
+.modal-content {
+  width: 80%; /* This will now take up the full width of the .modal-dialog */
+}
 
 
     @keyframes fadeOut {
@@ -91,7 +111,7 @@
             </div>
             <div class="table-responsive">
                 <form id="timeSheetForm" method="post">
-                <table class="table table-bordered spaced-table">
+                <table class="table table-bordered spaced-table my-table">
                     <colgroup>
                         <col width="15%">
                         <col width="11.5%">
@@ -167,19 +187,61 @@
                                 <input type="text" id="ovt_sunday" name="ovt_sunday" placeholder="0" style="width: 50px" value={{position.ovt_sunday}}>
                             </td>
                         </tr>
+                        {% if position.tasks|length <= 7 and tasks %}
+                        <tr style="background-color: #e0e0e0;" id="tasknamerow">
+                            <td class="px-2 py-1 text-center">
+                                Task Name 
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="task-input" type="text" id="monday_task" name="monday_task" placeholder="" value={{position.tasks.0}} style="width: 100%">
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="task-input" type="text" id="tuesday_task" name="tuesday_task" placeholder="" value={{position.tasks.1}} style="width: 100%">
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="task-input" type="text" id="wednesday_task" name="wednesday_task" placeholder="" value={{position.tasks.2}} style="width: 100%">
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="task-input" type="text" id="thursday_task" name="thursday_task" placeholder="" value={{position.tasks.3}} style="width: 100%">
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="task-input" type="text" id="friday_task" name="friday_task" placeholder="" value={{position.tasks.4}} style="width: 100%">
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="task-input" type="text" id="saturday_task" name="saturday_task" placeholder="" value={{position.tasks.5}} style="width: 100%">
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="task-input" type="text" id="sunday_task" name="sunday_task" placeholder="" value={{position.tasks.6}} style="width: 100%">
+                            </td>
+                            
+                        </tr>
+                        {% else %}
+                        {% for i in position.split_list %}
+                            <tr style="background-color: #e0e0e0;" id="tasknamerow">
+                                <td class="px-2 py-1 text-center">
+                                    Task Name 
+                                </td>
+                                {% for task in i %}
+                                <td class="px-2 py-1 text-center">
+                                    <input class="task-input" type="text" id="{{forloop.counter}}_task" name="{{forloop.counter}}_task" placeholder="" value="{{task}}" style="width: 100%">
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
                         <tr>
                             <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
                         </tr>
                         <tr style="background-color: #e0e0e0;">
-                            <td class="px-2 py-1 text-center">
+                            <td class="px-2 py-1 text-center" colspan="2">
                                 Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
                                 <input  type="text" id="St1" name="St" placeholder="0"  style="width: 50px;" value={{position.St}} readonly >
                             </td>
-                            <td class="px-2 py-1 text-center">
+                            <td class="px-2 py-1 text-center" colspan="2">
                                 Over Time: &nbsp;&nbsp;&nbsp&nbsp;
                                 <input  type="text" id="ot1" name="ot" placeholder="0"  style="width: 50px" value={{position.ot}} readonly>
                             </td>
-                            <td class="px-2 py-1 text-center">
+                            <td class="px-2 py-1 text-center" colspan="2">
                                 Total Hours: &nbsp;&nbsp;&nbsp&nbsp;
                                 <input type="text" id="total_hour" name="total_hour" placeholder="0" value={{position.total_hour}} style="width: 50px" readonly>
                             </td>
@@ -203,6 +265,8 @@
         <button class="btn btn-default border btn-sm rounded-0 d-flex align-items-center" type="button" data-bs-dismiss="modal"><i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">close</i> Close</button>
     </div>
 <script>
+
+
     $(function() {
 
 

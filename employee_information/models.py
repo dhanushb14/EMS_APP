@@ -2,6 +2,7 @@ from datetime import datetime
 from django.db import models
 from django.utils import timezone
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 
 # Create your models here.
@@ -28,6 +29,7 @@ class TimeSheet(models.Model):
     ovt_friday = models.IntegerField()
     ovt_saturday = models.IntegerField()
     ovt_sunday = models.IntegerField()
+    tasks = ArrayField(models.CharField(max_length=255))
     St =  models.IntegerField(null=True)
     ot = models.IntegerField(null=True)
     total_hour = models.IntegerField()
