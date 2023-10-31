@@ -212,7 +212,7 @@
                     <tr>
                         <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
                     </tr>
-                    <tr style="background-color: #e0e0e0;">
+                    <tr style="background-color: #e0e0e0;" id="calculationrow">
                         <td class="px-2 py-1 text-center" colspan="2">
                             Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
                             <input type="text" id="St" name="ST" placeholder="0" value="0" style="width: 50px;" readonly>
@@ -616,14 +616,12 @@
             input.value = "";
         });
         // Remove the newly created rows
-        var taskRows = document.querySelectorAll('#tasknamerow ~ tr');
-        taskRows.forEach((row) => {
-            row.remove();
-        });
+        
 
         // Remove the table data and task inputs from local storage
         localStorage.removeItem('tableData');
         localStorage.removeItem('taskInputs');
+        location.reload();
 }});
     document.getElementById("saveBtn").addEventListener("click", function() {
         // Get the table data
