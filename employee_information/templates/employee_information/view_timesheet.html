@@ -88,6 +88,14 @@
   width: 80%; /* This will now take up the full width of the .modal-dialog */
 }
 
+.popup {
+        position: absolute;
+        background-color: #fefefe;
+        border: 1px solid #888;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
     @keyframes fadeOut {
         0% {
@@ -193,25 +201,25 @@
                                 Task Name 
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="monday_task" name="monday_task" placeholder="" value={{position.tasks.0}} style="width: 100%">
+                                <input class="task-input" type="text" id="monday_task" name="monday_task" placeholder="" value={{position.tasks.0}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="tuesday_task" name="tuesday_task" placeholder="" value={{position.tasks.1}} style="width: 100%">
+                                <input class="task-input" type="text" id="tuesday_task" name="tuesday_task" placeholder="" value={{position.tasks.1}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="wednesday_task" name="wednesday_task" placeholder="" value={{position.tasks.2}} style="width: 100%">
+                                <input class="task-input" type="text" id="wednesday_task" name="wednesday_task" placeholder="" value={{position.tasks.2}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="thursday_task" name="thursday_task" placeholder="" value={{position.tasks.3}} style="width: 100%">
+                                <input class="task-input" type="text" id="thursday_task" name="thursday_task" placeholder="" value={{position.tasks.3}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="friday_task" name="friday_task" placeholder="" value={{position.tasks.4}} style="width: 100%">
+                                <input class="task-input" type="text" id="friday_task" name="friday_task" placeholder="" value={{position.tasks.4}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="saturday_task" name="saturday_task" placeholder="" value={{position.tasks.5}} style="width: 100%">
+                                <input class="task-input" type="text" id="saturday_task" name="saturday_task" placeholder="" value={{position.tasks.5}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="sunday_task" name="sunday_task" placeholder="" value={{position.tasks.6}} style="width: 100%">
+                                <input class="task-input" type="text" id="sunday_task" name="sunday_task" placeholder="" value={{position.tasks.6}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
                             </td>
                             
                         </tr>
@@ -223,7 +231,7 @@
                                 </td>
                                 {% for task in i %}
                                 <td class="px-2 py-1 text-center">
-                                    <input class="task-input" type="text" id="{{forloop.counter}}_task" name="{{forloop.counter}}_task" placeholder="" value="{{task}}" style="width: 100%">
+                                    <input class="task-input" type="text" id="{{forloop.counter}}_task" name="{{forloop.counter}}_task" placeholder="" value="{{task}}" style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
                                 </td>
                                 {% endfor %}
                             </tr>
@@ -265,7 +273,24 @@
         <button class="btn btn-default border btn-sm rounded-0 d-flex align-items-center" type="button" data-bs-dismiss="modal"><i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">close</i> Close</button>
     </div>
 <script>
+// Get all input fields
 
+// Function to show the popup
+function showPopup(event) {
+    const value = event.target.value;
+    const popup = document.createElement('div');
+    popup.classList.add('popup');
+    popup.textContent = value;
+    event.target.parentNode.appendChild(popup);
+}
+
+// Function to hide the popup
+function hidePopup(event) {
+    const popup = event.target.parentNode.querySelector('.popup');
+    if (popup) {
+        popup.remove();
+    }
+}
 
     $(function() {
 
