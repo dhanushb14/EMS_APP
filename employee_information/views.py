@@ -410,34 +410,37 @@ def TimeSheetCreate(request):
             start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
             data_status = model.objects.filter(start_date=start_date, username=username)
-            if data_status[0].status == "Rejected":
-                model.objects.filter(start_date=start_date, username=username).update(
-                    start_date= data["start_date"],
-                    end_date = data["end_date"],
-                    project_name= data["project_name"],
-                    monday_value= data["monday_value"],
-                    tuesday_value= data["tuesday_value"],
-                    wednesday_value= data["wednesday_value"],
-                    thursday_value= data["thursday_value"],
-                    friday_value= data["friday_value"],
-                    saturday_value= data["saturday_value"],
-                    sunday_value= data["sunday_value"],
-                    ovt_monday= data["ovt_monday"],
-                    ovt_tuesday= data["ovt_tuesday"],
-                    ovt_wednesday= data["ovt_wednesday"],
-                    ovt_thursday= data["ovt_thursday"],
-                    ovt_friday= data["ovt_friday"],
-                    ovt_saturday= data["ovt_saturday"],
-                    ovt_sunday= data["ovt_sunday"],
-                    St= data["St"],
-                    ot= data["ot"],
-                    total_hour= data["total_hour"],
-                    status= " ",
-                    tasks= data["tasks"],
-                    username = request.user.employee_name
-                )
-            else:
-                model.objects.create(**data)
+            try:
+                if data_status[0].status == "Rejected":
+                    model.objects.filter(start_date=start_date, username=username).update(
+                        start_date= data["start_date"],
+                        end_date = data["end_date"],
+                        project_name= data["project_name"],
+                        monday_value= data["monday_value"],
+                        tuesday_value= data["tuesday_value"],
+                        wednesday_value= data["wednesday_value"],
+                        thursday_value= data["thursday_value"],
+                        friday_value= data["friday_value"],
+                        saturday_value= data["saturday_value"],
+                        sunday_value= data["sunday_value"],
+                        ovt_monday= data["ovt_monday"],
+                        ovt_tuesday= data["ovt_tuesday"],
+                        ovt_wednesday= data["ovt_wednesday"],
+                        ovt_thursday= data["ovt_thursday"],
+                        ovt_friday= data["ovt_friday"],
+                        ovt_saturday= data["ovt_saturday"],
+                        ovt_sunday= data["ovt_sunday"],
+                        St= data["St"],
+                        ot= data["ot"],
+                        total_hour= data["total_hour"],
+                        status= " ",
+                        tasks= data["tasks"],
+                        username = request.user.employee_name
+                    )
+            except Exception:
+                
+                
+                    model.objects.create(**data)
             
             data.pop("username", None)
             return JsonResponse(data, safe=False)
