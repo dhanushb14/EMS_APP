@@ -172,7 +172,7 @@ padding: 0; /* Add this line */
 });
     
     var currentPage = 0;
-    var rowsPerPage = 1;
+    var rowsPerPage = 10;
     var tableBody = document.querySelector('.table tbody');
     var rows = Array.from(tableBody.querySelectorAll('tr'));
 function displayPage() {
@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             var tableBody = document.querySelector('.table tbody');
             var currentPage = 0;
-            var rowsPerPage = 1;
+            var rowsPerPage = 10;
 
             function displayPage() {
                 console.log("second displaypage callled")
