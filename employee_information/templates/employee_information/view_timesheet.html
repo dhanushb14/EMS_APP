@@ -132,7 +132,7 @@
                     </colgroup>
                     <thead>
                         <tr style="background-color: grey; height: 35px;">
-                            <th class="text-center py-1">Project name</th>
+                            <th class="text-center py-1"><input type="text" id="project_name" name="project_name" placeholder="Project name / Bench" value={{position.project_name}} style="width: 100%;"></th>
                             <th class="text-center py-1">Monday</th>
                             <th class="text-center py-1">Tuesday</th>
                             <th class="text-center py-1">Wednesday</th>
@@ -143,32 +143,35 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for task, monday_value, tuesday_value, wednesday_value, thursday_value, friday_value, saturday_value, sunday_value in position.zipped_values %}  
                         <tr style="background-color: #e0e0e0;">
+                            
                             <td class="px-2 py-1 text-center">
-                                <input type="text" id="project_name" name="project_name" placeholder="Enter Project name" style="width: 100%; text-align: center;" value={{position.project_name}}> 
+                                <input class="task-input" type="text" id="task" name="task" placeholder="Task Name"  style="width: 100%" value={{task}} > 
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input type="text" id="monday_value" name="monday_value" placeholder="0"  style="width: 50px" value={{position.monday_value}}>
+                                <input class="monday_value" type="text" id="monday_value" name="monday_value" placeholder="0"  style="width: 50px" value={{monday_value}}>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input type="text" id="tuesday_value" name="tuesday_value" placeholder="0"  style="width: 50px" value={{position.tuesday_value}}>
+                                <input class="tuesday_value" type="text" id="tuesday_value" name="tuesday_value" placeholder="0"  style="width: 50px" value={{tuesday_value}}>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px" value={{position.wednesday_value}}>
+                                <input class="wednesday_value" type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px" value={{wednesday_value}}>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px" value={{position.thursday_value}}>
+                                <input class="thursday_value" type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px" value={{thursday_value}}>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input type="text" id="friday_value" name="friday_value" placeholder="0"  style="width: 50px" value={{position.friday_value}}>
+                                <input class="friday_value" type="text" id="friday_value" name="friday_value" placeholder="0"  style="width: 50px" value={{friday_value}}>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input type="text" id="saturday_value" name="saturday_value" placeholder="0"  style="width: 50px" value={{position.saturday_value}}>
+                                <input class="saturday_value" type="text" id="saturday_value" name="saturday_value" placeholder="0"  style="width: 50px" value={{saturday_value}}>
                             </td>
                             <td class="px-2 py-1 text-center">
-                                <input type="text" id="sunday_value" name="sunday_value" placeholder="0"  style="width: 50px" value={{position.sunday_value}}>
+                                <input class="sunday_value" type="text" id="sunday_value" name="sunday_value" placeholder="0"  style="width: 50px" value={{sunday_value}}>
                             </td>
                         </tr>
+                        {% endfor %}
                         <tr style="background-color: #e0e0e0;">
                             <td class="px-2 py-1 text-center">
                                 Overtime Hours 
@@ -195,48 +198,7 @@
                                 <input type="text" id="ovt_sunday" name="ovt_sunday" placeholder="0" style="width: 50px" value={{position.ovt_sunday}}>
                             </td>
                         </tr>
-                        {% if position.tasks|length <= 7 and tasks %}
-                        <tr style="background-color: #e0e0e0;" id="tasknamerow">
-                            <td class="px-2 py-1 text-center">
-                                Task Name 
-                            </td>
-                            <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="monday_task" name="monday_task" placeholder="" value={{position.tasks.0}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
-                            </td>
-                            <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="tuesday_task" name="tuesday_task" placeholder="" value={{position.tasks.1}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
-                            </td>
-                            <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="wednesday_task" name="wednesday_task" placeholder="" value={{position.tasks.2}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
-                            </td>
-                            <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="thursday_task" name="thursday_task" placeholder="" value={{position.tasks.3}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
-                            </td>
-                            <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="friday_task" name="friday_task" placeholder="" value={{position.tasks.4}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
-                            </td>
-                            <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="saturday_task" name="saturday_task" placeholder="" value={{position.tasks.5}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
-                            </td>
-                            <td class="px-2 py-1 text-center">
-                                <input class="task-input" type="text" id="sunday_task" name="sunday_task" placeholder="" value={{position.tasks.6}} style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
-                            </td>
-                            
-                        </tr>
-                        {% else %}
-                        {% for i in position.split_list %}
-                            <tr style="background-color: #e0e0e0;" id="tasknamerow">
-                                <td class="px-2 py-1 text-center">
-                                    Task Name 
-                                </td>
-                                {% for task in i %}
-                                <td class="px-2 py-1 text-center">
-                                    <input class="task-input" type="text" id="{{forloop.counter}}_task" name="{{forloop.counter}}_task" placeholder="" value="{{task}}" style="width: 100%" onmouseover="showPopup(event)" onmouseout="hidePopup(event)" readonly>
-                                </td>
-                                {% endfor %}
-                            </tr>
-                            {% endfor %}
-                        {% endif %}
+                        
                         <tr>
                             <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
                         </tr>
@@ -339,13 +301,15 @@ $('input[id$="_value"], input[id^="ovt_"]').on('input', calculateTotalHours);
         var end_date = getValue('end_date');
         var project_name = "{{position.project_name}}";
         console.log(start_date);
-        var monday_value = document.getElementById('monday_value').value || '0';
-        var tuesday_value = document.getElementById('tuesday_value').value || '0';
-        var wednesday_value = document.getElementById('wednesday_value').value || '0';
-        var thursday_value = document.getElementById('thursday_value').value || '0';
-        var friday_value = document.getElementById('friday_value').value || '0';
-        var saturday_value = document.getElementById('saturday_value').value || '0';
-        var sunday_value = document.getElementById('sunday_value').value || '0';
+        var taskInputs = document.querySelectorAll('.task-input');
+        var tasks = Array.from(taskInputs).map(input => input.value);
+        var monday_value = Array.from(document.querySelectorAll('.monday_value')).map(input => input.value) || '0';
+        var tuesday_value = Array.from(document.querySelectorAll('.tuesday_value')).map(input => input.value) || '0';
+        var wednesday_value = Array.from(document.querySelectorAll('.wednesday_value')).map(input => input.value) || '0';
+        var thursday_value = Array.from(document.querySelectorAll('.thursday_value')).map(input => input.value) || '0';
+        var friday_value = Array.from(document.querySelectorAll('.friday_value')).map(input => input.value) || '0';
+        var saturday_value = Array.from(document.querySelectorAll('.saturday_value')).map(input => input.value) || '0';
+        var sunday_value = Array.from(document.querySelectorAll('.sunday_value')).map(input => input.value) || '0';
         var ovt_monday = document.getElementById('ovt_monday').value || '0';
         var ovt_tuesday = document.getElementById('ovt_tuesday').value || '0';
         var ovt_wednesday = document.getElementById('ovt_wednesday').value || '0';

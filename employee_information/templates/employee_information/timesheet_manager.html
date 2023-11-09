@@ -75,7 +75,7 @@ padding: 0; /* Add this line */
         <div class="d-flex justify-content-start align-items-center">
             <label for="start_date" class="me-2">Project Name: </label>
             <input type="text" id="project_name_filter" name="project_name" class="me-4">
-            <button type="button" id="applyFilterBtn" class="btn btn-primary"">Apply Filter</button>
+            <button type="button" id="applyFilterBtn" class="btn btn-primary" disabled>Apply Filter</button>
         </div>
     </div>
 </div>
@@ -161,6 +161,75 @@ padding: 0; /* Add this line */
     </div>
 </div>
 <script>
+    document.getElementById('project_name_filter').addEventListener('input', function() {
+    var projectName = this.value;
+    var applyFilterBtn = document.getElementById('applyFilterBtn');
+    if (projectName.trim() !== '') {
+        applyFilterBtn.disabled = false;
+    } else {
+        applyFilterBtn.disabled = true;
+    }
+});
+    
+    var currentPage = 0;
+    var rowsPerPage = 1;
+    var tableBody = document.querySelector('.table tbody');
+    var rows = Array.from(tableBody.querySelectorAll('tr'));
+function displayPage() {
+    console.log('Current Page:', currentPage); // Add this line
+    
+    
+    console.log('Rows:', rows); // Add this line
+    var data_list = rows.slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage);
+    console.log("here1")
+    
+    
+    console.log('Data List:', data_list); // Add this line
+    // Remove rows that are not in the new slice
+    while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+    }
+
+    data_list.forEach(function(row) {
+        tableBody.appendChild(row);
+    });
+
+    document.getElementById('pageDisplay').textContent = 'Page ' + (currentPage + 1);
+
+    var prevBtn = document.getElementById('prevBtn');
+    var nextBtn = document.getElementById('nextBtn');
+
+    if (currentPage === 0) {
+        prevBtn.disabled = true;
+    } else {
+        prevBtn.disabled = false;
+    }
+
+    if ((currentPage + 1) * rowsPerPage >= rows.length) {
+        nextBtn.disabled = true;
+    } else {
+        nextBtn.disabled = false;
+    }
+}
+
+document.getElementById('prevBtn').addEventListener('click', function() {
+    console.log("prevbtn called")
+    currentPage--;
+    displayPage();
+});
+
+document.getElementById('nextBtn').addEventListener('click', function() {
+    console.log("nextbtn called")
+    console.log('Current Page before increment:', currentPage); // Add this line
+    currentPage++;
+    console.log('Current Page after increment:', currentPage); // Add this line
+    displayPage();
+});
+
+// Call displayPage on page load
+document.addEventListener('DOMContentLoaded', function() {
+    displayPage();
+});
     
     $('.edit-data').click(function() {
     var id = $(this).attr('data-id');
@@ -190,9 +259,10 @@ padding: 0; /* Add this line */
             
             var tableBody = document.querySelector('.table tbody');
             var currentPage = 0;
-            var rowsPerPage = 10;
+            var rowsPerPage = 1;
 
             function displayPage() {
+                console.log("second displaypage callled")
                 while (tableBody.firstChild) {
                     tableBody.removeChild(tableBody.firstChild);
                 }

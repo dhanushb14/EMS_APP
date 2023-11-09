@@ -460,7 +460,8 @@ def TimeSheetCreate(request):
             # Filter data based on start_date and end_date
                 data = model.objects.filter(start_date=start_date, username=username)
                 print("worked")
-                print("project:",data[0].project_name)
+                print("monday_value",data[0].monday_value)
+                print("project:",len(data[0].monday_value))
                 print("status",data[0].status)
                 data = {
                     "start_date": data[0].start_date,
@@ -537,7 +538,7 @@ def timesheet_manager( request ):
      print(request.user.employee_name)
      for i in data_user:
         user_name = i.employee_name
-     data = model.objects.all()
+     data = model.objects.all().order_by('-start_date')
     #  data =            [{
     #             "project_name": "DHL",
     #             "start_date": "30",
@@ -660,7 +661,7 @@ def view_timesheet(request):
     print("view_timesheet")
     if request.method == 'GET':
         data = request.GET
-        print(data["id"])
+        print("here1",data["id"])
         print(data["data-project"])
         print(data["data-start_date"])
         date_string_start = data["data-start_date"]
@@ -683,16 +684,18 @@ def view_timesheet(request):
 
         result = list(range(0, len(data_retrived[0].tasks), 7))
         
-        
-        split_list = [data_retrived[0].tasks[i:i+7] for i in range(0, len(data_retrived[0].tasks), 7)]
+        print("data_retrived",data_retrived[0].tasks)
+        split_list_tasks= [data_retrived[0].tasks[i:i+7] for i in range(0, len(data_retrived[0].tasks), 7)]
 
-        print(split_list)
+
+        print("split_list",split_list_tasks)
         if len(data_retrived[0].tasks) < 7:
             tasks = []
         else:
             tasks = data_retrived[0].tasks
 
-        print(result)
+        print("tasks",tasks)
+        zipped_values = zip(data_retrived[0].tasks, data_retrived[0].monday_value, data_retrived[0].tuesday_value, data_retrived[0].wednesday_value, data_retrived[0].thursday_value, data_retrived[0].friday_value, data_retrived[0].saturday_value, data_retrived[0].sunday_value)
         position = {
                     "start_date": formatted_date_start,
                     "end_date" : formatted_date_end,
@@ -714,11 +717,11 @@ def view_timesheet(request):
                     "St": data_retrived[0].St,
                     "ot": data_retrived[0].ot,
                     "total_hour": data_retrived[0].total_hour,
-                    "tasks": tasks,
+                    "tasks": data_retrived[0].tasks,
                     "length": result,
-                    "split_list": split_list
-                   
-                    
+                    "split_list": split_list_tasks,
+                    "zipped_values": zipped_values,
+
                 }
         print(position["tasks"])
         return render(request, 'employee_information/view_timesheet.html', {"position":position})
