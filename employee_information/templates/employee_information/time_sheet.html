@@ -133,25 +133,25 @@
                             <input class="task-input" type="text" id="task" name="task" placeholder="Task Name"  style="width: 100%"> 
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="monday_value"  type="text" id="monday_value" name="monday_value"  style="width: 50px">
+                            <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value"  style="width: 50px">
+                            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" style="width: 50px">
+                            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" style="width: 50px">
+                            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="friday_value"  type="text" id="friday_value" name="friday_value"  style="width: 50px">
+                            <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value"  style="width: 50px">
+                            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value"  style="width: 50px">
+                            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center" style="background-color: white; border: none;">
                             <button type="button" id="addRow">+</button>
@@ -239,25 +239,25 @@
                             <input class="task-input" type="text" id="monday_task" name="monday_task" placeholder="Task Name" style="width: 100%"> 
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="monday_value" type="text" id="monday_value" name="monday_value"   style="width: 50px">
+                            <input class="monday_value" type="text" id="monday_value" name="monday_value" placeholder="0"  style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value"  style="width: 50px">
+                            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" style="width: 50px">
+                            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" style="width: 50px">
+                            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="friday_value"  type="text" id="friday_value" name="friday_value"  style="width: 50px">
+                            <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0"  style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value"  style="width: 50px">
+                            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="width: 50px">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value"  style="width: 50px">
+                            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="width: 50px">
                         </td>
         
     `;
@@ -378,13 +378,13 @@
                         newRow.style.backgroundColor = "#e0e0e0";                      
                         newRow.innerHTML += `
                         <td class="px-2 py-1 text-center"><input class="task-input" type="text" id="monday_task" name="monday_task" style="width: 100%" value="${data.tasks[i]}"</td>
-                        <td class="px-2 py-1 text-center"><input class="monday_value" type="text" id="monday_value" name="monday_value"    style="width: 50px" value="${data.monday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value"   style="width: 50px" value="${data.tuesday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value"  style="width: 50px" value="${data.wednesday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="thursday_value"  type="text" id="thursday_value" name="thursday_value"  style="width: 50px" value="${data.thursday_value[i]}" ></td>
-                        <td class="px-2 py-1 text-center"><input class="friday_value"  type="text" id="friday_value" name="friday_value"  style="width: 50px" value="${data.friday_value[i]}" ></td>
-                        <td class="px-2 py-1 text-center"><input class="saturday_value"  type="text" id="saturday_value" name="saturday_value"  style="width: 50px" value="${data.saturday_value[i]}" ></td>
-                        <td class="px-2 py-1 text-center"><input class="sunday_value"  type="text" id="sunday_value" name="sunday_value"  style="width: 50px" value="${data.sunday_value[i]}" ></td>       
+                        <td class="px-2 py-1 text-center"><input class="monday_value" type="text" id="monday_value" name="monday_value" placeholder="0"   style="width: 50px" value="${data.monday_value[i]}"></td>
+                        <td class="px-2 py-1 text-center"><input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value"  placeholder="0" style="width: 50px" value="${data.tuesday_value[i]}"></td>
+                        <td class="px-2 py-1 text-center"><input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px" value="${data.wednesday_value[i]}"></td>
+                        <td class="px-2 py-1 text-center"><input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px" value="${data.thursday_value[i]}" ></td>
+                        <td class="px-2 py-1 text-center"><input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0"  style="width: 50px" value="${data.friday_value[i]}" ></td>
+                        <td class="px-2 py-1 text-center"><input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0"  style="width: 50px" value="${data.saturday_value[i]}" ></td>
+                        <td class="px-2 py-1 text-center"><input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0"  style="width: 50px" value="${data.sunday_value[i]}" ></td>       
                         `;
                         taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
                     }
