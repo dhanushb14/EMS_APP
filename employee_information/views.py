@@ -16,7 +16,7 @@ from django.views.decorators.http import require_http_methods
 from User.models import Employee
 from django.http import HttpResponse
 import csv
-
+from django.core.paginator import Paginator
 import json
 import openpyxl
 import pandas as pd
@@ -779,4 +779,13 @@ def view_timesheet(request):
                                 total_hour=data["total_hour"]
                              )
         return JsonResponse(data, safe=False)
-    
+
+@login_required   
+def timesheet_scrum( request ):
+     model = TimeSheet
+     data = model.objects.all().order_by('-start_date')
+     paginator = Paginator(data, 10)  # Show 10 items per page
+
+     page_number = request.GET.get('page')
+     page_obj = paginator.get_page(page_number)
+     return render(request, 'employee_information/timesheet_scrum.html', {"page_obj":page_obj} )

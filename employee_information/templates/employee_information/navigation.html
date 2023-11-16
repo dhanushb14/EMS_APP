@@ -26,7 +26,7 @@
                     </a>
                 </div>
                 {% endif %}
-                {% if request.user.role != "superadmin" %}
+                {% if request.user.role != "superadmin" and request.user.role != "scrummaster" %}
                 <div class="mdc-list-item mdc-drawer-item ">
                     <a class="mdc-drawer-link" href="{% url 'home_employee' %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">home</i> Home
@@ -40,7 +40,7 @@
                     </a>
                 </div>
                 {% endif %}
-                {% if request.user.role != "superadmin" %}
+                {% if request.user.role != "superadmin" and request.user.role != "scrummaster" %}
                 <div class="mdc-list-item mdc-drawer-item">
                     <span class="mdc-drawer-link">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true" style="color:white">group</i> 
@@ -52,10 +52,17 @@
                     </span>
                 </div>
                 {% endif %}
-                {% if request.user.role == "superadmin" %}
+                {% if request.user.role == "superadmin"%}
                 <div class="mdc-list-item mdc-drawer-item">
                     <a class="mdc-drawer-link" href="{% url 'timesheet_manager' %}">
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">group</i> TimeSheet_manager
+                    </a>
+                </div>
+                {% endif %}
+                {% if request.user.role == "scrummaster"%}
+                <div class="mdc-list-item mdc-drawer-item">
+                    <a class="mdc-drawer-link" href="{% url 'timesheet_scrum' %}">
+                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">group</i> Task Tracker
                     </a>
                 </div>
                 {% endif %}

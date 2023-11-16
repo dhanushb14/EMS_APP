@@ -17,9 +17,9 @@ class EmployeeManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
-
-        if role != 'superadmin':
-            raise ValueError('Superuser must have role set to "superadmin"')
+        print("Enter your role: superadmin or scrummaster")
+        if role != 'superadmin' and role != 'scrummaster':
+            raise ValueError('Superuser must have role set to "superadmin or scrummaster"')
 
         return self.create_user(employee_id, password, role, **extra_fields)
 
