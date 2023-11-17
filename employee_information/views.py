@@ -553,6 +553,7 @@ def timesheet_manager( request ):
         
             data = json.loads(request.body)
             print(len(data))
+            print(data)
             if len(data) ==3:
                 try:
                     date_string_start = data["start_date"].replace("Sept", "Sep")
@@ -569,12 +570,20 @@ def timesheet_manager( request ):
             
         
             
-            elif len(data)<2:
+            elif len(data)<=2:
             
                 try:
                     print("in")
-                    project_name = data.get('project_name')
-                    data_result = model.objects.filter(project_name=project_name)
+                    selected = data.get('selected')
+                    if selected == 'emp_name':                       
+                        value = data.get('project_name')
+                        data_result = model.objects.filter(username=value)
+                    elif selected == 'project_name':                       
+                        value = data.get('project_name')
+                        data_result = model.objects.filter(project_name=value)
+                    else:                       
+                        value = data.get('project_name')
+                        data_result = model.objects.filter(start_date=value)
                     
                     print(data_result)
                     data_list = []

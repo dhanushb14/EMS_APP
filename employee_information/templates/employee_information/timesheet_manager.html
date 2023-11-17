@@ -73,7 +73,13 @@ padding: 0; /* Add this line */
 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
     <div class="mdc-card py-2" style="background-color: #dcd0ff;">
         <div class="d-flex justify-content-start align-items-center">
-            <label for="start_date" class="me-2">Project Name: </label>
+            
+            <select id="filter" name="project_name" class="me-4" style="background-color: transparent; border: none; font-size: 18px;">
+                <option value="project_name">Project name</option>
+                <option value="emp_name">Emp name</option>
+                <option value="start_date">Start Date</option>
+                <!-- Add more options as needed -->
+            </select>
             <input type="text" id="project_name_filter" name="project_name" class="me-4">
             <button type="button" id="applyFilterBtn" class="btn btn-primary" disabled>Apply Filter</button>
         </div>
@@ -157,6 +163,7 @@ padding: 0; /* Add this line */
             <span id="pageDisplay">Page 1</span>
             <button id="prevBtn" disabled><</button>
             <button id="nextBtn">></button>
+            <button type="button" id="saveBtn" class="btn btn-primary" style="float: left; margin-right: 10px;">Download List Data</button>
         </div>
     </div>
 </div>
@@ -241,7 +248,29 @@ document.addEventListener('DOMContentLoaded', function() {
     uni_modal("Edit TimeSheet", "{% url 'view_timesheet' %}?id=" + id + "&data-project=" + project + "&data-start_date=" + startDate + "&data-end_date=" + endDate, 'modal-lg');
 });
     document.getElementById('applyFilterBtn').addEventListener('click', function() {
-        var project_name = document.getElementById('project_name_filter').value;
+        var value = document.getElementById('project_name_filter').value;
+        var projectDropdown = document.getElementById('filter');
+        var project_name = projectDropdown.value;
+        console.log(project_name)
+        if (project_name == "emp_name"){
+            data = {
+                "selected": "emp_name",
+                "project_name": value
+            }
+        }
+        else if (project_name == "project_name"){
+            data = {
+                "selected": "project_name",
+                "project_name": value
+            }
+        }
+        else{
+            data = {
+                "selected": "start_date",
+                "project_name": value
+            }
+        }
+
         
         fetch("{% url 'timesheet_manager' %}", {
             method: 'POST',
@@ -249,10 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': '{{ csrf_token }}'
             },
-            body: JSON.stringify({
-                'project_name': project_name,
-                
-            }) // Add closing parenthesis here
+            body: JSON.stringify(data) // Add closing parenthesis here
         }).then(function(response) {
             return response.json();
         }).then(function(data_list) { // Move the .then function call here
@@ -459,6 +485,72 @@ document.addEventListener('DOMContentLoaded', function() {
         sendButton.addEventListener('click', submitForm);
     });
 
+    document.getElementById('saveBtn').addEventListener('click', function() {
+    // Get the table element
+    var table = document.querySelector('.table');
+
+    // Get the table rows
+    var rows = table.querySelectorAll('tbody tr');
+
+    // Create an array to store the table data
+    var tableData = [];
+
+    // Iterate over each row and extract the cell values
+    rows.forEach(function(row) {
+        var rowData = [];
+        var cells = row.querySelectorAll('td:not(:nth-last-child(-n+2))');
+        cells.forEach(function(cell) {
+            var value = cell.textContent.trim();
+        if (value.includes("Approved") && value.includes("Rejected")) {
+            rowData.push("pending");
+        } else {
+            rowData.push(value);
+        }
+    });
+        console.log("rowData", rowData)
+        tableData.push(rowData);
+    });
+
+    // Create a JSON object with the table data
+    var jsonData = {
+        'table_data': tableData
+    };
+    console.log("tabledata",tableData[0])
+    
+    // Send the table data to the server using an AJAX request
+    fetch("{% url 'download_list_data' %}", {
+    method: 'POST',
+    body: JSON.stringify(jsonData),
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token if needed
+
+    }
+})
+.then(response => response.blob())
+.then(blob => {
+    // Create a new object URL for the blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a link and click it to start the download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Timesheet_manager.csv';
+    link.click();
+
+    // Release the reference to the object URL
+    window.URL.revokeObjectURL(url);
+});
+});
+document.getElementById('filter').addEventListener('change', function() {
+    var selectedOption = this.value;
+    var nextInputField = document.getElementById('project_name_filter');
+    if (selectedOption === 'start_date') {
+        nextInputField.type = 'date';
+    } else {
+        nextInputField.type = 'text';
+    }
+});
 </script>
 
 {% endblock pageContent %} {% block ScriptBlock %}
