@@ -48,5 +48,5 @@ class Employee(AbstractBaseUser, PermissionsMixin):
         except Exception:
             # Handle the error here
             pass
-    def _str_(self):
+    def __str__(self):
         return self.employee_id

@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'employee_information.apps.EmployeeInformationConfig',
+    'employee_information',
     'django.contrib.humanize',
     'User',
     'whitenoise'
@@ -84,10 +84,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'ems1',
         'USER': 'postgres',
-        'PASSWORD': 'igs-dev',
-        'HOST': '3.226.14.5'
-        # 'PASSWORD': '12345',
-        # 'HOST': 'localhost'
+        # 'PASSWORD': 'igs-dev',
+        # 'HOST': '3.226.14.5'
+        'PASSWORD': 'admin',
+        'HOST': 'localhost'
     }
 }
 # DATABASES = {

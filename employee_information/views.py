@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
-from User.models import  Employee
+from User.models import  Employee 
+from django.contrib import messages
 from django.core import serializers
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -9,8 +10,8 @@ from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import TimeSheet
-from .forms import EmployeeForm 
+from .models import TimeSheet, LeaveRequest
+from .forms import EmployeeForm , LeaveRequestForm
 import json
 from django.views.decorators.http import require_http_methods
 from User.models import Employee
@@ -780,3 +781,64 @@ def view_timesheet(request):
                              )
         return JsonResponse(data, safe=False)
     
+def leave_request_manager(request):
+    if request.method == 'POST':
+        print(request.POST) 
+        # Assuming your form has 'status' and 'review_comments' fields
+        status = request.POST.get('status')
+        review_comments = request.POST.get('review_comments')
+
+        # Assuming 'leave_request_id' is the ID of the leave request being updated
+        leave_request_id = request.POST.get('leave_request_id')
+
+        try:
+            leave_request = LeaveRequest.objects.get(pk=leave_request_id)
+            leave_request.status = status
+            leave_request.review_comments = review_comments
+            leave_request.save()
+
+            messages.success(request, 'Leave request updated successfully.')
+        except LeaveRequest.DoesNotExist:
+            messages.error(request, 'Leave request not found.')
+
+        # Redirect to the same page or another page after processing the form
+        return redirect('leave_manager')
+
+    # If it's not a POST request, retrieve all leave requests
+    all_leave_requests = LeaveRequest.objects.all()
+    return render(request, 'employee_information/leave_manager.html', {'all_leave_requests': all_leave_requests})
+
+def user_leave_request(request):
+    leave_requests = LeaveRequest.objects.filter(employee=request.user)
+    return render(request, 'employee_information/user_leave_request.html', {'leave_requests': leave_requests})
+
+def create_leave_request(request):
+    if request.method == 'POST':
+        form = LeaveRequestForm(request.POST)
+        if form.is_valid():
+            leave_request = form.save(commit=False)
+            leave_request.employee = request.user
+            leave_request.save()
+            form.save()
+            print("Form submitted successfully")
+            return redirect('leave_detail')
+        else:
+            print("Form is invalid:", form.errors)
+    else:
+        form = LeaveRequestForm()
+
+    return render(request, 'employee_information/leave_request_form.html', {'form': form})
+
+
+def bootstrap_home(request):
+    return render(request, 'employee_information/home_page.html')
+
+def authenticate_user(request):
+    return render(request, 'employee_information/authenticate.html')
+
+
+def emp_home(request):
+    return render(request, 'employee_information/employee_homepage.html')
+
+def timesheet_bs(request):
+    return render(request, 'employee_information/timesheet_bs.html')
