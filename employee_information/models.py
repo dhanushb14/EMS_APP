@@ -40,6 +40,8 @@ class TimeSheet(models.Model):
     St = models.IntegerField(null=True)
     ot = models.IntegerField(null=True)
     total_hour = models.IntegerField()
+    th_hour = ArrayField(
+        models.CharField(max_length=255), default=['{0}'])
     username = models.CharField(max_length=255)
 
     comments = models.CharField(max_length=100)
@@ -78,3 +80,5 @@ class LeaveRequest(models.Model):
 
     def __str__(self):
         return f"{self.employee} {self.leave_type}"
+        
+        

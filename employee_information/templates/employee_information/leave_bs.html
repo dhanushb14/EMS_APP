@@ -28,13 +28,13 @@
               <tbody>
                 {% for leave_request in all_leave_requests %}
                   <tr>
-                    <td class="text-center">{{ leave_request.employee }}</td>
+                    <td class="text-center" id="employee_id">{{ leave_request.employee }}</td>
                     <td class="text-center">{{ leave_request.start_date | date:"j/n/Y"}} to {{ leave_request.end_date | date:"j/n/Y" }}</td>
                     <td class="text-center">{{ leave_request.leave_type }}</td>
-                    <td class="text-center">{{ leave_request.description }}</td>
+                    <td class="text-center" id="description">{{ leave_request.description }}</td>
                     <td class="text-center">
                       <div class="form-group">
-                        <select name="status" class="form-select">
+                        <select name="status" id="status" class="form-select">
                           <option value="Approve" {% if leave_request.status == 'Approve' %}selected{% endif %}>Approved</option>
                           <option value="Reject" {% if leave_request.status == 'Reject' %}selected{% endif %}>Rejected</option>
                           <option value="Pending" {% if leave_request.status == 'Pending' %}selected{% endif %}>Pending</option>
@@ -42,10 +42,10 @@
                       </div>
                     </td>
                     <td class="text-center">
-                      <textarea name="comments"  cols="15" class="form-control">{{ leave_request.comments }}</textarea>
+                      <textarea name="comments" id="comments"  cols="15" class="form-control">{{ leave_request.comments }}</textarea>
                     </td>
                     <td class="text-center my-auto">
-                      <button type="submit" class="btn btn-primary btn-sm">Send</button>
+                      <button type="submit" class="btn btn-primary btn-sm send-btn" data-id="{{ leave_request.id }}">Send</button>
                     </td>
                   </tr>
                 {% endfor %}
@@ -57,5 +57,55 @@
     </div>
   </div>
 </div>
+<script>
+  document.querySelectorAll('.send-btn').forEach(function(button) {
+  var onClick = function() {
+    event.preventDefault();
+    var row = this.closest('tr');
+    var data = {
+      id: this.dataset.id,
+      employee_id: row.querySelector('#employee_id').textContent,
+      description: row.querySelector('#description').textContent,
+      status: row.querySelector('#status').value,
+      comments: row.querySelector('#comments').value
+    };
+    sendData(data);
+  };
+  button.removeEventListener('click', onClick);
+  button.addEventListener('click', onClick);
+});
 
+function sendData(data) {
+  fetch("{% url 'leave_manager' %}", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken')  // Django requires CSRF token for POST requests
+    },
+    body: JSON.stringify(data)
+  }).then(function(response) {
+    if (response.ok) {
+      alert('Data sent successfully');
+    } else {
+      alert('Error: ' + response.statusText);
+    }
+  });
+}
+
+// Function to get CSRF token
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
 {% endblock pageContent %}

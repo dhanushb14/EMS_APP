@@ -1,5 +1,28 @@
 {% extends "employee_information/base.html" %} {% block pageContent %}
 <style>
+    .table-responsive {
+    overflow-x: auto;
+}
+
+@media screen and (max-width: 768px) {
+    .table-responsive {
+        display: block;
+        width: 100%;
+    }
+    .my-table th {
+        font-size: 12px; /* Adjust this value to your preference */
+        word-wrap: break-word;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 5px;
+    }
+    .my-table {
+        table-layout: auto;
+    }
+}
+
     .italic-text {
         
         white-space: nowrap;
@@ -94,7 +117,9 @@
             <input type="date" id="start_date" name="start_date" class="me-4">
             <label for="end_date" class="me-2">End Date</label>
             <input type="date" id="end_date" name="end_date" class="me-5" readonly>
-            <label for="holiday" class="me-4">Holiday (*)</label>
+            <label for="end_date" class="me-2">Project name</label>
+            <input type="text" id="project_name" name="project_name" placeholder="" required>
+            
         </div>
     </div>
 </div>
@@ -116,7 +141,7 @@
                 </colgroup>
                 <thead>
                     <tr style="background-color: grey; height: 35px;">
-                        <th class="px-2 text-center py-1"><input type="text" id="project_name" name="project_name" placeholder="Project name / Bench" style="width: 100%;"></th>
+                        <th class="px-2 text-center py-1">Tasks</th>
                         <th class="text-center py-1">Monday</th>
                         <th class="text-center py-1">Tuesday</th>
                         <th class="text-center py-1">Wednesday</th>
@@ -130,57 +155,85 @@
                 <tbody>
                     <tr style="background-color: #e0e0e0;" id="tasknamerow">
                         <td class="px-2 py-1 text-center">
-                            <input class="task-input" type="text" id="task" name="task" placeholder="Task Name"  style="width: 100%"> 
+                            <input class="task-input" type="text" id="task" name="task" placeholder="Task Name"  style="width: 100%;"> 
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="width: 50px">
+                            <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="width: 50px">
+                            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px">
+                            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px">
+                            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="width: 50px">
+                            <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="width: 50px">
+                            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="width: 50px">
+                            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center" style="background-color: white; border: none;">
                             <button type="button" id="addRow">+</button>
                         </td>
                     </tr>
+                    
+                    <tr style="background-color: #e0e0e0;" class="th_hour">
+                        <td class="px-2 py-1 text-center"  >
+                            Total Hours
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input type="text" id="th_monday" class="th_monday" name="" value="0" style="width: 50px; border: none;" readonly>
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input type="text" id="th_tuesday" class="th_tuesday" name="" value="0" style="width: 50px; border: none;"readonly>
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input type="text" id="th_wednesday" class="th_wednesday" name="" value="0" style="width: 50px; border: none;"readonly>
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input type="text" id="th_thursday" class="th_thursday" name="" value="0" style="width: 50px; border: none;"readonly>
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input type="text" id="th_friday" class="th_friday" name="" value="0" style="width: 50px; border: none;"readonly>
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input type="text" id="th_saturday" class="th_saturday" name="" value="0" style="width: 50px; border: none;"readonly>
+                        </td>
+                        <td class="px-2 py-1 text-center">
+                            <input type="text" id="th_sunday" class="th_sunday" name="" value="0" style="width: 50px; border: none;"readonly>
+                        </td>
+                    </tr>
+                    
                     <tr style="background-color: #e0e0e0;">
                         <td class="px-2 py-1 text-center">
                             Overtime Hours 
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input type="text" id="ovt_monday" name="ovt_monday" placeholder="0" style="width: 50px">
+                            <input type="text" id="ovt_monday" name="ovt_monday" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input type="text" id="ovt_tuesday" name="ovt_tuesday" placeholder="0"  style="width: 50px">
+                            <input type="text" id="ovt_tuesday" name="ovt_tuesday" placeholder="0"  style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input type="text" id="ovt_wednesday" name="ovt_wednesday" placeholder="0"  style="width: 50px">
+                            <input type="text" id="ovt_wednesday" name="ovt_wednesday" placeholder="0"  style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input type="text" id="ovt_thursday" name="ovt_thursday" placeholder="0" style="width: 50px">
+                            <input type="text" id="ovt_thursday" name="ovt_thursday" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input type="text" id="ovt_friday" name="ovt_friday" placeholder="0" style="width: 50px">
+                            <input type="text" id="ovt_friday" name="ovt_friday" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input type="text" id="ovt_saturday" name="ovt_saturday" placeholder="0" style="width: 50px">
+                            <input type="text" id="ovt_saturday" name="ovt_saturday" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input type="text" id="ovt_sunday" name="ovt_sunday" placeholder="0" style="width: 50px">
+                            <input type="text" id="ovt_sunday" name="ovt_sunday" placeholder="0" style="width: 50px; border:none;">
                         </td>
                     </tr>
                     
@@ -200,7 +253,7 @@
                             <input type="text" id="ot" name="ST" placeholder="0" value="0" style="width: 50px" readonly>
                         </td>
                         <td class="px-2 py-1 text-center" colspan="2">
-                            Total Hours: &nbsp;&nbsp;&nbsp&nbsp;
+                            Total Time Spent: &nbsp;&nbsp;&nbsp&nbsp;
                             <input type="text" id="total_hour" name="total_hour" placeholder="0" value="0" style="width: 50px" readonly>
                         </td>
                     </tr>
@@ -230,7 +283,7 @@
     
     var tbody = document.getElementById("timeSheetForm").getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
     var rows = tbody.getElementsByTagName("tr");
-    var taskNameRow = rows[rows.length - 5];
+    var taskNameRow = rows[rows.length - 6];
     var newRow = document.createElement("tr");
     
     newRow.style.backgroundColor = "#e0e0e0";
@@ -239,25 +292,25 @@
                             <input class="task-input" type="text" id="monday_task" name="monday_task" placeholder="Task Name" style="width: 100%"> 
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="monday_value" type="text" id="monday_value" name="monday_value" placeholder="0"  style="width: 50px">
+                            <input class="monday_value" type="text" id="monday_value" name="monday_value" placeholder="0"  style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="width: 50px">
+                            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px">
+                            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px">
+                            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0"  style="width: 50px">
+                            <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0"  style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="width: 50px">
+                            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
                         <td class="px-2 py-1 text-center">
-                            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="width: 50px">
+                            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="width: 50px; border:none;">
                         </td>
         
     `;
@@ -322,76 +375,83 @@
         })
         .then(response => response.json())
         .then(data => {
-            
+                
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
                 document.getElementById("project_name").value = data?.project_name || '';
-                document.getElementById("monday_value").value = data?.monday_value || '';
-                document.getElementById("tuesday_value").value = data?.tuesday_value || '';
-                document.getElementById("wednesday_value").value = data?.wednesday_value || '';
-                document.getElementById("thursday_value").value = data?.thursday_value || '';
-                document.getElementById("friday_value").value = data?.friday_value || '';
-                document.getElementById("saturday_value").value = data?.saturday_value || '';
-                document.getElementById("sunday_value").value = data?.sunday_value || '';
-                document.getElementById("ovt_monday").value = data?.ovt_monday || '';
-                document.getElementById("ovt_tuesday").value = data?.ovt_tuesday || '';
-                document.getElementById("ovt_wednesday").value = data?.ovt_wednesday || '';
-                document.getElementById("ovt_thursday").value = data?.ovt_thursday || '';
-                document.getElementById("ovt_friday").value = data?.ovt_friday || '';
-                document.getElementById("ovt_saturday").value = data?.ovt_saturday || '';
-                document.getElementById("ovt_sunday").value = data?.ovt_sunday || '';
-                document.getElementById("St").value = data?.St || '';
-                document.getElementById("ot").value = data?.ot || '';
-                document.getElementById("total_hour").value = data?.total_hour || '';
+                document.getElementById("monday_value").value = data?.monday_value || '0';
+                document.getElementById("tuesday_value").value = data?.tuesday_value || '0';
+                document.getElementById("wednesday_value").value = data?.wednesday_value || '0';
+                document.getElementById("thursday_value").value = data?.thursday_value || '0';
+                document.getElementById("friday_value").value = data?.friday_value || '0';
+                document.getElementById("saturday_value").value = data?.saturday_value || '0';
+                document.getElementById("sunday_value").value = data?.sunday_value || '0';
+                document.getElementById("ovt_monday").value = data?.ovt_monday || '0';
+                document.getElementById("ovt_tuesday").value = data?.ovt_tuesday || '0';
+                document.getElementById("ovt_wednesday").value = data?.ovt_wednesday || '0';
+                document.getElementById("ovt_thursday").value = data?.ovt_thursday || '0';
+                document.getElementById("ovt_friday").value = data?.ovt_friday || '0';
+                document.getElementById("ovt_saturday").value = data?.ovt_saturday || '0';
+                document.getElementById("ovt_sunday").value = data?.ovt_sunday || '0';
+                document.getElementById("St").value = data?.St || '0';
+                document.getElementById("ot").value = data?.ot || '0';
+                document.getElementById("total_hour").value = data?.total_hour || '0';
+                document.getElementById("th_monday").value = data?.th_hour[0] || '0';
+                document.getElementById("th_tuesday").value = data?.th_hour[1] || '0';
+                document.getElementById("th_wednesday").value = data?.th_hour[2] || '0';
+                document.getElementById("th_thursday").value = data?.th_hour[3] || '0';
+                document.getElementById("th_friday").value = data?.th_hour[4] || '0';
+                document.getElementById("th_saturday").value = data?.th_hour[5] || '0';
+                document.getElementById("th_sunday").value = data?.th_hour[6] || '0';
 
                 console.log("here4")
                 console.log(data)
                 if (data.monday_value.length <= 1) {
                     document.getElementById("task").value = data?.tasks[0] || '';
-                    document.getElementById("monday_value").value = data?.monday_value[0] || '';
-                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
-                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
-                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
-                    document.getElementById("friday_value").value = data?.friday_value[0] || '';
-                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
-                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
+                    document.getElementById("monday_value").value = data?.monday_value[0] || '0';
+                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
+                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
+                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
+                    document.getElementById("friday_value").value = data?.friday_value[0] || '0';
+                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
+                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
 
                 }
                 else{
                     document.getElementById("task").value = data?.tasks[0] || '';
-                    document.getElementById("monday_value").value = data?.monday_value[0] || '';
-                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
-                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
-                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
-                    document.getElementById("friday_value").value = data?.friday_value[0] || '';
-                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
-                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
+                    document.getElementById("monday_value").value = data?.monday_value[0] || '0';
+                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
+                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
+                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
+                    document.getElementById("friday_value").value = data?.friday_value[0] || '0';
+                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
+                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
                     console.log("here1: ", data)
                     var totallength = (data.monday_value.length) 
                     
                     var tbody = document.getElementById("timeSheetForm").getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
                     var rows = tbody.getElementsByTagName("tr");
-                    var taskNameRow = rows[rows.length - 5];
+                    var taskNameRow = rows[rows.length - 6];
                     
                     for (var i = 1; i < totallength; i++) {
                         var newRow = document.createElement("tr");
                         newRow.style.backgroundColor = "#e0e0e0";                      
                         newRow.innerHTML += `
                         <td class="px-2 py-1 text-center"><input class="task-input" type="text" id="monday_task" name="monday_task" style="width: 100%" value="${data.tasks[i]}"</td>
-                        <td class="px-2 py-1 text-center"><input class="monday_value" type="text" id="monday_value" name="monday_value" placeholder="0"   style="width: 50px" value="${data.monday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value"  placeholder="0" style="width: 50px" value="${data.tuesday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px" value="${data.wednesday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px" value="${data.thursday_value[i]}" ></td>
-                        <td class="px-2 py-1 text-center"><input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0"  style="width: 50px" value="${data.friday_value[i]}" ></td>
-                        <td class="px-2 py-1 text-center"><input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0"  style="width: 50px" value="${data.saturday_value[i]}" ></td>
-                        <td class="px-2 py-1 text-center"><input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0"  style="width: 50px" value="${data.sunday_value[i]}" ></td>       
+                        <td class="px-2 py-1 text-center"><input class="monday_value" type="text" id="monday_value" name="monday_value" placeholder="0"   style="width: 50px; border:none;" value="${data.monday_value[i] || 0}"></td>
+                        <td class="px-2 py-1 text-center"><input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value"  placeholder="0" style="width: 50px; border:none;" value="${data.tuesday_value[i] || 0}"></td>
+                        <td class="px-2 py-1 text-center"><input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="width: 50px; border:none;" value="${data.wednesday_value[i] || 0}"></td>
+                        <td class="px-2 py-1 text-center"><input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="width: 50px; border:none;" value="${data.thursday_value[i] || 0}" ></td>
+                        <td class="px-2 py-1 text-center"><input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0"  style="width: 50px; border:none;" value="${data.friday_value[i] || 0}" ></td>
+                        <td class="px-2 py-1 text-center"><input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0"  style="width: 50px; border:none;" value="${data.saturday_value[i] || 0}" ></td>
+                        <td class="px-2 py-1 text-center"><input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0"  style="width: 50px; border:none;" value="${data.sunday_value[i] || 0}" ></td>       
                         `;
                         taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
                     }
                 }
                 
 
-                if (data?.project_name && data?.status!="Rejected") {
+                if (data?.project_name && data?.status!="Redo") {
 
                     // Removing buttons
                     document.getElementById("submitBtn").remove();
@@ -432,7 +492,7 @@
 
                 }
                 else{
-                    if (data?.status!="Rejected"){
+                    if (data?.status!="Redo"){
                     console.log("else partition")
                     location.reload();}
                                 }
@@ -471,77 +531,85 @@
         .then(response => response.json())
         .then(data => {
             console.log("here2")
+            
             if (data ) {
             console.log('second')
-                console.log("data", data.tasks[0])
+                console.log("data", data)
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
                 document.getElementById("project_name").value = data?.project_name || '';
-                document.getElementById("monday_value").value = data?.monday_value || '';
-                document.getElementById("tuesday_value").value = data?.tuesday_value || '';
-                document.getElementById("wednesday_value").value = data?.wednesday_value || '';
-                document.getElementById("thursday_value").value = data?.thursday_value || '';
-                document.getElementById("friday_value").value = data?.friday_value || '';
-                document.getElementById("saturday_value").value = data?.saturday_value || '';
-                document.getElementById("sunday_value").value = data?.sunday_value || '';
-                document.getElementById("ovt_monday").value = data?.ovt_monday || '';
-                document.getElementById("ovt_tuesday").value = data?.ovt_tuesday || '';
-                document.getElementById("ovt_wednesday").value = data?.ovt_wednesday || '';
-                document.getElementById("ovt_thursday").value = data?.ovt_thursday || '';
-                document.getElementById("ovt_friday").value = data?.ovt_friday || '';
-                document.getElementById("ovt_saturday").value = data?.ovt_saturday || '';
-                document.getElementById("ovt_sunday").value = data?.ovt_sunday || '';
-                document.getElementById("St").value = data?.St || '';
-                document.getElementById("ot").value = data?.ot || '';
-                document.getElementById("total_hour").value = data?.total_hour || '';
+                document.getElementById("monday_value").value = data?.monday_value || '0';
+                document.getElementById("tuesday_value").value = data?.tuesday_value || '0';
+                document.getElementById("wednesday_value").value = data?.wednesday_value || '0';
+                document.getElementById("thursday_value").value = data?.thursday_value || '0';
+                document.getElementById("friday_value").value = data?.friday_value || '0';
+                document.getElementById("saturday_value").value = data?.saturday_value || '0';
+                document.getElementById("sunday_value").value = data?.sunday_value || '0';
+                document.getElementById("ovt_monday").value = data?.ovt_monday || '0';
+                document.getElementById("ovt_tuesday").value = data?.ovt_tuesday || '0';
+                document.getElementById("ovt_wednesday").value = data?.ovt_wednesday || '0';
+                document.getElementById("ovt_thursday").value = data?.ovt_thursday || '0';
+                document.getElementById("ovt_friday").value = data?.ovt_friday || '0';
+                document.getElementById("ovt_saturday").value = data?.ovt_saturday || '0';
+                document.getElementById("ovt_sunday").value = data?.ovt_sunday || '0';
+                document.getElementById("St").value = data?.St || '0';
+                document.getElementById("ot").value = data?.ot || '0';
+                document.getElementById("total_hour").value = data?.total_hour || '0';
+                document.getElementById("th_monday").value = data?.th_hour[0] || '0';
+                document.getElementById("th_tuesday").value = data?.th_hour[1] || '0';
+                document.getElementById("th_wednesday").value = data?.th_hour[2] || '0';
+                document.getElementById("th_thursday").value = data?.th_hour[3] || '0';
+                document.getElementById("th_friday").value = data?.th_hour[4] || '0';
+                document.getElementById("th_saturday").value = data?.th_hour[5] || '0';
+                document.getElementById("th_sunday").value = data?.th_hour[6] || '0';
 
                 console.log("here3")
                 console.log(data.tasks.length)
                 console.log(data.tasks)
                 if (data.monday_value.length <= 1) {
-                    document.getElementById("task").value = data?.tasks[0] || '';
-                    document.getElementById("monday_value").value = data?.monday_value[0] || '';
-                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
-                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
-                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
-                    document.getElementById("friday_value").value = data?.friday_value[0] || '';
-                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
-                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
+                    document.getElementById("task").value = data?.tasks[0] || '0';
+                    document.getElementById("monday_value").value = data?.monday_value[0] || '0';
+                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
+                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
+                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
+                    document.getElementById("friday_value").value = data?.friday_value[0] || '0';
+                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
+                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
 
                 }
                 else{
-                    document.getElementById("task").value = data?.tasks[0] || '';
-                    document.getElementById("monday_value").value = data?.monday_value[0] || '';
-                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
-                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
-                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
-                    document.getElementById("friday_value").value = data?.friday_value[0] || '';
-                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
-                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
+                    document.getElementById("task").value = data?.tasks[0] || '0';
+                    document.getElementById("monday_value").value = data?.monday_value[0] || '0';
+                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
+                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
+                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
+                    document.getElementById("friday_value").value = data?.friday_value[0] || '0';
+                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
+                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
                     var totallength = (data.monday_value.length) 
                     
                     var tbody = document.getElementById("timeSheetForm").getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
                     var rows = tbody.getElementsByTagName("tr");
-                    var taskNameRow = rows[rows.length - 5];
+                    var taskNameRow = rows[rows.length - 6];
                     
                     for (var i = 1; i < totallength; i++) {
                         var newRow = document.createElement("tr");
                         newRow.style.backgroundColor = "#e0e0e0";                      
                         newRow.innerHTML += `
                         <td class="px-2 py-1 text-center"><input class="task-input" type="text" id="monday_task" name="monday_task" style="width: 100%" value="${data.tasks[i]}" readonly></td>
-                        <td class="px-2 py-1 text-center"><input class="monday_value" type="text" id="monday_value" name="monday_value"    style="width: 50px" value="${data.monday_value[i]}" readonly></td>
-                        <td class="px-2 py-1 text-center"><input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value"   style="width: 50px" value="${data.tuesday_value[i]}" readonly></td>
-                        <td class="px-2 py-1 text-center"><input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value"  style="width: 50px" value="${data.wednesday_value[i]}" readonly></td>
-                        <td class="px-2 py-1 text-center"><input class="thursday_value"  type="text" id="thursday_value" name="thursday_value"  style="width: 50px" value="${data.thursday_value[i]}" readonly></td>
-                        <td class="px-2 py-1 text-center"><input class="friday_value"  type="text" id="friday_value" name="friday_value"  style="width: 50px" value="${data.friday_value[i]}" readonly></td>
-                        <td class="px-2 py-1 text-center"><input class="saturday_value"  type="text" id="saturday_value" name="saturday_value"  style="width: 50px" value="${data.saturday_value[i]}" readonly></td>
-                        <td class="px-2 py-1 text-center"><input class="sunday_value"  type="text" id="sunday_value" name="sunday_value"  style="width: 50px" value="${data.sunday_value[i]}" readonly></td>       
+                        <td class="px-2 py-1 text-center"><input class="monday_value" type="text" id="monday_value" name="monday_value"    style="width: 50px; border:none;" value="${data.monday_value[i] || 0}" readonly></td>
+                        <td class="px-2 py-1 text-center"><input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value"   style="width: 50px; border:none;" value="${data.tuesday_value[i] || 0}" readonly></td>
+                        <td class="px-2 py-1 text-center"><input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value"  style="width: 50px; border:none;" value="${data.wednesday_value[i] || 0}" readonly></td>
+                        <td class="px-2 py-1 text-center"><input class="thursday_value"  type="text" id="thursday_value" name="thursday_value"  style="width: 50px; border:none;" value="${data.thursday_value[i] || 0}" readonly></td>
+                        <td class="px-2 py-1 text-center"><input class="friday_value"  type="text" id="friday_value" name="friday_value"  style="width: 50px; border:none;" value="${data.friday_value[i] || 0}" readonly></td>
+                        <td class="px-2 py-1 text-center"><input class="saturday_value"  type="text" id="saturday_value" name="saturday_value"  style="width: 50px; border:none;" value="${data.saturday_value[i] || 0}" readonly></td>
+                        <td class="px-2 py-1 text-center"><input class="sunday_value"  type="text" id="sunday_value" name="sunday_value"  style="width: 50px; border:none;" value="${data.sunday_value[i] || 0}" readonly></td>       
                         `;
                         taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
                     }
                 }
 
-                if (data?.project_name && data?.status!="Rejected") {
+                if (data?.project_name && data?.status!="Redo") {
                     // Removing buttons
                     document.getElementById("submitBtn").remove();
                     document.getElementById("discardBtn").remove();
@@ -607,6 +675,14 @@
             var total = 0;
             var st = 0;
             var ot = 0;
+            var th_mon = 0;
+            var th_tue = 0;
+            var th_wed = 0;
+            var th_thurs = 0;
+            var th_fri = 0;
+            var th_sat = 0;
+            var th_sun = 0;
+            
             $('input[class$="_value"], input[class^="ovt_"]').each(function() {
                 var value = parseFloat($(this).val()) || 0;
                 total += value;
@@ -619,9 +695,45 @@
                 var value = parseFloat($(this).val()) || 0;
                 ot += value;
             });
+            $('input[class$="monday_value"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                th_mon += value;
+            });
+            $('input[class$="tuesday_value"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                th_tue += value;
+            });
+            $('input[class$="wednesday_value"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                th_wed += value;
+            });
+            $('input[class$="thursday_value"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                th_thurs += value;
+            });
+            $('input[class$="friday_value"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                th_fri += value;
+            });
+            $('input[class$="saturday_value"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                th_sat += value;
+            });
+            $('input[class$="sunday_value"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                th_sun += value;
+            });
+
             $('#St').val(st);
             $('#ot').val(ot);
             $('#total_hour').val(total);
+            $('#th_monday').val(th_mon);
+            $('#th_tuesday').val(th_tue);
+            $('#th_wednesday').val(th_wed);
+            $('#th_thursday').val(th_thurs);
+            $('#th_friday').val(th_fri);
+            $('#th_saturday').val(th_sat);
+            $('#th_sunday').val(th_sun);
         }
 
         // Trigger calculation on input change
@@ -650,6 +762,14 @@
         document.getElementById("St").value = "";
         document.getElementById("ot").value = "";
         document.getElementById("total_hour").value = "";
+        document.getElementById('th_monday').value = "";
+        document.getElementById('th_tuesday').value = "";
+        document.getElementById('th_wednesday').value = "";
+        document.getElementById('th_thursday').value = "";
+        document.getElementById('th_friday').value = "";
+        document.getElementById('th_saturday').value = "";
+        document.getElementById('th_sunday').value = "";
+
        // Reset the task inputs to their initial values
        var taskInputs = document.querySelectorAll('.task-input');
         taskInputs.forEach((input) => {
@@ -665,18 +785,19 @@
 }});
     document.getElementById("saveBtn").addEventListener("click", function() {
         // Get the table data
-        
+        var th_hour = [
+                document.getElementById('th_monday').value,
+                document.getElementById('th_tuesday').value,
+                document.getElementById('th_wednesday').value,
+                document.getElementById('th_thursday').value,
+                document.getElementById('th_friday').value,
+                document.getElementById('th_saturday').value,
+                document.getElementById('th_sunday').value
+            ];
         var tableData = {
             start_date: document.getElementById('start_date').value,
             end_date: document.getElementById('end_date').value,
             project_name: document.getElementById('project_name').value,
-            monday_value: document.getElementById('monday_value').value,
-            tuesday_value: document.getElementById('tuesday_value').value,
-            wednesday_value: document.getElementById('wednesday_value').value,
-            thursday_value: document.getElementById('thursday_value').value,
-            friday_value: document.getElementById('friday_value').value,
-            saturday_value: document.getElementById('saturday_value').value,
-            sunday_value: document.getElementById('sunday_value').value,
             ovt_monday: document.getElementById('ovt_monday').value,
             ovt_tuesday: document.getElementById('ovt_tuesday').value,
             ovt_wednesday: document.getElementById('ovt_wednesday').value,
@@ -687,6 +808,7 @@
             St: document.getElementById('St').value,
             ot: document.getElementById('ot').value,
             total_hour: document.getElementById('total_hour').value,
+            th_hour: th_hour,
             
         };
         
@@ -731,6 +853,15 @@
         var friday_value = Array.from(document.querySelectorAll('.friday_value')).map(input => input.value) || '0';
         var saturday_value = Array.from(document.querySelectorAll('.saturday_value')).map(input => input.value) || '0';
         var sunday_value = Array.from(document.querySelectorAll('.sunday_value')).map(input => input.value) || '0';
+        var th_hour = [
+                document.getElementById('th_monday').value,
+                document.getElementById('th_tuesday').value,
+                document.getElementById('th_wednesday').value,
+                document.getElementById('th_thursday').value,
+                document.getElementById('th_friday').value,
+                document.getElementById('th_saturday').value,
+                document.getElementById('th_sunday').value
+            ]; 
         var ovt_monday = document.getElementById('ovt_monday').value || '0';
         var ovt_tuesday = document.getElementById('ovt_tuesday').value || '0';
         var ovt_wednesday = document.getElementById('ovt_wednesday').value || '0';
@@ -768,6 +899,7 @@
                 'friday_value': friday_value,
                 'saturday_value': saturday_value,
                 'sunday_value': sunday_value,
+                'th_hour': th_hour,
                 'ovt_monday': ovt_monday,
                 'ovt_tuesday': ovt_tuesday,
                 'ovt_wednesday': ovt_wednesday,
@@ -810,6 +942,27 @@
         }, 1700);
 });
 window.addEventListener('load', function() {
+    
+    var formattedStartDate = startDate.toISOString().split('T')[0];
+        var formattedEndDate = endDate.toISOString().split('T')[0];
+        fetch("{% url 'timesheets_create' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'start_date': formattedStartDate,
+                'end_date': formattedEndDate,
+                'method_1': "first_fetch"
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("here5")
+            if (!data.project_name){
+
+
     // Check if there is any saved table data in local storage
     var savedTableData = localStorage.getItem('tableData');
     var taskInputs = localStorage.getItem('taskInputs')
@@ -834,53 +987,55 @@ window.addEventListener('load', function() {
         document.getElementById('St').value = tableData.St;
         document.getElementById('ot').value = tableData.ot;
         document.getElementById('total_hour').value = tableData.total_hour;
-        document.getElementById('monday_value').value = tableData.monday_value;
-        document.getElementById('tuesday_value').value = tableData.tuesday_value;
-        document.getElementById('wednesday_value').value = tableData.wednesday_value;
-        document.getElementById('thursday_value').value = tableData.thursday_value;
-        document.getElementById('friday_value').value = tableData.friday_value;
-        document.getElementById('saturday_value').value = tableData.saturday_value;
-        document.getElementById('sunday_value').value = tableData.sunday_value;
+
+        document.getElementById('th_monday').value = tableData.th_hour[0];
+        document.getElementById('th_tuesday').value = tableData.th_hour[1];
+        document.getElementById('th_wednesday').value = tableData.th_hour[2];
+        document.getElementById('th_thursday').value = tableData.th_hour[3];
+        document.getElementById('th_friday').value = tableData.th_hour[4];
+        document.getElementById('th_saturday').value = tableData.th_hour[5];
+        document.getElementById('th_sunday').value = tableData.th_hour[6];
+
         var data = JSON.parse(localStorage.getItem('taskInputs'));
         console.log(data)
         if (data.monday_value.length <= 1) {
                     document.getElementById("task").value = data?.tasks[0] || '';
-                    document.getElementById("monday_value").value = data?.monday_value[0] || '';
-                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
-                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
-                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
-                    document.getElementById("friday_value").value = data?.friday_value[0] || '';
-                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
-                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
+                    document.getElementById("monday_value").value = data?.monday_value[0] || '0';
+                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
+                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
+                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
+                    document.getElementById("friday_value").value = data?.friday_value[0] || '0';
+                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
+                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
 
         }
         else{
                     document.getElementById("task").value = data?.tasks[0] || '';
-                    document.getElementById("monday_value").value = data?.monday_value[0] || '';
-                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
-                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
-                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
-                    document.getElementById("friday_value").value = data?.friday_value[0] || '';
-                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
-                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
+                    document.getElementById("monday_value").value = data?.monday_value[0] || '0';
+                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
+                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
+                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
+                    document.getElementById("friday_value").value = data?.friday_value[0] || '0';
+                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
+                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
                     var totallength = (data.monday_value.length) 
                     
                     var tbody = document.getElementById("timeSheetForm").getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
                     var rows = tbody.getElementsByTagName("tr");
-                    var taskNameRow = rows[rows.length - 5];
+                    var taskNameRow = rows[rows.length - 6];
                     
                     for (var i = 1; i < totallength; i++) {
                         var newRow = document.createElement("tr");
                         newRow.style.backgroundColor = "#e0e0e0";                      
                         newRow.innerHTML += `
-                        <td class="px-2 py-1 text-center"><input class="task-input" type="text" id="monday_task" name="monday_task" style="width: 100%" value="${data.tasks[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="monday_value" type="text" id="monday_value" name="monday_value"  style="width: 50px" value="${data.monday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value"  style="width: 50px" value="${data.tuesday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" style="width: 50px" value="${data.wednesday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" style="width: 50px" value="${data.thursday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="friday_value"  type="text" id="friday_value" name="friday_value"  style="width: 50px" value="${data.friday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="saturday_value"  type="text" id="saturday_value" name="saturday_value"  style="width: 50px" value="${data.saturday_value[i]}"></td>
-                        <td class="px-2 py-1 text-center"><input class="sunday_value"  type="text" id="sunday_value" name="sunday_value"  style="width: 50px" value="${data.sunday_value[i]}"></td>       
+                        <td class="px-2 py-1 text-center"><input class="task-input" type="text" id="monday_task" name="monday_task" style="width: 100%" value="${data.tasks[i] || 0}"></td>
+                        <td class="px-2 py-1 text-center"><input class="monday_value" type="text" id="monday_value" name="monday_value"  style="width: 50px; border:none;" value="${data.monday_value[i] || 0}"></td>
+                        <td class="px-2 py-1 text-center"><input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value"  style="width: 50px; border:none;" value="${data.tuesday_value[i] || 0}"></td>
+                        <td class="px-2 py-1 text-center"><input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" style="width: 50px; border:none;" value="${data.wednesday_value[i] || 0}"></td>
+                        <td class="px-2 py-1 text-center"><input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" style="width: 50px; border:none;" value="${data.thursday_value[i] || 0}"></td>
+                        <td class="px-2 py-1 text-center"><input class="friday_value"  type="text" id="friday_value" name="friday_value"  style="width: 50px; border:none;" value="${data.friday_value[i] || 0}"></td>
+                        <td class="px-2 py-1 text-center"><input class="saturday_value"  type="text" id="saturday_value" name="saturday_value"  style="width: 50px; border:none;" value="${data.saturday_value[i] || 0}"></td>
+                        <td class="px-2 py-1 text-center"><input class="sunday_value"  type="text" id="sunday_value" name="sunday_value"  style="width: 50px; border:none;" value="${data.sunday_value[i] || 0}"></td>       
                         `;
                         taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
                     }
@@ -888,6 +1043,8 @@ window.addEventListener('load', function() {
 
         
     }
+}
+        });
 });
 });
 </script>
