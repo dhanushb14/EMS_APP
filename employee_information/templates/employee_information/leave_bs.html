@@ -1,0 +1,61 @@
+{% extends "employee_information/base.html" %}
+{% block pageContent %}
+
+<div class="container" style="margin-top: 5%">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="fw-bold mb-4">Leave Management</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="table-responsive">
+          <form method="post" action="">
+            {% csrf_token %}
+            <table class="table table-bordered">
+              <thead>
+                <tr class="table-secondary">
+                  <th scope="col" class="text-center">Employee ID</th>
+                  <th scope="col" class="text-center">Date</th>
+                  <th scope="col" class="text-center">Leave Type</th>
+                  <th scope="col" class="text-center">Description</th>
+                  <th scope="col" class="text-center col-auto">Status</th>
+                  <th scope="col" class="text-center">Comments</th>
+                  <th scope="col" class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for leave_request in all_leave_requests %}
+                  <tr>
+                    <td class="text-center">{{ leave_request.employee }}</td>
+                    <td class="text-center">{{ leave_request.start_date | date:"j/n/Y"}} to {{ leave_request.end_date | date:"j/n/Y" }}</td>
+                    <td class="text-center">{{ leave_request.leave_type }}</td>
+                    <td class="text-center">{{ leave_request.description }}</td>
+                    <td class="text-center">
+                      <div class="form-group">
+                        <select name="status" class="form-select">
+                          <option value="Approve" {% if leave_request.status == 'Approve' %}selected{% endif %}>Approved</option>
+                          <option value="Reject" {% if leave_request.status == 'Reject' %}selected{% endif %}>Rejected</option>
+                          <option value="Pending" {% if leave_request.status == 'Pending' %}selected{% endif %}>Pending</option>
+                        </select>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <textarea name="comments"  cols="15" class="form-control">{{ leave_request.comments }}</textarea>
+                    </td>
+                    <td class="text-center my-auto">
+                      <button type="submit" class="btn btn-primary btn-sm">Send</button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock pageContent %}

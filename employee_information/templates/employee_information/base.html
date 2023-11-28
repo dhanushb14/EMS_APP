@@ -18,7 +18,8 @@
   href="https://kit.fontawesome.com/7f5caf3864.css"
   crossorigin="anonymous"
 />
-
+<link rel="icon" href="https://intellectoglobal.com/wp-content/uploads/2023/06/cropped-Intellecto-Favicon-192x192.png" type="image/x-icon">
+<title>Intellecto Global Employee Portal</title>
 <style>
   .bg {
     background: linear-gradient(#2a1c5a, #4b3a6e);
@@ -75,7 +76,7 @@
           {% if request.user.role == "superadmin" %}
           <li class="nav-item">
             <a
-              class="nav-link active text-white my-4"
+              class="nav-link active text-white my-2"
               aria-current="page"
               href="{% url 'home-page' %}"
             >
@@ -83,18 +84,18 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="{% url 'employee-page' %}">
+            <a class="nav-link text-white my-2" href="{% url 'employee-page' %}">
               <i class="fa-solid fa-user-group text-white"></i> Employee List
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="{% url 'timesheet_manager' %}">
+            <a class="nav-link text-white my-2" href="{% url 'timesheet_manager' %}">
               <i class="fa-solid fa-user-clock text-white"></i> Time Sheet
               Manager
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" href="{% url 'leave_manager' %}">
+            <a class="nav-link text-white my-2" href="{% url 'leave_manager' %}">
               <i class="fa-solid fa-calendar-check text-white"></i> Leave
               Manager
             </a>

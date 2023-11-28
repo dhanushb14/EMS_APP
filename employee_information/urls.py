@@ -48,5 +48,7 @@ urlpatterns = [
     path('home/', views.bootstrap_home, name='bs_home'),
     path('auth/', views.authenticate_user, name='auth'),
     path('emp_home/', views.emp_home, name='emp_home'),
-    path('timesheet_bs/', views.timesheet_bs, name='timesheet_bs')
+    path('timesheet_bs/', views.timesheet_bs, name='timesheet_bs'),
+    path('leave_bs/', views.leave_manager_bs, name='leave_bs')
+
 ]

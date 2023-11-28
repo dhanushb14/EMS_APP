@@ -780,21 +780,23 @@ def view_timesheet(request):
                                 total_hour=data["total_hour"]
                              )
         return JsonResponse(data, safe=False)
-    
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import LeaveRequest
+from .forms import LeaveRequestReview
+
 def leave_request_manager(request):
     if request.method == 'POST':
-        print(request.POST) 
-        # Assuming your form has 'status' and 'review_comments' fields
         status = request.POST.get('status')
-        review_comments = request.POST.get('review_comments')
-
-        # Assuming 'leave_request_id' is the ID of the leave request being updated
-        leave_request_id = request.POST.get('leave_request_id')
+        review_comments = request.POST.get('comments')
+        employee_id = request.POST.get('employee_id')  # Assuming 'employee_id' is the correct name
 
         try:
-            leave_request = LeaveRequest.objects.get(pk=leave_request_id)
+            # Retrieve the LeaveRequest based on the associated Employee
+            leave_request = LeaveRequest.objects.get(employee__id=employee_id)
             leave_request.status = status
-            leave_request.review_comments = review_comments
+            leave_request.comments = review_comments
             leave_request.save()
 
             messages.success(request, 'Leave request updated successfully.')
@@ -806,7 +808,8 @@ def leave_request_manager(request):
 
     # If it's not a POST request, retrieve all leave requests
     all_leave_requests = LeaveRequest.objects.all()
-    return render(request, 'employee_information/leave_manager.html', {'all_leave_requests': all_leave_requests})
+    return render(request, 'employee_information/leave_bs.html', {'all_leave_requests': all_leave_requests})
+
 
 def user_leave_request(request):
     leave_requests = LeaveRequest.objects.filter(employee=request.user)
@@ -842,3 +845,6 @@ def emp_home(request):
 
 def timesheet_bs(request):
     return render(request, 'employee_information/timesheet_bs.html')
+
+def leave_manager_bs(request):
+    return render(request,'employee_information/leave_bs.html')
