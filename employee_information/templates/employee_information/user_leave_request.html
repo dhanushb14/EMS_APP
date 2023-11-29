@@ -53,7 +53,7 @@
             </thead>
             <tbody>
               {% for leave_request in leave_requests %}
-              <tr>
+              <tr {% if leave_request.status == 'Approved' %} class="table-success" {% elif leave_request.status == 'Rejected' %} class="table-danger" {% elif leave_request.status == 'Pending' %} class="table-warning" {% endif %}>
                 <td class="text-center">
                   {{ leave_request.start_date }} to {{ leave_request.end_date }}
                 </td>

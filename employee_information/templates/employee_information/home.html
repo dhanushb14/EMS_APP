@@ -1,43 +1,122 @@
-{% extends "employee_information/base.html" %} {% load humanize %} {% block pageContent %}
-<style>
-.center {
-display: flex;
-justify-content: center;
-}
-</style>
-<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-    <div class="mdc-card">
-        <div class="d-flex justify-content-between">
-            <h4 class="card-title mb-0">Home Page</h4>
-        </div>
+{% extends "employee_information/base.html" %} {% block pageContent %}
+<link
+  rel="stylesheet"
+  href="https://kit.fontawesome.com/7f5caf3864.css"
+  crossorigin="anonymous"
+/>
+<div class="container" style="margin-top: 5%">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="fw-bold mb-4">Dashboard</h2>
     </div>
-</div>
-<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-    <hr class="w-100">
-</div>
-
-
-    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-4-desktop mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--offset-4-desktop mdc-layout-grid__cell--offset-4-tablet">
-    <div class="mdc-card info-card info-card--info">
-        <div class="card-inner">
-            <h5 class="card-title">Employees</h5>
-            <h5 class="font-weight-light pb-2 mb-1 border-bottom">{{ total_employee|intcomma }}</h5>
-            <p class="tx-12 text-muted">Over All Count of Employees</p>
-            <div class="card-icon-wrapper">
-                <i class="material-icons">group</i>
+  </div>
+  <div class="row">
+    <div class="col-5">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-2 text-center my-auto">
+              <i
+                class="fa-solid fa-user my-auto"
+                style="color: #4723d9; font-size: 60px"
+              ></i>
             </div>
-        </div>
-    </div>
-</div>
+            <div class="col">
+              <p class="display-6">
+                {{ request.user.employee_name }} ( 122182 )
+              </p>
+              <p>
+                <i
+                  class="fa-solid fa-briefcase me-2"
+                  style="color: #4723d9"
+                ></i>
 
-<!-- <table style="width:100%">
-    {% for employee in employees %}
-    <tr>
-        <td width="20%">{{ employee.code }}</td>
-        <td width="30%">{{ employee.name }}</td>
-        <td width="20%">{{ employee.contact }}</td>
-        <td width="30%">{{ employee.address }}</td>
-    </tr>
-    {% endfor %}
-</table> -->
+                Software Engineer
+              </p>
+              <p>
+                <i
+                  class="fa-solid fa-address-card me-2"
+                  style="color: #4723d9"
+                ></i
+                >manoj.r@intellecto.co.in
+              </p>
+              <p>
+                <i class="fa-solid fa-envelope me-2" style="color: #4723d9"></i
+                >666rmanoj@gmail.com
+              </p>
+              <p>
+                <i class="fa-solid fa-building me-2" style="color: #4723d9"></i
+                >Intello Global Services
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-7">
+      <div class="card">
+        <div class="card-body">
+          <p class="display-6 text-center">
+            <i class="fa-solid fa-bell me-4" style="color: #4723d9"></i>Notice
+            Board
+          </p>
+          <table class="table">
+            <thead>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Status</th>
+            </thead>
+            <tbody>
+              <tr>
+                <td>29/11/2023</td>
+                <td>TimeSheet</td>
+                <td>Approved</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card mt-5">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-2 text-center my-auto">
+          <i
+            class="fa-solid fa-sitemap my-auto"
+            style="color: #4723d9; font-size: 60px"
+          ></i>
+        </div>
+        <div class="col ms-2">
+          <p class="display-6">Manager</p>
+          <p class="h5">Vipin Xavier</p>
+          <p>
+            <i class="fa-solid fa-envelope me-2" style="color: #4723d9"></i
+            >vipinxavier.k@intellecto.co.in
+          </p>
+          <p>
+            <i class="fa-solid fa-phone me-2" style="color: #4723d9"></i
+            >8248694043
+          </p>
+        </div>
+        <div class="col">
+          <p class="display-6">Scrum Master</p>
+          <p class="h5">Dhanush Anand</p>
+          <p>
+            <i class="fa-solid fa-envelope me-2" style="color: #4723d9"></i
+            >dhanush.s@intellecto.co.in
+          </p>
+          <p>
+            <i class="fa-solid fa-phone me-2" style="color: #4723d9"></i
+            >7092463594
+          </p>
+        </div>
+        <div class="col">
+          <p class="display-6">Team</p>
+          <p class="h5 my-auto">Next Gen Tech(NGT)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock pageContent %}

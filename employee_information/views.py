@@ -513,27 +513,6 @@ def TimeSheetCreate(request):
         return render(request, 'employee_information/timesheet_create_bs.html', context)
     return render(request, 'employee_information/timesheet_create_bs.html', context)
 
-@login_required
-def home_employee( request ):
-     model = TimeSheet
-     model_user = Employee
-     
-     data = model.objects.filter(username=request.user.employee_name)
-     data_user = model_user.objects.filter(employee_id=request.user.employee_id).first()
-     
-     data_list = []
-     for value in data:
-        data_dict={
-            "alert":value.status,
-            "comment":value.comments,
-            "project_name":value.project_name,
-            "start_date":value.start_date,
-            "employee_name":data_user.employee_name
-        }
-     
-        data_list.append(data_dict)
-     print(data_list)
-     return render(request, 'employee_information/home_employee.html', {"data":data_list} )
 
 @login_required
 def timesheet_manager( request ):
@@ -785,12 +764,7 @@ def view_timesheet(request):
                                 total_hour=data["total_hour"]
                              )
         return JsonResponse(data, safe=False)
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import LeaveRequest
-from .forms import LeaveRequestReview
-
+    
 def leave_request_manager(request):
     if request.method == 'POST':
         print('in')
@@ -860,19 +834,15 @@ def create_leave_request(request):
 
     return render(request, 'employee_information/leave_request_form.html', {'form': form})
 
-
-def bootstrap_home(request):
-    return render(request, 'employee_information/home_page.html')
-
-def authenticate_user(request):
-    return render(request, 'employee_information/authenticate.html')
-
-
-def emp_home(request):
-    return render(request, 'employee_information/employee_homepage.html')
-
 def timesheet_bs(request):
     return render(request, 'employee_information/timesheet_bs.html')
 
 def leave_manager_bs(request):
     return render(request,'employee_information/leave_bs.html')
+
+def timesheet_create_bs(request):
+    return render(request,'employee_information/timesheet_create_bs.html')
+
+def signup_bs(request):
+    return render(request,'employee_information/signup.html')
+

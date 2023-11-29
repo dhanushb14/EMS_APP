@@ -32,7 +32,6 @@ urlpatterns = [
     path('time_sheet_status', views.time_sheet_status, name="time_sheet_status"),
     path('timesheets_create', views.TimeSheetCreate, name='timesheets_create'),
 
-    path('home_employee', views.home_employee, name='home_employee'),
     path('timesheet_manager', views.timesheet_manager, name='timesheet_manager'),
 
     path('timesheets_update', views.timesheet_update_view,
@@ -45,10 +44,8 @@ urlpatterns = [
     path('leave_request/', views.create_leave_request, name='leave_request'),
     path('leave_detail/', views.user_leave_request, name='leave_detail'),
 
-    path('home/', views.bootstrap_home, name='bs_home'),
-    path('auth/', views.authenticate_user, name='auth'),
-    path('emp_home/', views.emp_home, name='emp_home'),
     path('timesheet_bs/', views.timesheet_bs, name='timesheet_bs'),
-    path('leave_bs/', views.leave_manager_bs, name='leave_bs')
-
+    path('leave_bs/', views.leave_manager_bs, name='leave_bs'),
+    path('timesheet_create_bs/', views.timesheet_create_bs, name='timesheet_create_bs'),
+    path('signup/', views.signup_bs, name='signup'),
 ]
