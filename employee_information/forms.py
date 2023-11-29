@@ -32,4 +32,4 @@ class LeaveRequestForm(forms.ModelForm):
 class LeaveRequestReview(forms.ModelForm):
     class Meta:
         model = LeaveRequest
-        fields = ['status', 'comments']
+        fields = ['start_date', 'end_date', 'leave_type', 'description', 'comments', 'status']

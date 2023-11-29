@@ -1,0 +1,71 @@
+{% extends "employee_information/base.html" %} {% block pageContent %}
+
+<div class="container-fluid" style="margin-top: 5%">
+  <div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+              <h2 class="fw-bold">Time Sheet</h2>
+            </div>
+          </div>
+    </div>
+  </div>
+  <div class="card mb-4" style="background-color: #dcd0ff;">
+    <div class="card-body">
+        <div class="row mx-auto">
+            <div class="col-4 my-auto">
+              <label for="start_date">Start Date</label>
+              <input type="date" id="start_date" class="form-control" />    
+            </div>
+            <div class="col-4 my-auto">
+              <label for="end_date">End Date</label>
+              <input type="date" id="end_date" class="form-control" />
+            </div>
+            <div class="col-4 my-auto">
+                Holiday(*)
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+        <div class="row">
+            <table class="table table-responsive table-bordered text-center">
+              <tr class="table-secondary fw-light">
+                <th class="fw-medium"><input type="text" placeholder="Project/Bench"></th>
+                <th class="fw-medium">Monday</th>
+                <th class="fw-medium">Tuesday</th>
+                <th class="fw-medium">Wednesday</th>
+                <th class="fw-medium">Thursday</th>
+                <th class="fw-medium">Friday</th>
+                <th class="fw-medium">Saturday</th>
+                <th class="fw-medium">Sunday</th>
+              </tr>
+              <tr>
+              <tr>
+                <td style="width: 10px !important;"><input type="text" placeholder="Task Name"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+              </tr>
+              <tr>
+                <td>Overtime hours</td>
+                <td class="col-2"><input type="number" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0"></td>
+              </tr>
+            </table>
+        </div>
+    </div>
+  </div>
+</div>
+
+{% endblock pageContent %}

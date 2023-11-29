@@ -56,6 +56,7 @@ class TimeSheet(models.Model):
 
 class LeaveRequest(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT)
+    employee_name = models.CharField(max_length=100) 
     start_date = models.DateField()
     end_date = models.DateField()
     leave_type_choices = [
@@ -69,12 +70,17 @@ class LeaveRequest(models.Model):
     description = models.CharField(max_length=255)
     comments =  models.CharField(max_length=255)
     leave_status = [
-        ('Approve', 'Approve'),
-        ('Reject', 'Reject'),
+        ('Approved', 'Approve'),
+        ('Rejected', 'Reject'),
         ('Pending', 'Pending'),
     ]
     status = models.CharField(
         max_length=20, choices=leave_status, default='Pending')
+    
+    def save(self, *args, **kwargs):
+        # Set the employee_name before saving
+        self.employee_name = self.employee.employee_name
+        super(LeaveRequest, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.employee} {self.leave_type}"

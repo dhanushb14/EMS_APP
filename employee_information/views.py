@@ -508,27 +508,6 @@ def TimeSheetCreate(request):
         return render(request, 'employee_information/time_sheet.html', context)
     return render(request, 'employee_information/time_sheet.html', context)
 
-@login_required
-def home_employee( request ):
-     model = TimeSheet
-     model_user = Employee
-     
-     data = model.objects.filter(username=request.user.employee_name)
-     data_user = model_user.objects.filter(employee_id=request.user.employee_id).first()
-     
-     data_list = []
-     for value in data:
-        data_dict={
-            "alert":value.status,
-            "comment":value.comments,
-            "project_name":value.project_name,
-            "start_date":value.start_date,
-            "employee_name":data_user.employee_name
-        }
-     
-        data_list.append(data_dict)
-     print(data_list)
-     return render(request, 'employee_information/home_employee.html', {"data":data_list} )
 
 @login_required
 def timesheet_manager( request ):
@@ -780,33 +759,51 @@ def view_timesheet(request):
                                 total_hour=data["total_hour"]
                              )
         return JsonResponse(data, safe=False)
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import LeaveRequest
-from .forms import LeaveRequestReview
-
+    
 def leave_request_manager(request):
     if request.method == 'POST':
-        status = request.POST.get('status')
-        review_comments = request.POST.get('comments')
-        employee_id = request.POST.get('employee_id')  # Assuming 'employee_id' is the correct name
+        print('in')
+        # status = request.POST.get('status')
+        # review_comments = request.POST.get('comments')
+        # employee_id = request.POST.get('employee')  # Assuming 'employee_id' is the correct name
+
+        data = json.loads(request.body)
+        print('data', data)
+        employee_id = data.get('employee_id')
+        id = data.get('id')
+        status = data.get('status')
+        comments = data.get('comments')
+
+        
 
         try:
             # Retrieve the LeaveRequest based on the associated Employee
-            leave_request = LeaveRequest.objects.get(employee__id=employee_id)
-            leave_request.status = status
-            leave_request.comments = review_comments
-            leave_request.save()
+            # leave_request = LeaveRequest.objects.get(employee__id=employee_id)
+            # leave_request.status = status
+            # leave_request.comments = review_comments
+            # leave_request.save()
+            #print(request.POST)
+            LeaveRequest.objects.filter(id=id).update(status=status, comments=comments)
+            print("success")
+            data_result = {
+                'message': 'success',
+                'status': status,
+                'comments': comments,
+               'employee_id': employee_id,
+            }
+            return JsonResponse(data_result, safe=False)
 
-            messages.success(request, 'Leave request updated successfully.')
+            
+            #messages.success(request, 'Leave request updated successfully.')
         except LeaveRequest.DoesNotExist:
-            messages.error(request, 'Leave request not found.')
+            data_result = 'failed'
+            return JsonResponse(data_result, safe=False)
 
         # Redirect to the same page or another page after processing the form
         return redirect('leave_manager')
 
     # If it's not a POST request, retrieve all leave requests
+    
     all_leave_requests = LeaveRequest.objects.all()
     return render(request, 'employee_information/leave_bs.html', {'all_leave_requests': all_leave_requests})
 
@@ -832,19 +829,15 @@ def create_leave_request(request):
 
     return render(request, 'employee_information/leave_request_form.html', {'form': form})
 
-
-def bootstrap_home(request):
-    return render(request, 'employee_information/home_page.html')
-
-def authenticate_user(request):
-    return render(request, 'employee_information/authenticate.html')
-
-
-def emp_home(request):
-    return render(request, 'employee_information/employee_homepage.html')
-
 def timesheet_bs(request):
     return render(request, 'employee_information/timesheet_bs.html')
 
 def leave_manager_bs(request):
     return render(request,'employee_information/leave_bs.html')
+
+def timesheet_create_bs(request):
+    return render(request,'employee_information/timesheet_create_bs.html')
+
+def signup_bs(request):
+    return render(request,'employee_information/signup.html')
+
