@@ -228,7 +228,8 @@
         })
         .then(response => response.json())
         .then(data => {
-                
+          if (!data) {
+            location.reload();}
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
                 document.getElementById("project_name").value = data?.project_name || '';
@@ -288,7 +289,7 @@
                     
                     for (var i = 1; i < totallength-1; i++) {
                         var newRow = document.createElement("tr");
-                        newRow.style.backgroundColor = "#e0e0e0";                      
+                                            
                         newRow.innerHTML += `
                         <td class="text-center">
                           <input class="text-center task-input" type="text" id="monday_task" name="task" placeholder="Task Name" value="${data.tasks[i] || 0}">
@@ -320,7 +321,7 @@
                 }
                 
 
-                if (data?.project_name && data?.status!="Redo") {
+                if (data?.project_name && data?.status!="uncheck") {
 
                     // Removing buttons
                     document.getElementById("submitBtn").remove();
@@ -361,7 +362,7 @@
 
                 }
                 else{
-                    if (data?.status!="Redo"){
+                    if (data?.status!="uncheck"){
                     console.log("else partition")
                     location.reload();}
                                 }
@@ -466,7 +467,7 @@
                     
                     for (var i = 1; i < totallength; i++) {
                         var newRow = document.createElement("tr");
-                        newRow.style.backgroundColor = "#e0e0e0";                      
+                                              
                         newRow.innerHTML += `
                         <td class="text-center">
                           <input class="text-center task-input" type="text" id="monday_task" name="task" placeholder="Task Name" value="${data.tasks[i] || 0}">
@@ -497,7 +498,7 @@
                     }
                 }
 
-                if (data?.project_name && data?.status!="Redo") {
+                if (data?.project_name && data?.status!="uncheck") {
                     // Removing buttons
                     document.getElementById("submitBtn").remove();
                     document.getElementById("discardBtn").remove();
@@ -644,7 +645,7 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
     var taskNameRow = rows[rows.length - 5];
     var newRow = document.createElement("tr");
     
-    newRow.style.backgroundColor = "#e0e0e0";
+    
     newRow.innerHTML = `
 
                         <td class="text-center">
@@ -827,7 +828,7 @@ if (savedTableData) {
                 
                 for (var i = 1; i < totallength; i++) {
                     var newRow = document.createElement("tr");
-                    newRow.style.backgroundColor = "#e0e0e0";                      
+                                          
                     newRow.innerHTML += `
                     
                     

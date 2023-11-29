@@ -384,7 +384,7 @@ def time_sheet_status(request):
 
         # ]
         return JsonResponse(data_result, safe=False)
-    return render(request, 'employee_information/timesheet_bs.html', {'data_result': page_obj})
+    return render(request, 'employee_information/timesheet_status_bs.html', {'data_result': page_obj})
 
 
 @login_required
@@ -519,21 +519,16 @@ def timesheet_manager( request ):
      print("timesheet manager")
      model = TimeSheet
      model_user = Employee
-     data_user = model_user.objects.filter(employee_id=request.user.employee_id)
-     print(request.user.employee_name)
-     for i in data_user:
-        user_name = i.employee_name
-     data = model.objects.all().order_by('-start_date')
-    #  data =            [{
-    #             "project_name": "DHL",
-    #             "start_date": "30",
-    #             "end_date": "7",
-    #             "ST": "30",
-    #             "OT": "7",
-
-    #         }]
-    
      
+     if request.user.role == "superadmin":
+        data_user = model_user.objects.filter(employee_id=request.user.employee_id)
+     print("data_user", request.user.role)
+     #data = model.objects.all().order_by('-start_date')
+     data = model.objects.exclude(username=request.user.employee_name).order_by('-start_date')
+     paginator = Paginator(data, 5)  # Show 10 items per page
+
+     page_number = request.GET.get('page')
+     page_obj = paginator.get_page(page_number)
      if request.method == 'POST':
         
             data = json.loads(request.body)
@@ -554,7 +549,7 @@ def timesheet_manager( request ):
             
         
             
-            elif len(data)<2:
+            elif len(data)<=2:
             
                 try:
                     print("in")
@@ -579,7 +574,7 @@ def timesheet_manager( request ):
                 except Exception as e:
                     # Handle the exception here
                     print(f"An error occurred: {str(e)}")
-                
+                print("data_list", data_list)
                 return JsonResponse(data_list, safe=False)
             else:
                 if request.method == 'POST':
@@ -597,7 +592,7 @@ def timesheet_manager( request ):
                 else:
                     return JsonResponse({"message": "Invalid request method"}, status=400)
 
-     return render(request, 'employee_information/timesheet_manager.html', {"data":data} )
+     return render(request, 'employee_information/timesheet_manager_bs.html', {"data":page_obj, "role":request.user.role} )
 
 @login_required
 def timesheet_update_view(request, timesheet_id):

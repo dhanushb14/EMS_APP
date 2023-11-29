@@ -206,6 +206,13 @@
               <span class="nav_name">Employee List</span>
             </a>
             <a
+              href="{% url 'timesheets_create' %}"
+              class="nav_link {% if request.path == '/timesheets_create' %}active{% endif %}"
+            >
+              <i class="fa-solid fa-pen-to-square nav_icon"></i>
+              <span class="nav_name">Time Sheet Create</span>
+            </a>
+            <a
               href="{% url 'timesheet_manager' %}"
               class="nav_link {% if request.path == '/timesheet_manager' %}active{% endif %}"
             >
