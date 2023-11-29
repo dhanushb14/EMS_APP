@@ -26,6 +26,7 @@
       <button
         class="btn btn-sm text-light px-3"
         style="background-color: #4981b2 !important"
+        id="applyFilterBtn"
       >
         Apply Filters
       </button>
@@ -33,17 +34,21 @@
   </div>
   <div class="row mt-5 mx-auto">
     <table class="table table-responsive table-bordered">
-      <tr class="table-secondary fw-light">
-        <th class="fw-medium">Project Name</th>
-        <th class="fw-medium">Start Date</th>
-        <th class="fw-medium">End Date</th>
-        <th class="fw-medium">ST</th>
-        <th class="fw-medium">OT</th>
-        <th class="fw-medium">Status</th>
-        <th class="fw-medium">Approved By</th>
-      </tr>
+      <thead>
+        <tr class="table-secondary fw-light">
+          <th class="fw-medium text-center">Project Name</th>
+          <th class="fw-medium text-center">Employee Name</th>
+          <th class="fw-medium text-center">Start Date</th>
+          <th class="fw-medium text-center">End Date</th>
+          <th class="fw-medium text-center">ST</th>
+          <th class="fw-medium text-center">OT</th>
+          <th class="fw-medium text-center">Status</th>
+          <th class="fw-medium text-center">Comment</th>
+          <th class="fw-medium text-center">Approved By</th>
+        </tr>
+      </thead>
+      {% for position in data_result|slice:":5" %}
       <tr>
-        {% for position in data_result %}
         <td class="text-center">{{ position.project_name }}</td>
         <td class="text-center">{{ position.username }}</td>
         <td class="text-center">{{ position.start_date }}</td>
@@ -54,50 +59,146 @@
         <td class="text-center">{{ position.status }}</td>
         {% else %}
         <td class="text-center">Pending</td>
-        {% endif %} {% if position.status == "Approved" or position.status == "Rejected" %}
+        {% endif %} 
+        <td class="text-center">{{ position.comments }}</td>
+        {% if position.status == "Approved" or position.status == "Rejected" %}
         <td class="text-center">Manager</td>
         {% else %}
         <td class="text-center"></td>
-        {% endif %} {% endfor %}
+        {% endif %} 
       </tr>
-      <tr>
-        <td>Fannimae</td>
-        <td>20/11/2023</td>
-        <td>24/11/2023</td>
-        <td>0</td>
-        <td>0</td>
-        <td>Pending</td>
-        <td></td>
-      </tr>
+      {% endfor %}
+      
     </table>
   </div>
   <div class="row">
     <div class="col-auto me-auto">
-        <button class="btn btn-md text-light" style="background-color: #978d9a">
+        <button class="btn btn-md text-light" id="saveBtn" style="background-color: #978d9a">
             Download List Data
         </button>
     </div>
-    <div class="col-auto ms-auto">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+    <div class="col-auto ms-auto" id="pagination" style="text-align: right;">
+      {% if data_result.has_previous %}
+          <button onclick="location.href='?page={{ data_result.previous_page_number }}'"><</button>
+      {% endif %}
+      <span id="pageDisplay">Page {{ data_result.number }} of {{ data_result.paginator.num_pages }}</span>
+      {% if data_result.has_next %}
+          <button onclick="location.href='?page={{ data_result.next_page_number }}'">></button>
+      {% endif %}
+  </div>
+    
 </div>
 
 </div>
+<script>
+  //download button
+  document.getElementById('saveBtn').addEventListener('click', function() {
+    // Get the table element
+    var table = document.querySelector('.table');
 
+    // Get the table rows
+    var rows = table.querySelectorAll('tbody tr');
+
+    // Create an array to store the table data
+    var tableData = [];
+
+    // Iterate over each row and extract the cell values
+    rows.forEach(function(row) {
+        var rowData = [];
+        var cells = row.querySelectorAll('td');
+        cells.forEach(function(cell) {
+            rowData.push(cell.textContent.trim());
+        });
+        tableData.push(rowData);
+    });
+
+    // Create a JSON object with the table data
+    var jsonData = {
+        'table_data': tableData
+    };
+    
+    // Send the table data to the server using an AJAX request
+    fetch("{% url 'download_list_data' %}", {
+    method: 'POST',
+    body: JSON.stringify(jsonData),
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token if needed
+
+    }
+})
+.then(response => response.blob())
+.then(blob => {
+    // Create a new object URL for the blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a link and click it to start the download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'list_data.csv';
+    link.click();
+
+    // Release the reference to the object URL
+    window.URL.revokeObjectURL(url);
+});
+});
+</script>
+<script>
+  //filter button
+  document.getElementById('applyFilterBtn').addEventListener('click', function() {
+    var startDate = document.getElementById('start_date').value;
+    var endDate = document.getElementById('end_date').value;
+
+    fetch("{% url 'time_sheet_status' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            'start_date': startDate,
+            'end_date': endDate
+        })
+    }).then(function(response) {
+        return response.json();
+    }).then(function(data_result) {
+        var tableBody = document.querySelector('.table tbody');
+
+        // Clear the table body
+        while (tableBody.firstChild) {
+            tableBody.removeChild(tableBody.firstChild);
+        }
+
+        // Populate the table with the filtered data
+        data_result.forEach(function(item) {
+            var row = document.createElement('tr');
+            row.classList.add('highlight-row')
+            row.innerHTML = `
+                <td class="text-center">${item.project_name}</td>
+                <td class="text-center">${item.username}</td>
+                <td class="text-center">${item.start_date}</td>
+                <td class="text-center">${item.end_date}</td>
+                <td class="text-center">${item.St}</td>
+                <td class="text-center">${item.ot}</td>
+                <td class="text-center">
+                    ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? item.status : 
+                        "Pending"
+                    }
+                </td>
+                <td class="text-center">
+                  ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? item.comments : 
+                        ""
+                    }
+                </td>
+                <td class="text-center">
+                  ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? "Manager" : 
+                        "" }
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    });
+});
+
+</script>
 {% endblock pageContent %}

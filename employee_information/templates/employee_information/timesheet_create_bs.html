@@ -286,7 +286,7 @@
                     var rows = tbody.getElementsByTagName("tr");
                     var taskNameRow = rows[rows.length - 5];
                     
-                    for (var i = 1; i < totallength; i++) {
+                    for (var i = 1; i < totallength-1; i++) {
                         var newRow = document.createElement("tr");
                         newRow.style.backgroundColor = "#e0e0e0";                      
                         newRow.innerHTML += `
@@ -800,25 +800,25 @@ if (savedTableData) {
     if (data.monday_value.length <= 1) {
       console.log("here7")
                 document.getElementById("task").value = data?.tasks[0] || '';
-                document.getElementById("monday_value").value = data?.monday_value[0] || '0';
-                document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
-                document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
-                document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
-                document.getElementById("friday_value").value = data?.friday_value[0] || '0';
-                document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
-                document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
+                document.getElementById("monday_value").value = data?.monday_value[0] || '';
+                document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
+                document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
+                document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
+                document.getElementById("friday_value").value = data?.friday_value[0] || '';
+                document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
+                document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
 
     }
     else{
       console.log("here8")
                 document.getElementById("task").value = data?.tasks[0] || '';
-                document.getElementById("monday_value").value = data?.monday_value[0] || '0';
-                document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
-                document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
-                document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
-                document.getElementById("friday_value").value = data?.friday_value[0] || '0';
-                document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
-                document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
+                document.getElementById("monday_value").value = data?.monday_value[0] || '';
+                document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
+                document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
+                document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
+                document.getElementById("friday_value").value = data?.friday_value[0] || '';
+                document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
+                document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
                 var totallength = (data.monday_value.length) 
                 
                 var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];

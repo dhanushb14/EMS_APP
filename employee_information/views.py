@@ -17,7 +17,7 @@ from django.views.decorators.http import require_http_methods
 from User.models import Employee
 from django.http import HttpResponse
 import csv
-
+from django.core.paginator import Paginator
 import json
 import openpyxl
 import pandas as pd
@@ -308,8 +308,11 @@ def time_sheet_status(request):
     current_user = request.user.employee_name
     print("current_user", current_user)
     model = TimeSheet
-    data_result = model.objects.filter(username=current_user)
-    
+    data_result = model.objects.filter(username=current_user).order_by('-start_date')
+    paginator = Paginator(data_result, 5)  # Show 10 items per page
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     if request.method == 'POST':
         data = json.loads(request.body)
         start_date = data.get('start_date')
@@ -381,7 +384,7 @@ def time_sheet_status(request):
 
         # ]
         return JsonResponse(data_result, safe=False)
-    return render(request, 'employee_information/time_sheet_status.html', {'data_result': data_result})
+    return render(request, 'employee_information/timesheet_bs.html', {'data_result': page_obj})
 
 
 @login_required
