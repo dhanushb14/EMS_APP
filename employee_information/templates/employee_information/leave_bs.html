@@ -10,9 +10,9 @@
   <div class="row">
     <div class="col">
       <div class="card">
-        <div class="table-responsive">
-          <form method="post" action="">
-            {% csrf_token %}
+        <form method="post" action="">
+          {% csrf_token %}
+          <div class="table-responsive">
             <table class="table table-bordered">
               <thead>
                 <tr class="table-secondary">
@@ -28,20 +28,18 @@
               </thead>
               <tbody>
                 {% for leave_request in all_leave_requests %}
-                  <tr {% if leave_request.status == 'Approved' %} class="table-success" {% elif leave_request.status == 'Rejected' %} class="table-danger" {% elif leave_request.status == 'Pending' %} class="table-warning" {% endif %}>
+                  <tr>
                     <td class="text-center" id="employee_id">{{ leave_request.employee }}</td>
                     <td class="text-center" id="employee_id">{{ leave_request.employee_name }}</td>
                     <td class="text-center">{{ leave_request.start_date | date:"j/n/Y"}} <br>to <br> {{ leave_request.end_date | date:"j/n/Y" }}</td>
                     <td class="text-center">{{ leave_request.leave_type }}</td>
                     <td class="text-center" id="description">{{ leave_request.description }}</td>
                     <td class="text-center">
-                      <div class="form-group">
                         <select name="status" id="status" class="form-select">
                           <option value="Approved" {% if leave_request.status == 'Approved' %}selected{% endif %}>Approved</option>
                           <option value="Rejected" {% if leave_request.status == 'Rejected' %}selected{% endif %}>Rejected</option>
                           <option value="Pending" {% if leave_request.status == 'Pending' %}selected{% endif %}>Pending</option>
                         </select>
-                      </div>
                     </td>
                     <td class="text-center col-2">
                       <textarea name="comments" id="comments"  cols="15" class="form-control">{{ leave_request.comments }}</textarea>
@@ -53,8 +51,9 @@
                 {% endfor %}
               </tbody>
             </table>
+          </div>
           </form>
-        </div>
+        
       </div>
     </div>
   </div>

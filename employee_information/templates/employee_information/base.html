@@ -169,7 +169,11 @@
   <body id="body-pd">
     <header class="header" id="header">
       <div class="header_toggle">
-        <i class="fa-solid fa-bars" style="color: #471fd9;" id="header-toggle"></i>
+        <i
+          class="fa-solid fa-bars"
+          style="color: #471fd9"
+          id="header-toggle"
+        ></i>
       </div>
       <div class="h4">
         <i class="fa-solid fa-user me-2 my-5" style="color: #4723d9"></i>
@@ -227,34 +231,61 @@
               <i class="fa-solid fa-house nav_icon"></i>
               <span class="nav_name">Home</span>
             </a>
+            
+            <!-- main menu of Time sheet collapse -->
             <a
+            data-bs-toggle="collapse" href="#TimeSheetSubmenu" role="button"
+              class="nav_link {% if request.path == '/timesheets_create' or request.path == '/time_sheet_status' %}active{% endif %}"
+            >
+              <i class="fa-solid fa-clock nav_icon"></i>
+              <span class="nav_name dropdown-toggle">Time Sheet</span>
+            </a>
+            <!-- Time sheet collapsible sub menu-->
+
+            <div class="collapse bg-light" id="TimeSheetSubmenu">
+              <a
               href="{% url 'timesheets_create' %}"
               class="nav_link {% if request.path == '/timesheets_create' %}active{% endif %}"
             >
-              <i class="fa-solid fa-pen-to-square nav_icon"></i>
-              <span class="nav_name">Time Sheet Create</span>
+              <i class="fa-solid fa-pen-to-square nav_icon" style="color: #471fd9;"></i>
+              <span class="nav_name" style="color: #471fd9;">Submit Time Sheet</span>
             </a>
             <a
               href="{% url 'time_sheet_status' %}"
               class="nav_link {% if request.path == '/time_sheet_status' %}active{% endif %}"
             >
-              <i class="fa-solid fa-clock nav_icon"></i>
-              <span class="nav_name">Time Sheet Status</span>
+            <i class="fa-regular fa-clock nav_icon" style="color: #471fd9;"></i>
+              <span class="nav_name" style="color: #471fd9;">Time Sheet Status</span>
             </a>
+            </div>
+            <!-- end of Time sheet collapsible sub menu -->
+            <!-- main menu of LMS collapse -->
             <a
-              href="{% url 'leave_request' %}"
-              class="nav_link {% if request.path == '/leave_request/' %}active{% endif %}"
+            data-bs-toggle="collapse" href="#LeaveSubmenu" role="button" aria-expanded="false" aria-controls="collapseExample"
+              class="nav_link {% if request.path == '/leave_request/' or request.path == '/leave_detail/' %}active{% endif %}"
             >
-              <i class="fa-regular fa-calendar-plus nav_icon"></i>
-              <span class="nav_name">Apply Leave</span>
+              <i class="fa-regular fa-calendar nav_icon"></i>
+              <span class="nav_name dropdown-toggle">LMS</span>
             </a>
-            <a
-              href="{% url 'leave_detail' %}"
-              class="nav_link {% if request.path == '/leave_detail/' %}active{% endif %}"
-            >
-              <i class="fa-regular fa-calendar-check nav_icon"></i>
-              <span class="nav_name">Leave Status</span>
-            </a>
+            <!-- LMS collapsible sub menu-->
+
+            <div class="collapse bg-light" id="LeaveSubmenu">
+              <a
+                href="{% url 'leave_request' %}"
+                class="nav_link {% if request.path == '/leave_request/' %}active{% endif %}"
+              >
+                <i class="fa-regular fa-calendar-plus nav_icon" style="color: #471fd9;"></i>
+                <span class="nav_name" style="color: #471fd9;">Apply Leave</span>
+              </a>
+              <a
+                href="{% url 'leave_detail' %}"
+                class="nav_link {% if request.path == '/leave_detail/' %}active{% endif %}"
+              >
+                <i class="fa-regular fa-calendar-check nav_icon" style="color: #471fd9;"></i>
+                <span class="nav_name" style="color: #471fd9;">Leave Status</span>
+              </a>
+            </div>
+            <!-- end of LMS collapsible sub menu -->
             {% endif %}
           </div>
         </div>
