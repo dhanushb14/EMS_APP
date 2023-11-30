@@ -40,7 +40,7 @@
       <thead>
         <tr class="table-secondary fw-light">
           <th class="col-2 fw-medium text-center">Tasks</th>
-          <th class="col fw-medium text-center">Monday</th>
+          <th class=" fw-medium text-center">Monday</th>
           <th class="col fw-medium text-center">Tuesday</th>
           <th class="col fw-medium text-center">Wednesday</th>
           <th class="col fw-medium text-center">Thursday</th>
@@ -169,6 +169,17 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+  // Creating the warning msg
+  var messageBox1 = document.createElement("div");
+                    messageBox1.textContent = "* You have already Submitted the Time Sheet *";
+                    messageBox1.classList.add("message1-box");
+                    //document.body.appendChild(messageBox1);
+                    // Get the parent element of the total hour input field
+                    
+                    var messageCell = document.getElementById("message").children[0];
+
+                    // Append the message box to the table cell
+                    messageCell.appendChild(messageBox1);
   // date change, check to see if there is data for that date
   function getPreviousMonday() {
         var date = new Date();
@@ -213,6 +224,10 @@
             var formattedEndDate = endDate.toISOString().split('T')[0];
             var username = document.body.getAttribute('data-username');
             console.log(username);
+
+            
+
+
             fetch("{% url 'timesheets_create' %}", {
             method: 'POST',
             headers: {
@@ -229,6 +244,8 @@
         .then(response => response.json())
         .then(data => {
           if (!data) {
+            console.log(data)
+            console.log("here4 reload")
             location.reload();}
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
@@ -318,15 +335,17 @@
                         `;
                         taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
                     }
-                }
                 
+                
+                console.log("here10", data?.project_name, data?.status)
 
                 if (data?.project_name && data?.status!="uncheck") {
-
+                    messageBox1.style.display = "block"; // Show the message box
+                    console.log("error came here")
                     // Removing buttons
-                    document.getElementById("submitBtn").remove();
-                    document.getElementById("discardBtn").remove();
-                    document.getElementById("saveBtn").remove();
+                    document.getElementById("submitBtn").disabled = true;
+                    document.getElementById("discardBtn").disabled = true;
+                    document.getElementById("saveBtn").disabled = true;
                     
                     // Making inputs read-only
                     document.getElementById("project_name").readOnly = true;
@@ -348,23 +367,42 @@
                     document.getElementById("ot").readOnly = true;
                     document.getElementById("total_hour").readOnly = true;
 
-                    // Creating the warning msg
-                    var messageBox1 = document.createElement("div");
-                    messageBox1.textContent = "* You have already Submitted the Time Sheet *";
-                    messageBox1.classList.add("message1-box");
-                    //document.body.appendChild(messageBox1);
-                    // Get the parent element of the total hour input field
                     
-                    var messageCell = document.getElementById("message").children[0];
-
-                    // Append the message box to the table cell
-                    messageCell.appendChild(messageBox1);
 
                 }
                 else{
+                  
                     if (data?.status!="uncheck"){
                     console.log("else partition")
+                    console.log("here3 reload")
                     location.reload();}
+
+                    else{
+                      messageBox1.style.display = "none"; // Hide the message box
+                      document.getElementById("submitBtn").disabled = false;
+                      document.getElementById("discardBtn").disabled = false;
+                      document.getElementById("saveBtn").disabled = false;
+
+                      // Making inputs read-only
+                    document.getElementById("project_name").readOnly = false;
+                    document.getElementById("monday_value").readOnly = false;
+                    document.getElementById("tuesday_value").readOnly = false;
+                    document.getElementById("wednesday_value").readOnly = false;
+                    document.getElementById("thursday_value").readOnly = false;
+                    document.getElementById("friday_value").readOnly = false;
+                    document.getElementById("saturday_value").readOnly = false;
+                    document.getElementById("sunday_value").readOnly = false;
+                    document.getElementById("ovt_monday").readOnly = false;
+                    document.getElementById("ovt_tuesday").readOnly = false;
+                    document.getElementById("ovt_wednesday").readOnly = false;
+                    document.getElementById("ovt_thursday").readOnly = false;
+                    document.getElementById("ovt_friday").readOnly = false;
+                    document.getElementById("ovt_saturday").readOnly = false;
+                    document.getElementById("ovt_sunday").readOnly = false;
+                    document.getElementById("St").readOnly = false;
+                    document.getElementById("ot").readOnly = false;
+                    document.getElementById("total_hour").readOnly = false;
+                    }
                                 }
                             
 
@@ -377,10 +415,11 @@
                     //     // add a request body if required
                     //     })
                     
-                
+                    }
             });
-
+          
         });
+      
 
         console.log("camehere")
         var data1 = localStorage.getItem('tableData');         
@@ -497,12 +536,13 @@
                         taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
                     }
                 }
-
+                console.log("here123")
                 if (data?.project_name && data?.status!="uncheck") {
+                    messageBox1.style.display = "block"; // Show the message box
                     // Removing buttons
-                    document.getElementById("submitBtn").remove();
-                    document.getElementById("discardBtn").remove();
-                    document.getElementById("saveBtn").remove();
+                    document.getElementById("submitBtn").disabled = true;
+                    document.getElementById("discardBtn").disabled = true;
+                    document.getElementById("saveBtn").disabled = true;
                     
                     // Making inputs read-only
                     document.getElementById("project_name").readOnly = true;
@@ -524,17 +564,7 @@
                     document.getElementById("ot").readOnly = true;
                     document.getElementById("total_hour").readOnly = true;
 
-                    // Creating the warning msg
-                    var messageBox1 = document.createElement("div");
-                    messageBox1.textContent = "* You have already Submitted the Time Sheet *";
-                    messageBox1.classList.add("message1-box");
-                    //document.body.appendChild(messageBox1);
-                    // Get the parent element of the total hour input field
                     
-                    var messageCell = document.getElementById("message").children[0];
-
-                    // Append the message box to the table cell
-                    messageCell.appendChild(messageBox1);
 
                 }
             
@@ -911,6 +941,7 @@ if (savedTableData) {
         // Remove the table data and task inputs from local storage
         localStorage.removeItem('tableData');
         localStorage.removeItem('taskInputs');
+        console.log("here2 reload")
         location.reload();
 }});
 </script>
@@ -918,7 +949,7 @@ if (savedTableData) {
   // submit button
   document.getElementById("submitBtn").addEventListener("click", function() {
         event.preventDefault()
-
+        console.log("sendbtm here")
         var taskInputs = document.querySelectorAll('.task-input');
         var tasks = Array.from(taskInputs).map(input => input.value);
         var start_date = document.getElementById('start_date').value;
@@ -1003,12 +1034,9 @@ if (savedTableData) {
         }
     })
     .then(function(data) {
-        location.reload();
-    })
-    .catch(function(error) {
-        // Handle any errors that occurred during the request
-        console.error(error);
-    });
+        //
+    
+        console.log("here1 reload")
         var messageBox_submit = document.createElement("div");
         messageBox_submit.textContent = "Time Sheet Submitted";
         messageBox_submit.classList.add("message-box");
@@ -1018,6 +1046,8 @@ if (savedTableData) {
         setTimeout(function() {
             messageBox_submit.remove();
         }, 1700);
+        location.reload();
+        })
 });
 </script>
 {% endblock pageContent %}

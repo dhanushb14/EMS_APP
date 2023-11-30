@@ -407,6 +407,7 @@ def TimeSheetCreate(request):
        #if data["method_1"] != "first_fetch":  # Loading the date into db
         print("storing undo", data)
         if len(data)>7:
+            print("first if")
             from datetime import datetime
             start_date = data.get('start_date')
             end_date = data.get('end_date')
@@ -415,7 +416,8 @@ def TimeSheetCreate(request):
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
             data_status = model.objects.filter(start_date=start_date, username=username)
             try:
-                if data_status[0].status == "Rejected":
+                if data_status[0].status == "uncheck":
+
                     model.objects.filter(start_date=start_date, username=username).update(
                         start_date= data["start_date"],
                         end_date = data["end_date"],
@@ -452,8 +454,9 @@ def TimeSheetCreate(request):
         else:    # Fetching the data with start and end date
             start_date = data.get('start_date')
             end_date = data.get('end_date')
+            print("asdf44refa", start_date, end_date)
             username = request.user.employee_name
-            
+            print("date change")
             from datetime import datetime
 
             # Convert start_date and end_date to datetime objects
@@ -463,10 +466,15 @@ def TimeSheetCreate(request):
             #pdb.set_trace()
             try:
             # Filter data based on start_date and end_date
-                data = model.objects.filter(start_date=start_date, username=username)
+                print("try in")
+                print("start_date",start_date)
+                print("username", username)
+                data = model.objects.filter(start_date=start_date, username=username, end_date=end_date )
+                print("try out", data)
+                print("got data",data)
                 print("worked")
                 print("monday_value",data[0].monday_value)
-                print("project:",len(data[0].monday_value))
+                print("project:",len(data[0].project_name))
                 print("status",data[0].status)
                 data = {
                     "start_date": data[0].start_date,
@@ -494,8 +502,10 @@ def TimeSheetCreate(request):
                     "th_hour": data[0].th_hour,
 
                 }
+                print("data",data)
             except Exception:
                 data = 0
+                print("111111111111111111111111111111111111111111111111111")
                 # For testing
             # data =            {
             #     "project_name": "DHL",
@@ -520,11 +530,19 @@ def timesheet_manager( request ):
      model = TimeSheet
      model_user = Employee
      
-     if request.user.role == "superadmin":
+     if request.user.role == "manager":
         data_user = model_user.objects.filter(employee_id=request.user.employee_id)
      print("data_user", request.user.role)
      #data = model.objects.all().order_by('-start_date')
-     data = model.objects.exclude(username=request.user.employee_name).order_by('-start_date')
+    #  if request.user.role == "manager":
+    #     data = model.objects.exclude(username=request.user.employee_name).order_by('-start_date')
+     if request.user.role == "manager":
+        data = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).order_by('-start_date')
+        
+     elif request.user.role == "employee":
+        data = model_user.objects.filter(employee_id=request.user.employee_id).order_by('-start_date')
+     else:
+        data = model.objects.all().order_by('-start_date')
      paginator = Paginator(data, 5)  # Show 10 items per page
 
      page_number = request.GET.get('page')
@@ -535,17 +553,24 @@ def timesheet_manager( request ):
             print(len(data))
             if len(data) ==3:
                 try:
+                    print("try")
+                    print(data)
                     date_string_start = data["start_date"].replace("Sept", "Sep")
                     date_object = datetime.strptime(date_string_start, "%b. %d, %Y")
                     formatted_date_start = date_object.strftime("%Y-%m-%d")
                     model.objects.filter(start_date=formatted_date_start, project_name=data["project_name"]).update(status="Pending", comments=" ")
                     return JsonResponse({"message": "Update successful", "data": "Pending"}, status=200)
                 except Exception:
-                    date_object = datetime.strptime(data["start_date"], "%b. %d, %Y")
-                    formatted_date_start = date_object.strftime("%Y-%m-%d")
-                    model.objects.filter(start_date=formatted_date_start, project_name=data["project_name"]).update(status="Pending", comments=" ")
-                    return JsonResponse({"message": "Update successful", "data": "Pending"}, status=200)
-            
+                    print("except")
+                    try:
+                        date_object = datetime.strptime(data["start_date"], "%b. %d, %Y")
+                        print(date_object)
+                        formatted_date_start = date_object.strftime("%Y-%m-%d")
+                        model.objects.filter(start_date=formatted_date_start, project_name=data["project_name"]).update(status="Pending", comments=" ")
+                        return JsonResponse({"message": "Update successful", "data": "Pending"}, status=200)
+                    except Exception:
+                        model.objects.filter(start_date=data["start_date"], project_name=data["project_name"]).update(status="Pending", comments=" ")
+                        return JsonResponse({"message": "Update successful", "data": "Pending"}, status=200)
             
         
             
@@ -553,13 +578,29 @@ def timesheet_manager( request ):
             
                 try:
                     print("in")
-                    project_name = data.get('project_name')
-                    data_result = model.objects.filter(project_name=project_name)
-                    
-                    print(data_result)
+                    print(data)
+                    print("project_name", data.get('project_name'))
+                    print("selected", data.get('selected'))
+
+                    if request.user.role == "manager":                       
+                        if data.get('selected') == "project_name":
+                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(project_name=data.get('project_name')).order_by('-start_date')
+                        elif data.get('selected') == "emp_name":
+                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(username=data.get('project_name')).order_by('-start_date')
+                        else:
+                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(start_date=data.get('project_name')).order_by('-start_date')
+                    else :
+                        if data.get('selected') == "project_name":
+                            data_result = model.objects.filter(project_name=data.get('project_name')).order_by('-start_date')
+                        elif data.get('selected') == "emp_name":
+                            data_result = model.objects.filter(username=data.get('project_name')).order_by('-start_date')
+                        else:
+                            data_result = model.objects.filter(start_date=data.get('project_name')).order_by('-start_date')
+
+                    print("data_result",data_result)
                     data_list = []
-                    for value in data_result:
-                        
+                    
+                    for value in data_result:  # Iterate over the objects on the current page
                         data_list.append({
                             "username": value.username,
                             "start_date": value.start_date,
@@ -571,11 +612,25 @@ def timesheet_manager( request ):
                             "comments": value.comments,
                             "total_hour": value.total_hour,
                         })
+                    paginator = Paginator(data_list, 5)
+                    data = paginator.get_page(page_number)
+                    response_data = {
+                        'paginator': {
+                            'num_pages': data.paginator.num_pages,
+                            'number': data.number,  # Include the current page number
+                            'has_next': data.has_next(),  # Include this
+                            'has_previous': data.has_previous(),  # Include this
+                            'count': data.paginator.count,
+                        },
+                        'results': data_list,  # The list of results
+                    }
                 except Exception as e:
                     # Handle the exception here
                     print(f"An error occurred: {str(e)}")
+                    response_data = {'error': str(e)}
                 print("data_list", data_list)
-                return JsonResponse(data_list, safe=False)
+                
+                return JsonResponse(response_data, safe=False)
             else:
                 if request.method == 'POST':
                     

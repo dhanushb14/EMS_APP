@@ -76,9 +76,9 @@
         </td>
         <td class="text-center">
           {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
-            <button id="send-btn" type="button" class="btn btn-success btn-sm undo-btn">Success</button> 
+            <button id="undo-btn" type="button" class="btn btn-success btn-sm undo-btn">Success</button> 
           {% else %}
-          <button id="send-btn" type="button" class="btn btn-danger btn-sm">Submit</button>
+          <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-danger btn-sm">Submit</button>
           {% endif %}
           <button id = "visibility" class="btn btn-secondary btn-sm edit-data" type="button" data-id="{{ employee.employee_id }}" title="Edit">
             <i class="fa-solid fa-pen"></i>
@@ -125,8 +125,16 @@
         var rowData = [];
         var cells = row.querySelectorAll('td');
         cells.forEach(function(cell) {
+            // Check if the cell contains a select dropdown
+        var select = cell.querySelector('select');
+        if (select) {
+            // If it does, push the selected value
+            rowData.push(select.options[select.selectedIndex].value);
+        } else {
+            // If it doesn't, push the cell text content
             rowData.push(cell.textContent.trim());
-        });
+        }
+    });
         tableData.push(rowData);
     });
 
@@ -187,146 +195,109 @@ document.getElementById('project_name_filter').addEventListener('input', functio
 <script>
   //filter button, submit button
   document.getElementById('applyFilterBtn').addEventListener('click', function() {
-        var value = document.getElementById('project_name_filter').value;
-        var projectDropdown = document.getElementById('filter');
-        var project_name = projectDropdown.value;
-        console.log(project_name)
-        if (project_name == "emp_name"){
-            data = {
-                "selected": "emp_name",
-                "project_name": value
-            }
-        }
-        else if (project_name == "project_name"){
-            data = {
-                "selected": "project_name",
-                "project_name": value
-            }
-        }
-        else{
-            data = {
-                "selected": "start_date",
-                "project_name": value
-            }
-        }
+    var value = document.getElementById('project_name_filter').value;
+    var projectDropdown = document.getElementById('filter');
+    var project_name = projectDropdown.value;
+    var data = {
+        "selected": project_name,
+        "project_name": value
+    }
 
-        
-        fetch("{% url 'timesheet_manager' %}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify(data) // Add closing parenthesis here
-        }).then(function(response) {
-            return response.json();
-        }).then(function(data_list) { // Move the .then function call here
-            
-            var tableBody = document.querySelector('.table tbody');
-            var currentPage = 0;
-            var rowsPerPage = 10;
+    var paginationElement = document.getElementById('pagination');
+    while (paginationElement.firstChild) {
+        paginationElement.removeChild(paginationElement.firstChild);
+    }
 
-            function displayPage() {
-                console.log("second displaypage callled")
-                while (tableBody.firstChild) {
-                    tableBody.removeChild(tableBody.firstChild);
-                }
+    fetch("{% url 'timesheet_manager' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(data)
+    }).then(function(response) {
+        return response.json();
+    }).then(function(response_data) {
+        var tableBody = document.querySelector('.table tbody');
+        var allData = response_data.results;
+        var itemsPerPage = 5;
+        var currentPage = 1;
 
-                var start = currentPage * rowsPerPage;
-                var end = start + rowsPerPage;
+        var prevButton = document.createElement('button');
+        prevButton.textContent = '<';
+        paginationElement.appendChild(prevButton);
 
-                data_list.slice(start, end).forEach(function(item) {
-                    $(document).on('click', '.edit-data', function() {
-                        console.log("hey")
-                        var id = $(this).attr('data-id');
-                        var project = $(this).attr('data-project');
-                        var startDate = $(this).attr('data-start_date');
-                        var endDate = $(this).attr('data-end_date');
-                        
-                        // Call the uni_modal function with the appropriate parameters
-                        uni_modal("Edit TimeSheet", "{% url 'view_timesheet' %}?id=" + id + "&data-project=" + project + "&data-start_date=" + startDate + "&data-end_date=" + endDate, 'modal-lg');
-                    });
-                    var row = document.createElement('tr');
-                    console.log(item.project_name,item.username, item.start_date, item.end_date);
+        var pageDisplay = document.createElement('span');
+        pageDisplay.id = 'pageDisplay';
+        paginationElement.appendChild(pageDisplay);
 
-                    //row.classList.add('highlight-row')
-                    row.innerHTML = `
-                        <td id="project_name" class="text-center">${item.project_name}</td>
-                        <td id="username" class="text-center">${item.username}</td>
-                        <td id='start_date' class="text-center">${item.start_date}</td>
-                        <td id='end_date' class="text-center">${item.end_date}</td>
-                        <td id='St' class="text-center">${item.St}</td>
-                        <td id='ot' class="text-center">${item.ot}</td>
-                        <td class="text-center">
-                            ${item.status == "Approved" || item.status == "Rejected" || item.status == "uncheck" ? item.status : `
-                            <select name="status" style="background-color: transparent; border: none;">
-                              <option value="Approved">Approved</option>
-                              <option value="Rejected">Rejected</option>
-                              <option value="uncheck">Uncheck</option>
-                            </select>
-                            `}
-                        </td>
-                        <td> 
-                          <div class="form-group">
-                            <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">${item.comments}</textarea>
-                          </div>  
-                         </td>
-                        <td class="text-center">
-                            ${item.status == "Approved" || item.status == "Rejected" ? 
-                            `<button id="send-btn" class="undo-btn" style="background-color: green !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;" disabled>SEND</button>` :
-                            `<button id="send-btn" onclick="submitForm(event)" style="background-color: red !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">SEND</button>`}
-                            <button id="visibility" class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="button" data-id="${item.username}" data-project="${item.project_name}" data-start_date="${item.start_date}" data-end_date="${item.end_date}" title="Edit">
-                                <i class="material-icons mdc-button__icon">visibility</i>
-                            </button>
+        var nextButton = document.createElement('button');
+        nextButton.textContent = '>';
+        paginationElement.appendChild(nextButton);
 
-                            {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
-                              <button id="send-btn" type="button" class="btn btn-success btn-sm undo-btn">Success</button> 
-                            {% else %}
-                            <button id="send-btn" type="button" class="btn btn-danger btn-sm">Submit</button>
-                            {% endif %}
-                            <button id = "visibility" class="btn btn-secondary btn-sm edit-data" type="button" data-id="{{ employee.employee_id }}" title="Edit">
-                              <i class="fa-solid fa-pen"></i>
-                            </button>
-                        </td>
-                        
-                    `;
-                    tableBody.appendChild(row);
-                });
+        function updatePage() {
+            var start = (currentPage - 1) * itemsPerPage;
+            var end = start + itemsPerPage;
+            var pageData = allData.slice(start, end);
 
-                document.getElementById('pageDisplay').textContent = 'Page ' + (currentPage + 1);
-
-                var prevBtn = document.getElementById('prevBtn');
-                var nextBtn = document.getElementById('nextBtn');
-
-                if (currentPage === 0) {
-                    prevBtn.disabled = true;
-                } else {
-                    prevBtn.disabled = false;
-                }
-
-                if (end >= data_list.length) {
-                    nextBtn.disabled = true;
-                } else {
-                    nextBtn.disabled = false;
-                }
+            while (tableBody.firstChild) {
+                tableBody.removeChild(tableBody.firstChild);
             }
 
-            displayPage();
-
-            document.getElementById('prevBtn').addEventListener('click', function() {
-                currentPage--;
-                displayPage();
+            pageData.forEach(function(item) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td id="project_name" class="text-center">${item.project_name}</td>
+                    <td id="username" class="text-center">${item.username}</td>
+                    <td id='start_date' class="text-center">${item.start_date}</td>
+                    <td id='end_date' class="text-center">${item.end_date}</td>
+                    <td id='St' class="text-center">${item.St}</td>
+                    <td id='ot' class="text-center">${item.ot}</td>
+                    <td class="text-center">
+                        ${item.status == "Approved" || item.status == "Rejected" || item.status == "uncheck" ? item.status : `
+                        <select name="status" style="background-color: transparent; border: none;">
+                          <option value="Approved">Approved</option>
+                          <option value="Rejected">Rejected</option>
+                          <option value="uncheck">Uncheck</option>
+                        </select>
+                        `}
+                    </td>
+                    <td> 
+                      <div class="form-group">
+                        <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">${item.comments}</textarea>
+                      </div>  
+                     </td>
+                     <td class="text-center">
+                        ${item.status == "Approved" || item.status == "Rejected" || item.status == "uncheck" ?
+                          `<button id="undo-btn" type="button" class="btn btn-success btn-sm undo-btn">Success</button>` :
+                          `<button class="send-btn btn btn-danger btn-sm" onclick="submitForm(event)" type="button">Submit</button>`}
+                        <button id="visibility" class="btn btn-secondary btn-sm edit-data" type="button" data-id="${item.comments}" title="Edit">
+                          <i class="fa-solid fa-pen"></i>
+                        </button>
+                      </td>
+                `;
+                tableBody.appendChild(row);
             });
 
-            document.getElementById('nextBtn').addEventListener('click', function() {
-                currentPage++;
-                displayPage();
-            });
-        }).catch(function(error) {
-            console.error('Error:', error);
-        });
+            pageDisplay.textContent = 'Page ' + currentPage + ' of ' + Math.ceil(allData.length / itemsPerPage);
+
+            prevButton.disabled = currentPage === 1;
+            nextButton.disabled = currentPage >= Math.ceil(allData.length / itemsPerPage);
+        }
+
+        prevButton.onclick = function() {
+            currentPage--;
+            updatePage();
+        };
+
+        nextButton.onclick = function() {
+            currentPage++;
+            updatePage();
+        };
+
+        updatePage();
     });
-
+});
 
     function submitForm(event) {
         event.preventDefault(); // Prevent form submission and page refresh
@@ -341,9 +312,10 @@ document.getElementById('project_name_filter').addEventListener('input', functio
         'ST': row.querySelector('td:nth-child(5)')?.innerText || '',
         'OT': row.querySelector('td:nth-child(6)')?.innerText || '',
         'status': row.querySelector('td:nth-child(7) select')?.value || '',
-        'comment': row.querySelector('td:nth-child(8) input')?.value || '',
+        'comment': row.querySelector('td:nth-child(8) textarea')?.value || '',
         
     };
+        console.log(data)
 
         fetch("{% url 'timesheet_manager' %}", {
             method: 'POST',
@@ -357,7 +329,10 @@ document.getElementById('project_name_filter').addEventListener('input', functio
         }).then(function(data) {
             if (data.message === "Update successful") {
                 button.style.backgroundColor = "green";
-                button.textContent = "Undo";
+                button.style.border = "none";
+                button.textContent = "Success";
+                button.classList.add('undo-btn');
+                
 
                 // Find the status field and update it
                 var statusField = row.querySelector('td:nth-child(7)');
@@ -367,16 +342,16 @@ document.getElementById('project_name_filter').addEventListener('input', functio
                     statusField.innerHTML = data.data;}
                 else {
                     statusField.innerHTML = `
-                            <select name="status" id="status" style="width: 100%; height: 100%;">
-                                <option class="me-4" value="Approved">Approved</option>
-                                <option class="me-4" value="Rejected">Rejected</option>
-                                <option class="me-4" value="Redo">Redo</option>
+                            <select name="status" id="status" style="background-color: transparent; border: none;">
+                                <option class="text-center" value="Approved">Approved</option>
+                                <option class="text-center" value="Rejected">Rejected</option>
+                                <option class="text-center" value="uncheck">Uncheck</option>
                             </select>
                             `;
                             var sendButton = row.querySelector('#send-btn');
                             sendButton.addEventListener('click', submitForm);
                             button.style.backgroundColor = "red";
-                            button.textContent = "SEND";
+                            button.textContent = "Submit";
                 }
                 
                 
@@ -388,53 +363,68 @@ document.getElementById('project_name_filter').addEventListener('input', functio
     }; 
     document.addEventListener('click', function(event) {
         var button = event.target;
-        if (button.classList.contains("undo-btn") && button.textContent === "Undo") {
-            event.preventDefault();
-            console.log("got in")
-            var row = button.closest('tr'); 
-                var data = {
-                    'project_name': row.querySelector('td:nth-child(1)').innerText,
-                    'username': row.querySelector('td:nth-child(2)').innerText,
-                    'start_date': row.querySelector('td:nth-child(3)').innerText,
-                    
-                };
+        console.log("button", button.textContent )
+        if (button.classList.contains("undo-btn") && button.textContent === "Success") {
+          if (window.confirm("Do you want to revert?")) {
+              console.log("got in")
+              var row = button.closest('tr'); 
+                  var data = {
+                      'project_name': row.querySelector('td:nth-child(1)').innerText,
+                      'username': row.querySelector('td:nth-child(2)').innerText,
+                      'start_date': row.querySelector('td:nth-child(3)').innerText,
+                      
+                  };
+                  console.log("data", data)
+                  fetch("{% url 'timesheet_manager' %}", {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'X-CSRFToken': '{{ csrf_token }}'
+                      },
+                      body: JSON.stringify(data)
+                  }).then(function(response) {
+                      return response.json();
+                  }).then(function(data) {
+                      if (data.message === "Update successful") {
+                          button.textContent = "Submit";
+                          button.style.backgroundColor = "red";
+                          button.style.border = "none";
+                          button.addEventListener('click', submitForm);
 
-                fetch("{% url 'timesheet_manager' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify(data)
-                }).then(function(response) {
-                    return response.json();
-                }).then(function(data) {
-                    if (data.message === "Update successful") {
-                        button.textContent = "Send";
-                        button.style.backgroundColor = "red";
+                          // Find the status field and replace it with a select field
+                          var statusField = row.querySelector('td:nth-child(7)');
+                          statusField.innerHTML = `
+                            <select name="status" id="status" style="background-color: transparent; border: none;">
+                                  <option class="text-center" value="Approved">Approved</option>
+                                  <option class="text-center" value="Rejected">Rejected</option>
+                                  <option class="text-center" value="uncheck">Uncheck</option>
+                              </select>
+                              `;
 
-                        // Find the status field and replace it with a select field
-                        var statusField = row.querySelector('td:nth-child(7)');
-                        statusField.innerHTML = `
-                            <select name="status" id="status" style="width: 100%; height: 100%;">
-                                <option class="me-4" value="Approved">Approved</option>
-                                <option class="me-4" value="Rejected">Rejected</option>
-                                <option class="me-4" value="Redo">Redo</option>
-                            </select>
-                            `;
+                          // Set up event listener for the new "Send" button
+                          var sendButton = row.querySelector('#send-btn');
+                          sendButton.addEventListener('click', submitForm);
 
-                        // Set up event listener for the new "Send" button
-                        var sendButton = row.querySelector('#send-btn');
-                        sendButton.addEventListener('click', submitForm);
-                    }
-                });
+                          document.addEventListener('click', function(event) {
+                          var button = event.target;
+                          if (button.id === 'send-btn') {
+                              submitForm(event);
+                          }
+                      });
+                      }
+                  });
+                }
             }
         });
 
     document.addEventListener('DOMContentLoaded', function() {
         var sendButton = document.getElementById("send-btn");
+        if (sendButton) {
         sendButton.addEventListener('click', submitForm);
-    });
+    } else {
+        console.log("Send button not found");
+    }
+});
 </script>
 
 {% endblock pageContent %}

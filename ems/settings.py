@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['ems-bwyn.onrender.com', '3.226.14.5', '*']
 # Application definition
 
 INSTALLED_APPS = [
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'employee_information',
     'django.contrib.humanize',
+    
     'User',
     'whitenoise'
 ]
