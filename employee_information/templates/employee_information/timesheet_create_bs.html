@@ -181,23 +181,21 @@
                     // Append the message box to the table cell
                     messageCell.appendChild(messageBox1);
   // date change, check to see if there is data for that date
+  messageBox1.style.display = "none";
   function getPreviousMonday() {
-        var date = new Date();
-        if (date.getUTCHours() < 6) {
-            date.setUTCDate(date.getUTCDate() - 1);
-        }
-        var day = date.getUTCDay();
-        var prevMonday;
+    var date = new Date();
+    var day = date.getUTCDay();
+    var currentWeekMonday;
 
-        if(day === 0){
-            prevMonday = new Date(date.getTime() - 6 * 24 * 60 * 60 * 1000);
-        }
-        else{
-            prevMonday = new Date(date.getTime() - (day - 1) * 24 * 60 * 60 * 1000);
-        }
-
-        return prevMonday;
+    if(day === 0){ // If it's Sunday
+        currentWeekMonday = new Date(date.getTime() - 6 * 24 * 60 * 60 * 1000);
     }
+    else{
+        currentWeekMonday = new Date(date.getTime() - (day - 1) * 24 * 60 * 60 * 1000);
+    }
+
+    return currentWeekMonday;
+}
 
     $(function() {
         console.log('in')
