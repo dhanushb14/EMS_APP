@@ -841,3 +841,5 @@ def timesheet_create_bs(request):
 def signup_bs(request):
     return render(request,'employee_information/signup.html')
 
+def forgot_password(request):
+    return render(request,'employee_information/forgot_password.html')

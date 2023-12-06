@@ -48,4 +48,5 @@ urlpatterns = [
     path('leave_bs/', views.leave_manager_bs, name='leave_bs'),
     path('timesheet_create_bs/', views.timesheet_create_bs, name='timesheet_create_bs'),
     path('signup/', views.signup_bs, name='signup'),
+    path('forgot_password/', views.forgot_password, name='forgot_password'),
 ]
