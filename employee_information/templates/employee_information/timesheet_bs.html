@@ -2,12 +2,9 @@
 
 <div class="container mg-t">
   <div class="row">
-    <div class="col-12">
+    <div class="col">
       <h2 class="fw-bold mb-4">Time Sheets</h2>
     </div>
-  </div>
-  <div class="row">
-    <h4>Period</h4>
   </div>
   <div class="row mx-auto" style="background-color: #ecd5ef; min-height: 7%">
     <div class="col-auto my-auto">
@@ -34,14 +31,13 @@
   <div class="row mt-5 mx-auto">
     <table class="table table-responsive table-bordered">
       <tr class="table-secondary fw-light">
-        <th class="fw-medium text-center">Project Name</th>
-        <th class="fw-medium text-center">Employee Name</th>
-        <th class="fw-medium text-center">Start Date</th>
-        <th class="fw-medium text-center">End Date</th>
-        <th class="fw-medium text-center">ST</th>
-        <th class="fw-medium text-center">OT</th>
-        <th class="fw-medium text-center">Status</th>
-        <th class="fw-medium text-center">Approved By</th>
+        <th class="fw-medium">Project Name</th>
+        <th class="fw-medium">Start Date</th>
+        <th class="fw-medium">End Date</th>
+        <th class="fw-medium">ST</th>
+        <th class="fw-medium">OT</th>
+        <th class="fw-medium">Status</th>
+        <th class="fw-medium">Approved By</th>
       </tr>
       <tr>
         {% for position in data_result %}
@@ -60,6 +56,15 @@
         {% else %}
         <td class="text-center"></td>
         {% endif %} {% endfor %}
+      </tr>
+      <tr>
+        <td>Fannimae</td>
+        <td>20/11/2023</td>
+        <td>24/11/2023</td>
+        <td>0</td>
+        <td>0</td>
+        <td>Pending</td>
+        <td></td>
       </tr>
     </table>
   </div>
