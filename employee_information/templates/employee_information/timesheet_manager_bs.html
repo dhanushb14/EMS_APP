@@ -1,5 +1,7 @@
 {% extends "employee_information/base.html" %} {% block pageContent %}
+{% include "modal.html" %}
 
+</style>
 <div class="container" style="margin-top: 5%">
   <div class="row">
     <div class="col-12">
@@ -425,6 +427,17 @@ document.getElementById('project_name_filter').addEventListener('input', functio
         console.log("Send button not found");
     }
 });
+</script>
+
+<script>
+  $(function() {
+        
+        $('.edit-data').click(function() {
+          console.log("123")
+            uni_modal("Edit Employee", "{% url 'manage_employees-page' %}?id=" + $(this).attr('data-id'), 'modal-xl')
+        })
+        
+    })
 </script>
 
 {% endblock pageContent %}

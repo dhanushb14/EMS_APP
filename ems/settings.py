@@ -62,7 +62,7 @@ ROOT_URLCONF = 'ems.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'employee_information/templates/employee_information'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

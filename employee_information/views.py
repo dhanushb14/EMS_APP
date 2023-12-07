@@ -230,24 +230,28 @@ def employees(request):
 
 @login_required
 def manage_employees(request):
-    employee = {}
+    
+    # employee = {}
     if request.method == 'GET':
-        data = request.GET
-        #code_value = data.get('id')
-        #print(code_value)
-        id = ''
-        if 'id' in data:
-            #print(True)
-            id = data['id']
-        if id.isnumeric():
-            employee = Employee.objects.filter(employee_id=id).first()
-            #print(employee)
-        context = {
-            'employee': employee
+     print("thambi")
+     modal_content = "Your modal content here"
+     #return JsonResponse({'modal_content': modal_content})
+    #     data = request.GET
+    #     #code_value = data.get('id')
+    #     #print(code_value)
+    #     id = ''
+    #     if 'id' in data:
+    #         #print(True)
+    #         id = data['id']
+    #     if id.isnumeric():
+    #         employee = Employee.objects.filter(employee_id=id).first()
+    #         #print(employee)
+    #     context = {
+    #         'employee': employee
 
-        }
-    return render(request, 'employee_information/manage_employee.html', context)
-
+    #     }
+    # return render(request, 'employee_information/manage_employee.html', context)
+     return render(request, 'employee_information/uni_modal.html')
 
 @login_required
 def save_employee(request):

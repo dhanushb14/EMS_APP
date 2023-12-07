@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,6 +26,11 @@
       href="https://kit.fontawesome.com/7f5caf3864.css"
       crossorigin="anonymous"
     />
+    <style>
+      .modal-backdrop {
+    display: none;
+    }
+    </style>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
       :root {
@@ -209,7 +215,7 @@
           </p>
           <div class="nav_list">
             <!-- super admin nav menus -->
-            {% if request.user.role == "superadmin" %}
+            {% if request.user.role == "superadmin" or request.user.role == "manager" %}
             <!-- homepage -->
             <a
               href="{% url 'home-page' %}"
@@ -359,6 +365,7 @@
 
     <!-- Container Main start -->
     <div>{% block pageContent %} {% endblock pageContent %}</div>
+    
     <!-- Container Main end -->
 
     <!-- jQuery -->
@@ -391,6 +398,53 @@
 
         showNavbar("header-toggle", "nav-bar", "body-pd", "header");
       });
+
+
     </script>
+    <script>
+      window.start_loader = function() {
+          $('body').removeClass('loaded')
+      }
+      window.end_loader = function() {
+          $('body').addClass('loaded')
+      }
+      window.uni_modal = function($title = '', $url = '', $size = "") {
+          start_loader()
+          $.ajax({
+              url: $url,
+              error: err => {
+                  console.log()
+                  alert("An error occured")
+              },
+              success: function(resp) {
+                  if (resp) {
+                      $('#uni_modal .modal-title').html($title)
+                      $('#uni_modal .modal-body').html(resp)
+                      if ($size != '') {
+                          $('#uni_modal .modal-dialog').addClass($size + '  modal-dialog-centered')
+                      } else {
+                          $('#uni_modal .modal-dialog').removeAttr("class").addClass("modal-dialog modal-md modal-dialog-centered")
+                      }
+                      $('#uni_modal').modal({
+                          backdrop: 'static',
+                          keyboard: false,
+                          focus: true,
+                          
+                      })
+                      $('#uni_modal').modal('show')
+                      end_loader()
+                  }
+              }
+          })
+      }
+      window._conf = function($msg = '', $func = '', $params = []) {
+          $('#confirm_modal #confirm').attr('onclick', $func + "(" + $params.join(',') + ")")
+          $('#confirm_modal .modal-body').html($msg)
+          $('#confirm_modal').modal('show')
+      }
+      $(function() {
+
+      })
+  </script>
   </body>
 </html>
