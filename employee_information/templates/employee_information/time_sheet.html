@@ -1,361 +1,358 @@
 {% extends "employee_information/base.html" %} {% block pageContent %}
-
+<style>
+  .hours_input {
+    border: none;
+    width: 30px;
+  }
+  .btn-color {
+    background-color: #978d9a;
+  }
+</style>
+<!-- Container -->
 <div class="container mg-t">
+  <!-- Time Sheet heading row -->
   <div class="row">
     <div class="col">
       <h2 class="fw-bold mb-4">Time Sheets</h2>
     </div>
   </div>
-  <div class="row mx-auto" style="background-color: #ecd5ef; min-height: 7%">
-    <div class="col-auto my-auto">
-      <label for="start_date" class="col-form-label">Start Date</label>
+  <!-- End of Time Sheet heading row -->
+  <!-- Start, End Date and Project Name row -->
+  <div class="row" style="background-color: #ecd5ef">
+    <div class="col input-group my-3">
+      <span class="input-group-text" id="basic-addon1">Start Date</span>
+      <input
+        type="date"
+        class="form-control"
+        id="start_date"
+      />
     </div>
-    <div class="col-auto my-auto">
-      <input type="date" id="start_date" class="form-control" />
+    <div class="col input-group my-3">
+      <span class="input-group-text" id="basic-addon1">End Date</span>
+      <input
+        type="date"
+        class="form-control"
+        id="end_date"
+      />
     </div>
-    <div class="col-auto my-auto">
-      <label for="end_date" class="col-form-label">End Date</label>
-    </div>
-    <div class="col-auto my-auto">
-      <input type="date" id="end_date" class="form-control" />
-    </div>
-    <div class="col-auto my-auto">
-      <label for="project_name" class="col-form-label">Project Name</label>
-    </div>
-    <div class="col-auto my-auto">
+    <div class="col input-group my-3">
+      <span class="input-group-text" id="basic-addon1">Project Name</span>
       <input
         type="text"
-        id="project_name"
-        placeholder="Project Name / RND"
         class="form-control"
+        placeholder="Project Name / RND"
+        id="project_name"
       />
     </div>
   </div>
-  <div class="row mt-5 mx-auto">
+  <!-- End of Start, End Date and Project Name row -->
+  <!-- Table row -->
+  <div class="row mt-5">
     <div class="table-responsive">
       <table class="table table-bordered" id="timeSheetForm">
         <thead>
-          <tr class="table-secondary fw-light">
-            <th class="col-2 fw-medium text-center">Tasks</th>
-            <th class="col-auto fw-medium text-center">Monday</th>
-            <th class="col-auto fw-medium text-center">Tuesday</th>
-            <th class="col-auto fw-medium text-center">Wednesday</th>
-            <th class="col-auto fw-medium text-center">Thursday</th>
-            <th class="col-auto fw-medium text-center">Friday</th>
-            <th class="col-auto fw-medium text-center">Saturday</th>
-            <th class="col-auto fw-medium text-center">Sunday</th>
-            <th class="col-auto fw-medium text-center"></th>
+          <tr class="text-center table-secondary">
+            <th>Type</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+            <th>Sunday</th>
+            <th></th>
           </tr>
         </thead>
-        <tr id="tasknamerow">
-          <td class="text-center">
-            <input
-              class="text-center task-input"
-              type="text"
-              id="task"
-              name="task"
-              placeholder="Task Name"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="monday_value"
-              type="text"
-              id="monday_value"
-              name="monday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="tuesday_value"
-              type="text"
-              id="tuesday_value"
-              name="tuesday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="wednesday_value"
-              type="text"
-              id="wednesday_value"
-              name="wednesday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="thursday_value"
-              type="text"
-              id="thursday_value"
-              name="thursday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="friday_value"
-              type="text"
-              id="friday_value"
-              name="friday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="saturday_value"
-              type="text"
-              id="saturday_value"
-              name="saturday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="sunday_value"
-              type="text"
-              id="sunday_value"
-              name="sunday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <button id="addrow">+</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="text-center">Overtime Hours</td>
-          <td class="text-center">
-            <input
-              class="ovt_monday"
-              type="text"
-              id="ovt_monday"
-              name="monday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="ovt_tuesday"
-              type="text"
-              id="ovt_tuesday"
-              name="tuesday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="ovt_wednesday"
-              type="text"
-              id="ovt_wednesday"
-              name="wednesday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="ovt_thursday"
-              type="text"
-              id="ovt_thursday"
-              name="thursday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="ovt_friday"
-              type="text"
-              id="ovt_friday"
-              name="friday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="ovt_saturday"
-              type="text"
-              id="ovt_saturday"
-              name="saturday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-          <td class="text-center">
-            <input
-              class="ovt_sunday"
-              type="text"
-              id="ovt_sunday"
-              name="sunday_value"
-              placeholder="0"
-              style="border: none"
-            />
-          </td>
-        </tr>
-
-        <tr class="th_hour">
-          <td class="text-center">Total Hour</td>
-          <td class="text-center">
-            <input
-              type="text"
-              id="th_monday"
-              class="th_monday"
-              name=""
-              style="border: none"
-              value="0"
-              readonly
-            />
-          </td>
-          <td class="text-center">
-            <input
-              type="text"
-              id="th_tuesday"
-              class="th_tuesday"
-              name=""
-              style="border: none"
-              value="0"
-              readonly
-            />
-          </td>
-          <td class="text-center">
-            <input
-              type="text"
-              id="th_wednesday"
-              class="th_wednesday"
-              name=""
-              style="border: none"
-              value="0"
-              readonly
-            />
-          </td>
-          <td class="text-center">
-            <input
-              type="text"
-              id="th_thursday"
-              class="th_thursday"
-              name=""
-              style="border: none"
-              value="0"
-              readonly
-            />
-          </td>
-          <td class="text-center">
-            <input
-              type="text"
-              id="th_friday"
-              class="th_friday"
-              name=""
-              style="border: none"
-              value="0"
-              readonly
-            />
-          </td>
-          <td class="text-center">
-            <input
-              type="text"
-              id="th_saturday"
-              class="th_saturday"
-              name=""
-              style="border: none"
-              value="0"
-              readonly
-            />
-          </td>
-          <td class="text-center">
-            <input
-              type="text"
-              id="th_sunday"
-              class="th_sunday"
-              name=""
-              style="border: none"
-              value="0"
-              readonly
-            />
-          </td>
-        </tr>
-
-        <tr>
-          <td colspan="8" class="text-center" style="border: none">&nbsp;</td>
-        </tr>
-        <tr class="table-secondary fw-light" id="calculationrow">
-          <td class="text-center" colspan="2">
-            Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
-            <input
-              type="text"
-              id="St"
-              name="ST"
-              placeholder="0"
-              value="0"
-              readonly
-            />
-          </td>
-          <td class="text-center" colspan="2">
-            Over Time: &nbsp;&nbsp;&nbsp&nbsp;
-            <input
-              type="text"
-              id="ot"
-              name="ST"
-              placeholder="0"
-              value="0"
-              readonly
-            />
-          </td>
-          <td class="text-center" colspan="2">
-            Total Time Spent: &nbsp;&nbsp;&nbsp&nbsp;
-            <input
-              type="text"
-              id="total_hour"
-              name="total_hour"
-              placeholder="0"
-              value="0"
-              readonly
-            />
-          </td>
-        </tr>
-        <tr id="message">
-          <td colspan="8" class="text-center">&nbsp;</td>
-        </tr>
+        <tbody>
+          <!-- Taskname row -->
+          <tr id="tasknamerow" class="text-center">
+            <td>
+              <textarea
+                class="text-center"
+                type="text"
+                name="task"
+                id="task"
+                placeholder="Task Name"
+              ></textarea>
+            </td>
+            <td>
+              <input
+                class="text-center monday_value hours_input"
+                type="text"
+                name="monday_value"
+                id="monday_value"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center tuesday_value hours_input"
+                type="text"
+                name="tuesday_value"
+                id="tuesday_value"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center wednesday_value hours_input"
+                type="text"
+                name="wednesday_value"
+                id="wednesday_value"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center thursday_value hours_input"
+                type="text"
+                name="thursday_value"
+                id="thursday_value"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center friday_value hours_input"
+                type="text"
+                name="friday_value"
+                id="friday_value"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center saturday_value hours_input"
+                type="text"
+                name="saturday_value"
+                id="saturday_value"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center sunday_value hours_input"
+                type="text"
+                name="sunday_value"
+                id="sunday_value"
+                placeholder="0"
+              />
+            </td>
+            <td class="text-center">
+              <button id="addrow">+</button>
+            </td>
+          </tr>
+          <!-- End fo Taskname row -->
+          <!-- Overtime row -->
+          <tr class="text-center">
+            <td>Overtime Hours</td>
+            <td>
+              <input
+                class="text-center ovt_monday hours_input"
+                type="text"
+                name="monday_value"
+                id="ovt_monday"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center ovt_tuesday hours_input"
+                type="text"
+                name="tuesday_value"
+                id="ovt_tuesday"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center ovt_wednesday hours_input"
+                type="text"
+                name="wednesday_value"
+                id="ovt_wednesday"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center ovt_thursday hours_input"
+                type="text"
+                name="thursday_value"
+                id="ovt_thursday"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center ovt_friday hours_input"
+                type="text"
+                name="friday_value"
+                id="ovt_friday"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center ovt_saturday hours_input"
+                type="text"
+                name="saturday_value"
+                id="ovt_saturday"
+                placeholder="0"
+              />
+            </td>
+            <td>
+              <input
+                class="text-center ovt_sunday hours_input"
+                type="text"
+                name="sunday_value"
+                id="ovt_sunday"
+                placeholder="0"
+              />
+            </td>
+            <td class="text-center"></td>
+          </tr>
+          <!-- End of Overtime row -->
+          <!-- Total hours row -->
+          <tr class="text-center th_hour">
+            <td>Total Hours</td>
+            <td>
+              <input
+                class="text-center th_monday hours_input"
+                type="text"
+                name="th_monday"
+                id="th_monday"
+                value="0"
+                readonly
+              />
+            </td>
+            <td>
+              <input
+                class="text-center th_tuesday hours_input"
+                type="text"
+                name="th_tuesday"
+                id="th_tuesday"
+                value="0"
+                readonly
+              />
+            </td>
+            <td>
+              <input
+                class="text-center th_wednesday hours_input"
+                type="text"
+                name="th_wednesday"
+                id="th_wednesday"
+                value="0"
+                readonly
+              />
+            </td>
+            <td>
+              <input
+                class="text-center th_thursday hours_input"
+                type="text"
+                name="th_thursday"
+                id="th_thursday"
+                value="0"
+                readonly
+              />
+            </td>
+            <td>
+              <input
+                class="text-center th_friday hours_input"
+                type="text"
+                name="th_friday"
+                id="th_friday"
+                value="0"
+                readonly
+              />
+            </td>
+            <td>
+              <input
+                class="text-center th_saturday hours_input"
+                type="text"
+                name="th_saturday"
+                id="th_saturday"
+                value="0"
+                readonly
+              />
+            </td>
+            <td>
+              <input
+                class="text-center th_sunday hours_input"
+                type="text"
+                name="th_sunday"
+                id="th_sunday"
+                value="0"
+                readonly
+              />
+            </td>
+            <td class="text-center"></td>
+          </tr>
+          <!-- End of Total hours row -->
+          <tr>
+            <td colspan="8" class="text-center" style="border: none">&nbsp;</td>
+          </tr>
+          <!-- Hours calculation row  -->
+          <tr class="table-secondary fw-light" id="calculationrow">
+            <td class="text-center" colspan="3">
+              Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
+              <input
+                type="text"
+                id="St"
+                name="ST"
+                placeholder="0"
+                value="0"
+                readonly
+              />
+            </td>
+            <td class="text-center" colspan="3">
+              Over Time: &nbsp;&nbsp;&nbsp&nbsp;
+              <input
+                type="text"
+                id="ot"
+                name="ST"
+                placeholder="0"
+                value="0"
+                readonly
+              />
+            </td>
+            <td class="text-center" colspan="3">
+              Total Time Spent: &nbsp;&nbsp;&nbsp&nbsp;
+              <input
+                type="text"
+                id="total_hour"
+                name="total_hour"
+                placeholder="0"
+                value="0"
+                readonly
+              />
+            </td>
+          </tr>
+          <!-- End of Hours calculation row -->
+          <tr id="message">
+            <td colspan="8" class="text-center" style="border: none">&nbsp;</td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
+  <!-- End of Table row -->
+  <!-- Save, Discard and Submit buttons row -->
   <div class="row">
-    <div class="col-auto me-auto">
-      <button
-        id="saveBtn"
-        class="btn btn-md text-light"
-        style="background-color: #978d9a"
-      >
+    <div class="col-auto ms-auto">
+      <button id="saveBtn" class="btn btn-md text-light btn-color mx-1">
         Save
       </button>
-      <button
-        id="discardBtn"
-        class="btn btn-md text-light"
-        style="background-color: #978d9a"
-      >
+      <button id="discardBtn" class="btn btn-md text-light btn-color mx-1">
         Discard
       </button>
-      <button
-        id="submitBtn"
-        class="btn btn-md text-light"
-        style="background-color: #978d9a"
-      >
+      <button id="submitBtn" class="btn btn-md text-light btn-color mx-1">
         Submit
       </button>
     </div>
   </div>
+  <!-- End of Save, Discard and Submit buttons row -->
 </div>
+<!-- End of Container -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
   // date change, check to see if there is data for that date
@@ -939,30 +936,30 @@
     var newRow = document.createElement("tr");
 
     newRow.innerHTML = `
-
+                        
                         <td class="text-center">
-                          <input class="text-center task-input" type="text" id="monday_task" name="task" placeholder="Task Name">
+                          <textarea class="text-center" type="text" name="task" id="task" placeholder="Task Name"></textarea>
                         </td>
                         <td class="text-center">
-                          <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;">
+                          <input class="text-center sunday_value hours_input" type="text" name="sunday_value" id="sunday_value" placeholder="0"/>
                         </td>
                         <td class="text-center">
-                          <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;">
+                          <input class="tuesday_value hours_input"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0">
                         </td>
                         <td class="text-center">
-                          <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;">
+                          <input class="wednesday_value hours_input"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0">
                         </td>
                         <td class="text-center">
-                          <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;">
+                          <input class="thursday_value hours_input"  type="text" id="thursday_value" name="thursday_value" placeholder="0">
                         </td>
                         <td class="text-center">
-                          <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;">
+                          <input class="friday_value hours_input"  type="text" id="friday_value" name="friday_value" placeholder="0">
                         </td>
                         <td class="text-center">
-                          <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;">
+                          <input class="saturday_value hours_input"  type="text" id="saturday_value" name="saturday_value" placeholder="0">
                         </td>
                         <td class="text-center">
-                          <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;">
+                          <input class="sunday_value hours_input"  type="text" id="sunday_value" name="sunday_value" placeholder="0">
                         </td>
         
     `;
