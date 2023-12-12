@@ -49,4 +49,4 @@ class Employee(AbstractBaseUser, PermissionsMixin):
             # Handle the error here
             pass
     def __str__(self):
-        return self.employee_id
+        return self.employee_name

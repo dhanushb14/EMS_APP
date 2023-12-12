@@ -1,99 +1,106 @@
-
-
-<div class="container" style="margin-top: 5%">
+{% block modal-footer %}
+<style>
+input[type="text"]:not(#project_name):not(#task) {
+  width: 100px;
+}
+</style>
+<div class="container mg-t">
   
-  
-  <div class="row mx-auto" style="background-color: #ecd5ef; min-height: 7%">
+  <div class="row" style="background-color: #ecd5ef; min-height: 7%">
     <div class="col-auto my-auto">
       <label for="start_date" class="col-form-label">Start Date</label>
     </div>
     <div class="col-auto my-auto">
-      <input type="date" id="start_date" class="form-control" />
+      <input type="text" id="start_date" class="form-control" value={{position.start_date}} style="width: fit-content;" readonly>
     </div>
     <div class="col-auto my-auto">
       <label for="end_date" class="col-form-label">End Date</label>
     </div>
     <div class="col-auto my-auto">
-      <input type="date" id="end_date" class="form-control" />
+      <input type="text" id="end_date" class="form-control" value={{position.end_date}}  style="width: fit-content;" readonly>
     </div>
     <div class="col-auto my-auto">
       <label for="project_name" class="col-form-label">Project Name</label>
     </div>
     <div class="col-auto my-auto">
-      <input type="text" id="project_name" placeholder="Project Name / RND" class="form-control" />
+      <input type="text" id="project_name" placeholder="Project Name / RND" class="form-control" value="{{position.project_name}}" style="width: fit-content;" readonly>
     </div>
   </div>
-  <div class="row mt-5 mx-auto">
+  <div class="row mt-5">
     <div class="table-responsive">
       <table class="table table-bordered" id="timeSheetForm">
       <thead>
-        <tr class="table-secondary fw-light">
-          <th class="col-2 fw-medium text-center">Tasks</th>
-          <th class=" fw-medium text-center">Monday</th>
-          <th class="col fw-medium text-center">Tuesday</th>
-          <th class="col fw-medium text-center">Wednesday</th>
-          <th class="col fw-medium text-center">Thursday</th>
-          <th class="col fw-medium text-center">Friday</th>
-          <th class="col fw-medium text-center">Saturday</th>
-          <th class="col fw-medium text-center">Sunday</th>
-          <th class="col fw-medium text-center"></th>
+        <tr class="table-secondary fw-light text-center">
+          <th >Type</th>
+          <th >Monday</th>
+          <th >Tuesday</th>
+          <th >Wednesday</th>
+          <th >Thursday</th>
+          <th >Friday</th>
+          <th >Saturday</th>
+          <th >Sunday</th>
+          
+          <th class="text-center">
+            <button  id="addrow">+</button>
+          </th>
         </tr>
       </thead>
+      <tbody>
+        {% for task, monday_value, tuesday_value, wednesday_value, thursday_value, friday_value, saturday_value, sunday_value in position.zipped_values %}  
         <tr id="tasknamerow">
           
           <td class="text-center">
-            <input class="text-center task-input" type="text" id="task" name="task" placeholder="Task Name">
+            <input class="text-center task-input" type="text" id="task" name="task" placeholder="Task Name" value="{{task}}">
           </td>
           <td class="text-center">
-            <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;">
+            <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;" value="{{monday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;">
+            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;" value="{{tuesday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;">
+            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;" value="{{wednesday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;">
+            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;" value="{{thursday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;">
+            <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;" value="{{friday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;">
+            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;" value="{{saturday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;">
+            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;" value="{{sunday_value|default:'0'}}">
           </td>
-          <td class="text-center">
-            <button  id="addrow">+</button>
-          </td>
+          
         </tr>
+        {% endfor %}
         <tr>
           
           <td class="text-center">
             Overtime Hours
           </td>
           <td class="text-center">
-            <input class="ovt_monday"  type="text" id="ovt_monday" name="monday_value" placeholder="0" style="border: none;">
+            <input class="ovt_monday"  type="text" id="ovt_monday" name="monday_value" placeholder="0" style="border: none;" value="{{position.ovt_monday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_tuesday"  type="text" id="ovt_tuesday" name="tuesday_value" placeholder="0" style="border: none;">
+            <input class="ovt_tuesday"  type="text" id="ovt_tuesday" name="tuesday_value" placeholder="0" style="border: none;" value="{{position.ovt_tuesday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_wednesday"  type="text" id="ovt_wednesday" name="wednesday_value" placeholder="0" style="border: none;">
+            <input class="ovt_wednesday"  type="text" id="ovt_wednesday" name="wednesday_value" placeholder="0" style="border: none;" value="{{position.ovt_wednesday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_thursday"  type="text" id="ovt_thursday" name="thursday_value" placeholder="0" style="border: none;">
+            <input class="ovt_thursday"  type="text" id="ovt_thursday" name="thursday_value" placeholder="0" style="border: none;" value="{{position.ovt_thursday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_friday"  type="text" id="ovt_friday" name="friday_value" placeholder="0" style="border: none;">
+            <input class="ovt_friday"  type="text" id="ovt_friday" name="friday_value" placeholder="0" style="border: none;" value="{{position.ovt_friday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_saturday"  type="text" id="ovt_saturday" name="saturday_value" placeholder="0" style="border: none;">
+            <input class="ovt_saturday"  type="text" id="ovt_saturday" name="saturday_value" placeholder="0" style="border: none;" value="{{position.ovt_saturday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_sunday"  type="text" id="ovt_sunday" name="sunday_value" placeholder="0" style="border: none;">
+            <input class="ovt_sunday"  type="text" id="ovt_sunday" name="sunday_value" placeholder="0" style="border: none;" value="{{position.ovt_sunday}}">
           </td>
         </tr>
         
@@ -103,485 +110,90 @@
             Total Hour
           </td>
           <td class="text-center">
-            <input type="text" id="th_monday" class="th_monday" name="" style="border: none;" value="0"  readonly>
+            <input type="text" id="th_monday" class="th_monday" name="" style="border: none;" value="{{position.th_hour_0}}"  readonly>
           </td>
           <td class="text-center">
-            <input type="text" id="th_tuesday" class="th_tuesday" name="" style="border: none;" value="0"  readonly>
+            <input type="text" id="th_tuesday" class="th_tuesday" name="" style="border: none;" value="{{position.th_hour_1}}"  readonly>
           </td>
           <td class="text-center">
-            <input type="text" id="th_wednesday" class="th_wednesday" name="" style="border: none;" value="0"  readonly>
+            <input type="text" id="th_wednesday" class="th_wednesday" name="" style="border: none;" value="{{position.th_hour_2}}"  readonly>
           </td>
           <td class="text-center">
-            <input type="text" id="th_thursday" class="th_thursday" name="" style="border: none;" value="0"  readonly>
+            <input type="text" id="th_thursday" class="th_thursday" name="" style="border: none;" value="{{position.th_hour_3}}"  readonly>
           </td>
           <td class="text-center">
-            <input type="text" id="th_friday" class="th_friday" name="" style="border: none;" value="0"  readonly>
+            <input type="text" id="th_friday" class="th_friday" name="" style="border: none;" value="{{position.th_hour_4}}"  readonly>
           </td>
           <td class="text-center">
-            <input type="text" id="th_saturday" class="th_saturday" name="" style="border: none;" value="0"  readonly>
+            <input type="text" id="th_saturday" class="th_saturday" name="" style="border: none;" value="{{position.th_hour_5}}"  readonly>
           </td>
           <td class="text-center">
-            <input type="text" id="th_sunday" class="th_sunday" name="" style="border: none;" value="0"  readonly>
+            <input type="text" id="th_sunday" class="th_sunday" name="" style="border: none;" value="{{position.th_hour_6}}"  readonly>
           </td>
         </tr>
         
-      <tr>
+        <tr style="border: transparent;">
           <td colspan="8" class="text-center" style="border: none;">&nbsp;</td>
-      </tr>
-        <tr class="table-secondary fw-light" id="calculationrow">
+        </tr>
+        <tr class="table-secondary fw-light" id="calculationrow" style="border: transparent;">
           <td class="text-center" colspan="2">
               Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
-              <input type="text" id="St" name="ST" placeholder="0" value="0"  readonly>
+              <input type="text" id="St" name="ST" placeholder="0"  value={{position.St}}  readonly>
           </td>
           <td class=" text-center" colspan="2">
               Over Time: &nbsp;&nbsp;&nbsp&nbsp;
-              <input type="text" id="ot" name="ST" placeholder="0" value="0"  readonly>
+              <input type="text" id="ot1" name="OT" placeholder="0" value={{position.ot}} readonly>
           </td>
-          <td class="text-center" colspan="2">
+          <td class="text-center" colspan="3">
               Total Time Spent: &nbsp;&nbsp;&nbsp&nbsp;
-              <input type="text" id="total_hour" name="total_hour" placeholder="0" value="0" readonly>
+              <input type="text" id="total_hour" name="total_hour" placeholder="0" value={{position.total_hour}} readonly>
           </td>
-      </tr>
-      <tr id="message">
-        <td colspan="8" class="text-center">&nbsp;</td>
-    </tr>
+        </tr>
+        <tr id="message" style="border: transparent;">
+          <td colspan="8" class="text-center">&nbsp;</td>
+        </tr>
+      </tbody>
       </table>
     </div>
   </div>
   <div class="row">
-    <div class="col-auto me-auto">
-        <button  id="submitBtn" class="btn btn-md text-light" style="background-color: #978d9a">Submit</button>
+    <div class="">
+        {% if request.user.role != "scrummaster" %}
+        <button  id="submitBtn" class="btn btn-md text-light float-end" style="background-color: #978d9a">Submit</button>
+        {% endif %}
     </div>
 </div>
 </div>
 
 <script>
-  // Creating the warning msg
-  var messageBox1 = document.createElement("div");
-                    messageBox1.textContent = "* You have already Submitted the Time Sheet *";
-                    messageBox1.classList.add("message1-box");
-                    //document.body.appendChild(messageBox1);
-                    // Get the parent element of the total hour input field
-                    
-                    var messageCell = document.getElementById("message").children[0];
+  function applyDynamicRowStyling() {
+  $('input[type="text"]:not(#project_name):not(#task)').css('width', '100px');
+}
+</script>
+<script>
+// Get all input fields
 
-                    // Append the message box to the table cell
-                    messageCell.appendChild(messageBox1);
-  // date change, check to see if there is data for that date
-  messageBox1.style.display = "none";
-  function getPreviousMonday() {
-    var date = new Date();
-    var day = date.getUTCDay();
-    var currentWeekMonday;
+// Function to show the popup
+function showPopup(event) {
+    const value = event.target.value;
+    const popup = document.createElement('div');
+    popup.classList.add('popup');
+    popup.textContent = value;
+    event.target.parentNode.appendChild(popup);
+}
 
-    if(day === 0){ // If it's Sunday
-        currentWeekMonday = new Date(date.getTime() - 6 * 24 * 60 * 60 * 1000);
+// Function to hide the popup
+function hidePopup(event) {
+    const popup = event.target.parentNode.querySelector('.popup');
+    if (popup) {
+        popup.remove();
     }
-    else{
-        currentWeekMonday = new Date(date.getTime() - (day - 1) * 24 * 60 * 60 * 1000);
-    }
-
-    return currentWeekMonday;
 }
 
     $(function() {
-        console.log('in')
-        var previousMonday = getPreviousMonday();
-        var formattedDate = previousMonday.toISOString().split('T')[0];
-        $('#start_date').val(formattedDate);
-        var startDate = new Date(formattedDate);
-        var endDate = new Date(startDate.getTime() + (6 * 24 * 60 * 60 * 1000)); // Add 6 days to start date
-        var formattedEndDate = endDate.toISOString().split('T')[0]; // Format the end date as YYYY-MM-DD
-        $('#end_date').val(formattedEndDate);
-
-        document.getElementById('start_date').addEventListener('change', function() {
-            
-            var startDate = new Date(this.value);
-            var day = startDate.getDay();
-            var diff = startDate.getDate() - day + (day === 0 ? -6 : 1); // Calculate the difference to the previous Monday
-            var mondayDate = new Date(startDate.setDate(diff));
-            var formattedStartDate = mondayDate.toISOString().split('T')[0];
-            var endDate = new Date(mondayDate.getTime() + (6 * 24 * 60 * 60 * 1000)); // Add 6 days to start date
-            var formattedEndDate = endDate.toISOString().split('T')[0]; // Format the end date as YYYY-MM-DD
-            document.getElementById('end_date').value = formattedEndDate;
-            document.getElementById('start_date').value = formattedStartDate;
-            var formattedStartDate = startDate.toISOString().split('T')[0];
-            var formattedEndDate = endDate.toISOString().split('T')[0];
-            var username = document.body.getAttribute('data-username');
-            console.log(username);
-
-            
 
 
-            fetch("{% url 'timesheets_create' %}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({
-                'start_date': formattedStartDate,
-                'end_date': formattedEndDate,
-                'username':username,
-                'method_1': "first_fetch"
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (!data) {
-            console.log(data)
-            console.log("here4 reload")
-            location.reload();}
-                // data is not empty, create HTML elements to display the data
-                let table = document.getElementById('yourTableId')
-                document.getElementById("project_name").value = data?.project_name || '';
-                document.getElementById("monday_value").value = data?.monday_value || '0';
-                document.getElementById("tuesday_value").value = data?.tuesday_value || '0';
-                document.getElementById("wednesday_value").value = data?.wednesday_value || '0';
-                document.getElementById("thursday_value").value = data?.thursday_value || '0';
-                document.getElementById("friday_value").value = data?.friday_value || '0';
-                document.getElementById("saturday_value").value = data?.saturday_value || '0';
-                document.getElementById("sunday_value").value = data?.sunday_value || '0';
-                document.getElementById("ovt_monday").value = data?.ovt_monday || '0';
-                document.getElementById("ovt_tuesday").value = data?.ovt_tuesday || '0';
-                document.getElementById("ovt_wednesday").value = data?.ovt_wednesday || '0';
-                document.getElementById("ovt_thursday").value = data?.ovt_thursday || '0';
-                document.getElementById("ovt_friday").value = data?.ovt_friday || '0';
-                document.getElementById("ovt_saturday").value = data?.ovt_saturday || '0';
-                document.getElementById("ovt_sunday").value = data?.ovt_sunday || '0';
-                document.getElementById("St").value = data?.St || '0';
-                document.getElementById("ot").value = data?.ot || '0';
-                document.getElementById("total_hour").value = data?.total_hour || '0';
-                document.getElementById("th_monday").value = data?.th_hour[0] || '0';
-                document.getElementById("th_tuesday").value = data?.th_hour[1] || '0';
-                document.getElementById("th_wednesday").value = data?.th_hour[2] || '0';
-                document.getElementById("th_thursday").value = data?.th_hour[3] || '0';
-                document.getElementById("th_friday").value = data?.th_hour[4] || '0';
-                document.getElementById("th_saturday").value = data?.th_hour[5] || '0';
-                document.getElementById("th_sunday").value = data?.th_hour[6] || '0';
-
-                console.log("here4")
-                console.log(data)
-                if (data.monday_value.length <= 1) {
-                    document.getElementById("task").value = data?.tasks[0] || '';
-                    document.getElementById("monday_value").value = data?.monday_value[0] || '0';
-                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
-                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
-                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
-                    document.getElementById("friday_value").value = data?.friday_value[0] || '0';
-                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
-                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
-
-                }
-                else{
-                    document.getElementById("task").value = data?.tasks[0] || '';
-                    document.getElementById("monday_value").value = data?.monday_value[0] || '0';
-                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
-                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
-                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
-                    document.getElementById("friday_value").value = data?.friday_value[0] || '0';
-                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
-                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
-                    console.log("here1: ", data)
-                    var totallength = (data.monday_value.length) 
-                    
-                    var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
-                    var rows = tbody.getElementsByTagName("tr");
-                    var taskNameRow = rows[rows.length - 5];
-                    
-                    for (var i = 1; i < totallength-1; i++) {
-                        var newRow = document.createElement("tr");
-                                            
-                        newRow.innerHTML += `
-                        <td class="text-center">
-                          <input class="text-center task-input" type="text" id="monday_task" name="task" placeholder="Task Name" value="${data.tasks[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;" value="${data.monday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;" value="${data.tuesday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;" value="${data.wednesday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;" value="${data.thursday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;" value="${data.friday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;" value="${data.saturday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;" value="${data.sunday_value[i] || 0}">
-                        </td>       
-                        `;
-                        taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
-                    }
-                
-                
-                console.log("here10", data?.project_name, data?.status)
-
-                if (data?.project_name && data?.status!="uncheck") {
-                    messageBox1.style.display = "block"; // Show the message box
-                    console.log("error came here")
-                    // Removing buttons
-                    document.getElementById("submitBtn").disabled = true;
-                    document.getElementById("discardBtn").disabled = true;
-                    document.getElementById("saveBtn").disabled = true;
-                    
-                    // Making inputs read-only
-                    document.getElementById("project_name").readOnly = true;
-                    document.getElementById("monday_value").readOnly = true;
-                    document.getElementById("tuesday_value").readOnly = true;
-                    document.getElementById("wednesday_value").readOnly = true;
-                    document.getElementById("thursday_value").readOnly = true;
-                    document.getElementById("friday_value").readOnly = true;
-                    document.getElementById("saturday_value").readOnly = true;
-                    document.getElementById("sunday_value").readOnly = true;
-                    document.getElementById("ovt_monday").readOnly = true;
-                    document.getElementById("ovt_tuesday").readOnly = true;
-                    document.getElementById("ovt_wednesday").readOnly = true;
-                    document.getElementById("ovt_thursday").readOnly = true;
-                    document.getElementById("ovt_friday").readOnly = true;
-                    document.getElementById("ovt_saturday").readOnly = true;
-                    document.getElementById("ovt_sunday").readOnly = true;
-                    document.getElementById("St").readOnly = true;
-                    document.getElementById("ot").readOnly = true;
-                    document.getElementById("total_hour").readOnly = true;
-
-                    
-
-                }
-                else{
-                  
-                    if (data?.status!="uncheck"){
-                    console.log("else partition")
-                    console.log("here3 reload")
-                    location.reload();}
-
-                    else{
-                      messageBox1.style.display = "none"; // Hide the message box
-                      document.getElementById("submitBtn").disabled = false;
-                      document.getElementById("discardBtn").disabled = false;
-                      document.getElementById("saveBtn").disabled = false;
-
-                      // Making inputs read-only
-                    document.getElementById("project_name").readOnly = false;
-                    document.getElementById("monday_value").readOnly = false;
-                    document.getElementById("tuesday_value").readOnly = false;
-                    document.getElementById("wednesday_value").readOnly = false;
-                    document.getElementById("thursday_value").readOnly = false;
-                    document.getElementById("friday_value").readOnly = false;
-                    document.getElementById("saturday_value").readOnly = false;
-                    document.getElementById("sunday_value").readOnly = false;
-                    document.getElementById("ovt_monday").readOnly = false;
-                    document.getElementById("ovt_tuesday").readOnly = false;
-                    document.getElementById("ovt_wednesday").readOnly = false;
-                    document.getElementById("ovt_thursday").readOnly = false;
-                    document.getElementById("ovt_friday").readOnly = false;
-                    document.getElementById("ovt_saturday").readOnly = false;
-                    document.getElementById("ovt_sunday").readOnly = false;
-                    document.getElementById("St").readOnly = false;
-                    document.getElementById("ot").readOnly = false;
-                    document.getElementById("total_hour").readOnly = false;
-                    }
-                                }
-                            
-
-                    // fetch("{% url 'timesheets_create' %}", {
-                    //     method: 'GET', // or 'POST', 'PUT', 'DELETE', etc. depending on your API
-                    //     headers: {
-                    //         'Content-Type': 'application/json', // set the appropriate content type
-                    //         'X-CSRFToken': '{{ csrf_token }}'
-                    //     },
-                    //     // add a request body if required
-                    //     })
-                    
-                    }
-            });
-          
-        });
-      
-
-        console.log("camehere")
-        var data1 = localStorage.getItem('tableData');         
-        var formattedStartDate = startDate.toISOString().split('T')[0];
-        var formattedEndDate = endDate.toISOString().split('T')[0];
-        fetch("{% url 'timesheets_create' %}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({
-                'start_date': formattedStartDate,
-                'end_date': formattedEndDate,
-                'method_1': "first_fetch"
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("here2")
-            
-            if (data ) {
-            console.log('second')
-                console.log("data", data)
-                // data is not empty, create HTML elements to display the data
-                let table = document.getElementById('yourTableId')
-                document.getElementById("project_name").value = data?.project_name || '';
-                document.getElementById("monday_value").value = data?.monday_value || '0';
-                document.getElementById("tuesday_value").value = data?.tuesday_value || '0';
-                document.getElementById("wednesday_value").value = data?.wednesday_value || '0';
-                document.getElementById("thursday_value").value = data?.thursday_value || '0';
-                document.getElementById("friday_value").value = data?.friday_value || '0';
-                document.getElementById("saturday_value").value = data?.saturday_value || '0';
-                document.getElementById("sunday_value").value = data?.sunday_value || '0';
-                document.getElementById("ovt_monday").value = data?.ovt_monday || '0';
-                document.getElementById("ovt_tuesday").value = data?.ovt_tuesday || '0';
-                document.getElementById("ovt_wednesday").value = data?.ovt_wednesday || '0';
-                document.getElementById("ovt_thursday").value = data?.ovt_thursday || '0';
-                document.getElementById("ovt_friday").value = data?.ovt_friday || '0';
-                document.getElementById("ovt_saturday").value = data?.ovt_saturday || '0';
-                document.getElementById("ovt_sunday").value = data?.ovt_sunday || '0';
-                document.getElementById("St").value = data?.St || '0';
-                document.getElementById("ot").value = data?.ot || '0';
-                document.getElementById("total_hour").value = data?.total_hour || '0';
-                document.getElementById("th_monday").value = data?.th_hour[0] || '0';
-                document.getElementById("th_tuesday").value = data?.th_hour[1] || '0';
-                document.getElementById("th_wednesday").value = data?.th_hour[2] || '0';
-                document.getElementById("th_thursday").value = data?.th_hour[3] || '0';
-                document.getElementById("th_friday").value = data?.th_hour[4] || '0';
-                document.getElementById("th_saturday").value = data?.th_hour[5] || '0';
-                document.getElementById("th_sunday").value = data?.th_hour[6] || '0';
-
-                console.log("here3")
-                console.log(data.tasks.length)
-                console.log(data.tasks)
-                if (data.monday_value.length <= 1) {
-                  console.log("here3.1")
-                    document.getElementById("task").value = data?.tasks[0] || '0';
-                    
-                    document.getElementById("monday_value").value = data?.monday_value[0] || '0';
-                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
-                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
-                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
-                    document.getElementById("friday_value").value = data?.friday_value[0] || '0';
-                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
-                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
-
-                }
-                else{
-                    console.log("here3.2")
-                    document.getElementById("task").value = data?.tasks[0] || '0';
-                    document.getElementById("monday_value").value = data?.monday_value[0] || '0';
-                    document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
-                    document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '0';
-                    document.getElementById("thursday_value").value = data?.thursday_value[0] || '0';
-                    document.getElementById("friday_value").value = data?.friday_value[0] || '0';
-                    document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
-                    document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
-                    var totallength = (data.monday_value.length) 
-                    
-                    var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
-                    var rows = tbody.getElementsByTagName("tr");
-                    var taskNameRow = rows[rows.length - 5];
-                    
-                    for (var i = 1; i < totallength; i++) {
-                        var newRow = document.createElement("tr");
-                                              
-                        newRow.innerHTML += `
-                        <td class="text-center">
-                          <input class="text-center task-input" type="text" id="monday_task" name="task" placeholder="Task Name" value="${data.tasks[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;" value="${data.monday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;" value="${data.tuesday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;" value="${data.wednesday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;" value="${data.thursday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;" value="${data.friday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;" value="${data.saturday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;" value="${data.sunday_value[i] || 0}">
-                        </td>       
-                        `;
-                        taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
-                    }
-                }
-                console.log("here123")
-                if (data?.project_name && data?.status!="uncheck") {
-                    messageBox1.style.display = "block"; // Show the message box
-                    // Removing buttons
-                    document.getElementById("submitBtn").disabled = true;
-                    document.getElementById("discardBtn").disabled = true;
-                    document.getElementById("saveBtn").disabled = true;
-                    
-                    // Making inputs read-only
-                    document.getElementById("project_name").readOnly = true;
-                    document.getElementById("monday_value").readOnly = true;
-                    document.getElementById("tuesday_value").readOnly = true;
-                    document.getElementById("wednesday_value").readOnly = true;
-                    document.getElementById("thursday_value").readOnly = true;
-                    document.getElementById("friday_value").readOnly = true;
-                    document.getElementById("saturday_value").readOnly = true;
-                    document.getElementById("sunday_value").readOnly = true;
-                    document.getElementById("ovt_monday").readOnly = true;
-                    document.getElementById("ovt_tuesday").readOnly = true;
-                    document.getElementById("ovt_wednesday").readOnly = true;
-                    document.getElementById("ovt_thursday").readOnly = true;
-                    document.getElementById("ovt_friday").readOnly = true;
-                    document.getElementById("ovt_saturday").readOnly = true;
-                    document.getElementById("ovt_sunday").readOnly = true;
-                    document.getElementById("St").readOnly = true;
-                    document.getElementById("ot").readOnly = true;
-                    document.getElementById("total_hour").readOnly = true;
-
-                    
-
-                }
-            
-            }});   
-
-            
-    
-    // Add event listener to project name input field
-    var inputFields = document.querySelectorAll('input');
-    inputFields.forEach(function(input) {
-    input.addEventListener('keydown', function(event) {
-        if (event.keyCode === 13) {
-            event.preventDefault(); // Prevent form submission
-            var nextInput = input.parentElement.nextElementSibling.querySelector('input');
-            if (nextInput) {
-                nextInput.focus(); // Move focus to the next field in the same row
-            } 
-        }
-    });
-});
-            
-        });
-      
-
-</script>
-<script>
-  // Calculation hours
-  $(function() {
-
-
-// Calculate total hours
-function calculateTotalHours() {
+      function calculateTotalHours() {
     var total = 0;
     var st = 0;
     var ot = 0;
@@ -601,8 +213,9 @@ function calculateTotalHours() {
         var value = parseFloat($(this).val()) || 0;
         st += value;
     });
-    $('input[id^="ovt_"]').each(function() {
+    $('input[class^="ovt_"]').each(function() {
         var value = parseFloat($(this).val()) || 0;
+        console.log("value",value)
         ot += value;
     });
     $('input[class$="monday_value"], input[class^="ovt_monday"]').each(function() {
@@ -634,8 +247,9 @@ function calculateTotalHours() {
         th_sun += value;
     });
 
+    console.log("ot",ot)
     $('#St').val(st);
-    $('#ot').val(ot);
+    document.getElementById('ot1').value = ot;
     $('#total_hour').val(total);
     $('#th_monday').val(th_mon);
     $('#th_tuesday').val(th_tue);
@@ -644,302 +258,32 @@ function calculateTotalHours() {
     $('#th_friday').val(th_fri);
     $('#th_saturday').val(th_sat);
     $('#th_sunday').val(th_sun);
+    
 }
 
 // Trigger calculation on input change
-$(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculateTotalHours);
+$(document).on('input[class$="_value"], input[class^="ovt_"]').on('input', calculateTotalHours);
 });
-</script>
-<script>
-  //add row
-  document.getElementById("addrow").addEventListener("click", function() {
-    
-    console.log('addrow')
-    var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
-    var rows = tbody.getElementsByTagName("tr");
-    var taskNameRow = rows[rows.length - 5];
-    var newRow = document.createElement("tr");
-    
-    
-    newRow.innerHTML = `
-
-                        <td class="text-center">
-                          <input class="text-center task-input" type="text" id="monday_task" name="task" placeholder="Task Name">
-                        </td>
-                        <td class="text-center">
-                          <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;">
-                        </td>
-                        <td class="text-center">
-                          <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;">
-                        </td>
-                        <td class="text-center">
-                          <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;">
-                        </td>
-                        <td class="text-center">
-                          <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;">
-                        </td>
-                        <td class="text-center">
-                          <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;">
-                        </td>
-                        <td class="text-center">
-                          <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;">
-                        </td>
-                        <td class="text-center">
-                          <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;">
-                        </td>
+    document.getElementById("submitBtn").addEventListener("click", function(event) {
         
-    `;
-    taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
-    
-});
-</script>
-<script>
-  //save button
-  document.getElementById("saveBtn").addEventListener("click", function() {
-        // Get the table data
-        var th_hour = [
-                document.getElementById('th_monday').value,
-                document.getElementById('th_tuesday').value,
-                document.getElementById('th_wednesday').value,
-                document.getElementById('th_thursday').value,
-                document.getElementById('th_friday').value,
-                document.getElementById('th_saturday').value,
-                document.getElementById('th_sunday').value
-            ];
-        var tableData = {
-            start_date: document.getElementById('start_date').value,
-            end_date: document.getElementById('end_date').value,
-            project_name: document.getElementById('project_name').value,
-            ovt_monday: document.getElementById('ovt_monday').value,
-            ovt_tuesday: document.getElementById('ovt_tuesday').value,
-            ovt_wednesday: document.getElementById('ovt_wednesday').value,
-            ovt_thursday: document.getElementById('ovt_thursday').value,
-            ovt_friday: document.getElementById('ovt_friday').value,
-            ovt_saturday: document.getElementById('ovt_saturday').value,
-            ovt_sunday: document.getElementById('ovt_sunday').value,
-            St: document.getElementById('St').value,
-            ot: document.getElementById('ot').value,
-            total_hour: document.getElementById('total_hour').value,
-            th_hour: th_hour,
-            
-        };
-        
-        // Store the table data in local storage
-        localStorage.setItem('tableData', JSON.stringify(tableData));
-        var taskInputs = {
-            monday_value : Array.from(document.querySelectorAll('.monday_value')).map(input => input.value),
-            tuesday_value : Array.from(document.querySelectorAll('.tuesday_value')).map(input => input.value),
-            wednesday_value : Array.from(document.querySelectorAll('.wednesday_value')).map(input => input.value),
-            thursday_value : Array.from(document.querySelectorAll('.thursday_value')).map(input => input.value),
-            friday_value : Array.from(document.querySelectorAll('.friday_value')).map(input => input.value),
-            saturday_value : Array.from(document.querySelectorAll('.saturday_value')).map(input => input.value),
-            sunday_value : Array.from(document.querySelectorAll('.sunday_value')).map(input => input.value),
-            th_hour : Array.from(document.querySelectorAll('.th_hour')).map(input => input.value),
-            tasks : Array.from(document.querySelectorAll('.task-input')).map(input => input.value),
-        }
-        console.log("taskinputs:", taskInputs)
-        localStorage.setItem('taskInputs', JSON.stringify(taskInputs));
-
-        var messageBox = document.createElement("div");
-        messageBox.textContent = "The Values are Saved";
-        messageBox.classList.add("message-box");
-        document.body.appendChild(messageBox);
-
-        // Show the message box
-        setTimeout(function() {
-            messageBox.remove();
-        }, 1700);
-});
-</script>
-<script>
-  // windows on load, check there is data for the date
-  window.addEventListener('load', function() {
-    var startDate = new Date(document.getElementById('start_date').value);
-    var endDate = new Date(document.getElementById('end_date').value);
-    console.log(startDate, endDate)
-    var formattedStartDate = startDate.toISOString().split('T')[0];
-    var formattedEndDate = endDate.toISOString().split('T')[0];
-    fetch("{% url 'timesheets_create' %}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({
-            'start_date': formattedStartDate,
-            'end_date': formattedEndDate,
-            'method_1': "first_fetch"
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("here5")
-        if (!data.project_name){
-          
-
-// Check if there is any saved table data in local storage
-var savedTableData = localStorage.getItem('tableData');
-var taskInputs = localStorage.getItem('taskInputs')
-console.log(savedTableData)
-console.log(taskInputs)
-if (savedTableData) {
-  console.log("here6")
-    // Parse the saved table data
-    var tableData = JSON.parse(savedTableData);
-
-    // Populate the table with the saved data
-    document.getElementById('start_date').value = tableData.start_date;
-    document.getElementById('end_date').value = tableData.end_date;
-    document.getElementById('project_name').value = tableData.project_name;
-    
-    document.getElementById('ovt_monday').value = tableData.ovt_monday;
-    document.getElementById('ovt_tuesday').value = tableData.ovt_tuesday;
-    document.getElementById('ovt_wednesday').value = tableData.ovt_wednesday;
-    document.getElementById('ovt_thursday').value = tableData.ovt_thursday;
-    document.getElementById('ovt_friday').value = tableData.ovt_friday;
-    document.getElementById('ovt_saturday').value = tableData.ovt_saturday;
-    document.getElementById('ovt_sunday').value = tableData.ovt_sunday;
-    document.getElementById('St').value = tableData.St;
-    document.getElementById('ot').value = tableData.ot;
-    document.getElementById('total_hour').value = tableData.total_hour;
-
-    document.getElementById('th_monday').value = tableData.th_hour[0];
-    document.getElementById('th_tuesday').value = tableData.th_hour[1];
-    document.getElementById('th_wednesday').value = tableData.th_hour[2];
-    document.getElementById('th_thursday').value = tableData.th_hour[3];
-    document.getElementById('th_friday').value = tableData.th_hour[4];
-    document.getElementById('th_saturday').value = tableData.th_hour[5];
-    document.getElementById('th_sunday').value = tableData.th_hour[6];
-
-    var data = JSON.parse(localStorage.getItem('taskInputs'));
-    console.log(data)
-    if (data.monday_value.length <= 1) {
-      console.log("here7")
-                document.getElementById("task").value = data?.tasks[0] || '';
-                document.getElementById("monday_value").value = data?.monday_value[0] || '';
-                document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
-                document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
-                document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
-                document.getElementById("friday_value").value = data?.friday_value[0] || '';
-                document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
-                document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
-
-    }
-    else{
-      console.log("here8")
-                document.getElementById("task").value = data?.tasks[0] || '';
-                document.getElementById("monday_value").value = data?.monday_value[0] || '';
-                document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
-                document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
-                document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
-                document.getElementById("friday_value").value = data?.friday_value[0] || '';
-                document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
-                document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
-                var totallength = (data.monday_value.length) 
-                
-                var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
-                var rows = tbody.getElementsByTagName("tr");
-                var taskNameRow = rows[rows.length - 5];
-                
-                for (var i = 1; i < totallength; i++) {
-                    var newRow = document.createElement("tr");
-                                          
-                    newRow.innerHTML += `
-                    
-                    
-                    <td class="text-center">
-                          <input class="text-center task-input" type="text" id="monday_task" name="task" placeholder="Task Name" value="${data.tasks[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;" value="${data.monday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;" value="${data.tuesday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;" value="${data.wednesday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;" value="${data.thursday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;" value="${data.friday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;" value="${data.saturday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;" value="${data.sunday_value[i] || 0}">
-                        </td>
-                    `;
-                    taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
+        function getValue(id) {
+            var element = document.getElementById(id);
+            if (element) {
+                if (element.value !== undefined) {
+                    return element.value;
+                } else {
+                    return element.textContent;
                 }
-    }
+            }
+            return null;
+        }
 
-    
-}
-
-}
-    });
-});
-</script>
-<script>
-  //discard button
-  document.getElementById("discardBtn").addEventListener("click", function() {
-        var confirmation = confirm("Are you sure you want to discard the values?")
-    // Reset the input fields to their initial values
-        if (confirmation) {
-        document.getElementById("project_name").value = "";
-        document.getElementById("monday_value").value = "";
-        document.getElementById("tuesday_value").value = "";
-        document.getElementById("wednesday_value").value = "";
-        document.getElementById("thursday_value").value = "";
-        document.getElementById("friday_value").value = "";
-        document.getElementById("saturday_value").value = "";
-        document.getElementById("sunday_value").value = "";
-        document.getElementById("ovt_monday").value = "";
-        document.getElementById("ovt_tuesday").value = "";
-        document.getElementById("ovt_wednesday").value = "";
-        document.getElementById("ovt_thursday").value = "";
-        document.getElementById("ovt_friday").value = "";
-        document.getElementById("ovt_saturday").value = "";
-        document.getElementById("ovt_sunday").value = "";
-        document.getElementById("St").value = "";
-        document.getElementById("ot").value = "";
-        document.getElementById("total_hour").value = "";
-        document.getElementById('th_monday').value = "";
-        document.getElementById('th_tuesday').value = "";
-        document.getElementById('th_wednesday').value = "";
-        document.getElementById('th_thursday').value = "";
-        document.getElementById('th_friday').value = "";
-        document.getElementById('th_saturday').value = "";
-        document.getElementById('th_sunday').value = "";
-
-       // Reset the task inputs to their initial values
-       var taskInputs = document.querySelectorAll('.task-input');
-        taskInputs.forEach((input) => {
-            input.value = "";
-        });
-        // Remove the newly created rows
-        
-
-        // Remove the table data and task inputs from local storage
-        localStorage.removeItem('tableData');
-        localStorage.removeItem('taskInputs');
-        console.log("here2 reload")
-        location.reload();
-}});
-</script>
-<script>
-  // submit button
-  document.getElementById("submitBtn").addEventListener("click", function() {
-        event.preventDefault()
-        console.log("sendbtm here")
+        var start_date = getValue('start_date');
+        var end_date = getValue('end_date');
+        var project_name = "{{position.project_name}}";
+        console.log(start_date);
         var taskInputs = document.querySelectorAll('.task-input');
         var tasks = Array.from(taskInputs).map(input => input.value);
-        var start_date = document.getElementById('start_date').value;
-        var end_date = document.getElementById('end_date').value;
-        var project_name = document.getElementById('project_name').value || '0';
         var monday_value = Array.from(document.querySelectorAll('.monday_value')).map(input => input.value) || '0';
         var tuesday_value = Array.from(document.querySelectorAll('.tuesday_value')).map(input => input.value) || '0';
         var wednesday_value = Array.from(document.querySelectorAll('.wednesday_value')).map(input => input.value) || '0';
@@ -947,6 +291,16 @@ if (savedTableData) {
         var friday_value = Array.from(document.querySelectorAll('.friday_value')).map(input => input.value) || '0';
         var saturday_value = Array.from(document.querySelectorAll('.saturday_value')).map(input => input.value) || '0';
         var sunday_value = Array.from(document.querySelectorAll('.sunday_value')).map(input => input.value) || '0';
+        var ovt_monday = document.getElementById('ovt_monday').value || '0';
+        var ovt_tuesday = document.getElementById('ovt_tuesday').value || '0';
+        var ovt_wednesday = document.getElementById('ovt_wednesday').value || '0';
+        var ovt_thursday = document.getElementById('ovt_thursday').value || '0';
+        var ovt_friday = document.getElementById('ovt_friday').value || '0';
+        var ovt_saturday = document.getElementById('ovt_saturday').value || '0';
+        var ovt_sunday = document.getElementById('ovt_sunday').value || '0';
+        var St = document.getElementById('St').value || '0';
+        var ot = document.getElementById('ot1').value || '0';
+        var total_hour = document.getElementById('total_hour').value || '0';
         var th_hour = [
                 document.getElementById('th_monday').value,
                 document.getElementById('th_tuesday').value,
@@ -956,26 +310,13 @@ if (savedTableData) {
                 document.getElementById('th_saturday').value,
                 document.getElementById('th_sunday').value
             ]; 
-        var ovt_monday = document.getElementById('ovt_monday').value || '0';
-        var ovt_tuesday = document.getElementById('ovt_tuesday').value || '0';
-        var ovt_wednesday = document.getElementById('ovt_wednesday').value || '0';
-        var ovt_thursday = document.getElementById('ovt_thursday').value || '0';
-        var ovt_friday = document.getElementById('ovt_friday').value || '0';
-        var ovt_saturday = document.getElementById('ovt_saturday').value || '0';
-        var ovt_sunday = document.getElementById('ovt_sunday').value || '0';
-        var St = document.getElementById('St').value || '0';
-        var ot = document.getElementById('ot').value || '0';
-        var total_hour = document.getElementById('total_hour').value || '0';
-        
 
-        
-        
         
         // Get the form data
         //var formData = new FormData(document.getElementById("timeSheetForm"));
 
     // Send the form data to the server using fetch
-    fetch("{% url 'timesheets_create' %}", {
+    fetch("{% url 'view_timesheet' %}", {
                   // enter your url
         method: "POST",
         headers: {
@@ -1005,7 +346,6 @@ if (savedTableData) {
                 'ot': ot,
                 'total_hour': total_hour,
                 'tasks': tasks,
-                
 
             })
     })
@@ -1013,17 +353,19 @@ if (savedTableData) {
         // Handle the response from the server
         if (response.ok) {
             return response.json();
-            
         } else {
             throw new Error("Error: " + response.status);
         }
     })
     .then(function(data) {
-        //
-    
-        console.log("here1 reload")
+        // Do something with the response data
+    })
+    .catch(function(error) {
+        // Handle any errors that occurred during the request
+        console.error(error);
+    });
         var messageBox_submit = document.createElement("div");
-        messageBox_submit.textContent = "Time Sheet Submitted";
+        messageBox_submit.textContent = "Time Sheet Edited";
         messageBox_submit.classList.add("message-box");
         document.body.appendChild(messageBox_submit);
 
@@ -1031,8 +373,8 @@ if (savedTableData) {
         setTimeout(function() {
             messageBox_submit.remove();
         }, 1700);
-        location.reload();
-        })
 });
+
 </script>
 
+{% endblock %}

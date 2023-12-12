@@ -7,7 +7,25 @@ from User.models import Employee
 
 
 # Create your models here.
+class Teams(models.Model):
+    employees = Employee.objects.all()
+    scrumMaster = [sm for sm in employees if sm.role == "scrummaster"]
+    members = [emp for emp in employees if (emp.role != "scrummaster" and emp.role !="manager" and emp.role !="superadmin")]
+    team_name = models.CharField(max_length=255)
+    scrum_master = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': 'employee'}, related_name='scrum_teams')
+    team_members = models.ManyToManyField(Employee, related_name='teams', limit_choices_to={'role__in': ['employee', 'other_role']})
 
+    def save(self, *args, **kwargs):
+        print("save function")
+        if self.scrum_master_id:  # Check if a scrum_master is set
+            print("inside if")
+            scrum_master = Employee.objects.get(id=self.scrum_master_id)  # Fetch the actual Employee object
+            scrum_master.role = 'scrummaster'  # Change the role
+            scrum_master.save()  # Save the Employee object
+        super(Teams, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.team_name
 
 class TimeSheet(models.Model):
     project_name = models.CharField(max_length=255)
@@ -83,7 +101,6 @@ class LeaveRequest(models.Model):
         # Set the employee_name before saving
         self.employee_name = self.employee.employee_name
         super(LeaveRequest, self).save(*args, **kwargs)
-
     def __str__(self):
         return f"{self.employee} {self.leave_type}"
         

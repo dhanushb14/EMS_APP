@@ -18,20 +18,25 @@ def employee_list(request):
         return render(request, 'unauthorized.html') 
 
 def employee_create(request):
+    print("employee_create")
     model = Employee
     if request.method == 'POST':
-        data = json.loads(request.body)
-        if 'password' in data:
-            data['password'] = make_password(data['password'])
-        model.objects.create(**data)
-        
-        return JsonResponse(data, safe=True)
+        try:
+            data = json.loads(request.body)
+            if 'password' in data:
+                data['password'] = make_password(data['password'])
+            model.objects.create(**data)
+            
+            return JsonResponse(data, safe=True)
+        except:
+            print("except")
         
     else:
         return render(request, 'employee_information/employee_signup.html')
 
 def employee_update(request, pk):
     employee = get_object_or_404(Employee, employee_id=pk)
+
     if request.method == 'POST':
         # Handle the form submission and update the employee
         # This part depends on your form handling logic

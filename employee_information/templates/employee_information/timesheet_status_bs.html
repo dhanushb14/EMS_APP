@@ -6,9 +6,7 @@
       <h2 class="fw-bold mb-4">Time Sheets</h2>
     </div>
   </div>
-  <div class="row">
-    <h4>Period</h4>
-  </div>
+  
   <div class="row mx-auto" style="background-color: #ecd5ef; min-height: 7%">
     <div class="col-auto my-auto">
       <label for="start_date" class="col-form-label">Start Date</label>
@@ -60,8 +58,12 @@
         {% else %}
         <td class="text-center">Pending</td>
         {% endif %} 
-        <td class="text-center">{{ position.comments }}</td>
-        {% if position.status == "Approved" or position.status == "Rejected" %}
+        <td>
+          <div class="form-group">
+            <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea>
+          </div>
+        </td>
+        {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
         <td class="text-center">Manager</td>
         {% else %}
         <td class="text-center"></td>

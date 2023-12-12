@@ -1,5 +1,5 @@
 {% extends "employee_information/base.html" %} {% block pageContent %}
-{% include "modal.html" %}
+
 
 </style>
 <div class="container" style="margin-top: 5%">
@@ -32,6 +32,16 @@
         Apply Filters
       </button>
     </div>
+    <div class="col-auto my-auto ms-3 ">
+      
+      <button
+        class="btn btn-sm text-light px-3"
+        style="background-color: #4981b2 !important"
+        id="saveBtn"
+      >
+        Dowload 
+      </button>
+    </div>
   </div>
   <div class="row mt-5 mx-auto">
     <table class="table table-responsive table-bordered">
@@ -56,20 +66,25 @@
         <td id='end_date' class="text-center">{{ position.end_date }}</td>
         <td id='St' class="text-center">{{ position.St }}</td>
         <td id='ot' class="text-center">{{ position.ot }}</td>
-        {% if position.status == "Approved" %}
-          <td id="status" class="text-center">Approved</td>
-        {% elif position.status == "Rejected" %}
-          <td id="status" class="text-center">Rejected</td>
-        {% elif position.status == "uncheck" %}
-          <td id="status" class="text-center">uncheck</td>
+        {% if request.user.role != "scrummaster" %}
+          {% if position.status == "Approved" %}
+            <td id="status" class="text-center">Approved</td>
+          {% elif position.status == "Rejected" %}
+            <td id="status" class="text-center">Rejected</td>
+          {% elif position.status == "uncheck" %}
+            <td id="status" class="text-center">uncheck</td>
+          {% else %}
+            <td id="status" class="text-center">
+              <select name="status" style="background-color: transparent; border: none;">
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="uncheck">Uncheck</option>
+              </select>
+            </td>
+          {% endif %}
         {% else %}
-          <td id="status" class="text-center">
-            <select name="status" style="background-color: transparent; border: none;">
-              <option value="Approved">Approved</option>
-              <option value="Rejected">Rejected</option>
-              <option value="uncheck">Uncheck</option>
-            </select>
-          </td>
+          <td id="status" class="text-center">{% if position.status%}{{ position.status }} {% else %}Pending{% endif %}</td>
+          
         {% endif %} 
         <td>
           <div class="form-group">
@@ -77,12 +92,14 @@
           </div>
         </td>
         <td class="text-center">
+          {% if request.user.role != "scrummaster" %}
           {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
             <button id="undo-btn" type="button" class="btn btn-success btn-sm undo-btn">Success</button> 
           {% else %}
           <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-danger btn-sm">Submit</button>
           {% endif %}
-          <button id = "visibility" class="btn btn-secondary btn-sm edit-data" type="button" data-id="{{ employee.employee_id }}" title="Edit">
+          {% endif %}
+          <button id = "visibility" class="btn btn-secondary btn-sm edit-data" type="button"  data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
             <i class="fa-solid fa-pen"></i>
           </button>
         </td>
@@ -92,12 +109,9 @@
     </table>
   </div>
   <div class="row">
-    <div class="col-auto me-auto">
-        <button class="btn btn-md text-light" id="saveBtn" style="background-color: #978d9a">
-            Download List Data
-        </button>
-    </div>
-    <div class="col-auto ms-auto" id="pagination" style="text-align: right;">
+    
+    
+    <div class="col-auto mx-auto d-flex justify-content-center align-items-center" id="pagination">
       {% if data.has_previous %}
           <button onclick="location.href='?page={{ data.previous_page_number }}'"><</button>
       {% endif %}
@@ -105,7 +119,7 @@
       {% if data.has_next %}
           <button onclick="location.href='?page={{ data.next_page_number }}'">></button>
       {% endif %}
-  </div>
+    </div>
     
 </div>
 
@@ -433,8 +447,12 @@ document.getElementById('project_name_filter').addEventListener('input', functio
   $(function() {
         
         $('.edit-data').click(function() {
+          var id = $(this).attr('data-id');
+          var project = $(this).attr('data-project');
+          var startDate = $(this).attr('data-start_date');
+          var endDate = $(this).attr('data-end_date');
           console.log("123")
-            uni_modal("Edit Employee", "{% url 'manage_employees-page' %}?id=" + $(this).attr('data-id'), 'modal-xl')
+          uni_modal("Edit TimeSheet", "{% url 'view_timesheet' %}?id=" + id + "&data-project=" + project + "&data-start_date=" + startDate + "&data-end_date=" + endDate, 'modal-xl');
         })
         
     })

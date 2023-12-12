@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
+from django.core.mail import send_mail, EmailMessage
 from User.models import  Employee 
 from django.contrib import messages
 from django.core import serializers
@@ -10,7 +11,7 @@ from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import TimeSheet, LeaveRequest
+from .models import TimeSheet, LeaveRequest, Teams
 from .forms import EmployeeForm , LeaveRequestForm
 import json
 from django.views.decorators.http import require_http_methods
@@ -84,11 +85,55 @@ def logoutuser(request):
 
 @login_required
 def home(request):
+    current_user = request.user.employee_name
+    print("current_user", current_user)
+    model = TimeSheet
+    data_result = model.objects.filter(username=current_user).order_by('-start_date')[:4]
+    leave_requests = LeaveRequest.objects.filter(employee=request.user)[:4]
+    result_list = list(model.objects.filter(username=current_user).order_by('-start_date')) + list(LeaveRequest.objects.filter(employee=request.user).order_by('-start_date'))
+    print(result_list)
+    paginator = Paginator(data_result, 5)  # Show 10 items per page
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    teams = Teams.objects.all()
+    employees = Employee.objects.all()
+    try:
+        team_member = Teams.objects.get(scrum_master_id = request.user.id)
+        employe_team = [i.employee_name for i in team_member.team_members.all()]
+    except:
+        team_member = None
+    
+    scrum_team = [(scrum.scrum_master, scrum.team_name) for scrum in teams if request.user.employee_name in [employee.employee_name for employee in scrum.team_members.all()]]
+    
+    manager = [employee for employee in employees if employee.role == "manager"]
+    admin = [admin for admin in employees if admin.role == "superadmin"]
+    if scrum_team:
+        scrum_master = Employee.objects.get(employee_name = scrum_team[0][0].employee_name)
+    else:
+        scrum_master = None
+    
     context = {
         'page_title': 'Home',
         'employees': employees,
+        'manager': manager[0],
+        'admin' : admin[0],
+        'scrum_emp': teams,
+        'scrum_master': scrum_master,
+        'allManagers': manager,
+        'data_result': result_list,
+        
+        
         'total_employee': len(Employee.objects.all()),
     }
+    if scrum_team:
+        context['scrum_team'] = scrum_team[0][1]
+    print(context)
+    if team_member:
+        context['member_team_name'] = team_member.team_name
+        context['team_member'] = employe_team
+    
     return render(request, 'employee_information/home.html', context)
 
 
@@ -233,36 +278,37 @@ def manage_employees(request):
     
     # employee = {}
     if request.method == 'GET':
-     print("thambi")
-     modal_content = "Your modal content here"
-     #return JsonResponse({'modal_content': modal_content})
-    #     data = request.GET
-    #     #code_value = data.get('id')
-    #     #print(code_value)
-    #     id = ''
-    #     if 'id' in data:
-    #         #print(True)
-    #         id = data['id']
-    #     if id.isnumeric():
-    #         employee = Employee.objects.filter(employee_id=id).first()
-    #         #print(employee)
-    #     context = {
-    #         'employee': employee
+        print("thambi")
+     
+     
+        data = request.GET
+        #code_value = data.get('id')
+        #print(code_value)
+        id = ''
+        if 'id' in data:
+            #print(True)
+            id = data['id']
+        if id.isnumeric():
+            employee = Employee.objects.filter(employee_id=id).first()
+            #print(employee)
+        context = {
+            'employee': employee
 
-    #     }
-    # return render(request, 'employee_information/manage_employee.html', context)
-     return render(request, 'employee_information/uni_modal.html')
+        }
+        return render(request, 'employee_information/manage_employee.html', context)
+     
 
 @login_required
 def save_employee(request):
     data = request.POST
     code_value = data.get('id')
-    #print(code_value)
+    print("save employee", data)
     resp={"success": True}
     try:
         employee_check = Employee.objects.get(id=data['id'])
         if (employee_check):
-            save_employee = Employee.objects.filter(id=data['id']).update(employee_id=data['code'], employee_name=data['name'],phonenumber=data['contact'], email_id=data['email'], is_active=data['status'])
+            print('true')
+            save_employee = Employee.objects.filter(id=data['id']).update(employee_id=data['code'], employee_name=data['name'],phonenumber=data['contact'], email_id=data['email'], is_active=data['status'], role=data['role'])
             #print(save_employee)
             resp['status'] = 'success'
     except:
@@ -760,17 +806,26 @@ def view_timesheet(request):
                     "length": result,
                     "split_list": split_list_tasks,
                     "zipped_values": zipped_values,
+                    "th_hour_0": data_retrived[0].th_hour[0],
+                    "th_hour_1": data_retrived[0].th_hour[1],
+                    "th_hour_2": data_retrived[0].th_hour[2],
+                    "th_hour_3": data_retrived[0].th_hour[3],
+                    "th_hour_4": data_retrived[0].th_hour[4],
+                    "th_hour_5": data_retrived[0].th_hour[5],
+                    "th_hour_6": data_retrived[0].th_hour[6],
 
                 }
-        print(position["tasks"])
-        return render(request, 'employee_information/view_timesheet.html', {"position":position})
+        print("position tasks",position["th_hour_0"])
+        print(position)
+        print(data_retrived[0].th_hour)
+        return render(request, 'employee_information/uni_modal.html', {"position":position})
         #print(formatted_date)
     if request.method == "POST":
         model= TimeSheet
         data=json.loads(request.body)
         print("post data", data["project_name"])  
         
-        print(data) 
+        print(data)  
         ## Converting time
         date_string_start = data["start_date"]
         try:
@@ -815,7 +870,9 @@ def view_timesheet(request):
                                 ovt_sunday=data["ovt_sunday"],
                                 St=data["St"],
                                 ot=data["ot"],
-                                total_hour=data["total_hour"]
+                                total_hour=data["total_hour"],
+                                th_hour=data["th_hour"],
+                                tasks=data["tasks"],
                              )
         return JsonResponse(data, safe=False)
     
@@ -901,4 +958,71 @@ def signup_bs(request):
     return render(request,'employee_information/signup.html')
 
 def forgot_password(request):
+    
     return render(request,'employee_information/forgot_password.html')
+        # resp={"success": True}
+        # try:
+        #     employee_check = Employee.objects.get(id=data['id'])
+        #     if (employee_check):
+        #         print('true')
+        #         save_employee = Employee.objects.filter(id=data['id']).update(employee_id=data['code'], employee_name=data['name'],phonenumber=data['contact'], email_id=data['email'], is_active=data['status'], role=data['role'])
+        #         #print(save_employee)
+        #         resp['status'] = 'success'
+        # except:
+        #     resp['status'] = 'failed'
+
+        # #print(json.dumps({"code": data['code'], "name": data['name'], "contact": data['contact'],"email": data['email'], "status": data['status']}))
+        # return HttpResponse(json.dumps(resp), content_type="application/json")
+
+def forgot_password_email(request):
+    from smtplib import SMTPException
+    from django.conf import settings
+
+    if request.method == 'POST':
+        print("in in in")
+        data = request.POST
+        email = data['email']
+        employee_id = data['emp_id']
+        print(email, employee_id)
+        resp={"success": True}
+        employee_check = Employee.objects.all()
+        print(employee_check)
+        for user in employee_check:
+            
+            try:
+                print(user.email_id, email)
+                print(user.employee_id, employee_id)
+                if (user.email_id == email and user.employee_id == employee_id):
+                    print('true')
+                    #save_employee = Employee.objects.filter(employee_id=employee_id).update(is_active=True)
+                    #print(save_employee)
+                    # send_mail(
+                    #     "Subject here",
+                    #     "Here is the message.",
+                    #     "from@example.com",
+                    #     ["to@example.com"],
+                    #     fail_silently=False,
+                    # )
+                    print(settings.EMAIL_HOST_USER)
+                    try:
+                        send_mail(
+                            "Timesheet Forgot password",
+                            "Here is the message.",
+                            settings.EMAIL_HOST_USER,
+                            ["bragadeesh.s@intellecto.co.in"],
+                            fail_silently=False,
+                        )
+                    except:
+                        print("failed here")
+                        return JsonResponse({'status': 'success'})
+                    print("success")
+                    return JsonResponse({'status': 'success'})
+                
+                
+
+            except:
+                print("failed 123")
+        return JsonResponse({'status': 'success'})        
+        #return HttpResponse(json.dumps(resp), content_type="application/json")
+    
+        

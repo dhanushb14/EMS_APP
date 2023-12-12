@@ -1,5 +1,5 @@
 {% extends "employee_information/base.html" %} {% block pageContent %}
-{% include "modal.html" %}
+
 
 
 <div class="container mg-t">
@@ -41,22 +41,23 @@
                   <label for="recipient-name" class="col-form-label"
                     >Name:</label
                   >
-                  <input type="text" class="form-control" id="recipient-name" />
+                  <input type="text" class="form-control" id="team_name" />
                 </div>
                 <div class="mb-3">
                   <label for="message-text" class="col-form-label"
                     >Scrum master:</label
                   >
-                  <input class="form-control" id="message-text"></input>
+                  <input class="form-control" id="scrum_master"></input>
                 </div>
                 <button
                 type="button"
                 class="btn btn-secondary"
                 data-bs-dismiss="modal"
+                id="cancelBtn"
               >
                 Cancel
               </button>
-              <button type="button" class="btn btn-primary">
+              <button type="button" class="btn btn-primary" id="createBtn">
                 Create
               </button>
               </form>
@@ -95,6 +96,7 @@
         <colgroup>
           <col width="10%" />
           <col width="26%" />
+          <col width="26%" />
           <col width="16%" />
           <col width="11%" />
         </colgroup>
@@ -102,6 +104,7 @@
           <tr class="table-secondary">
             <th class="text-center py-2">Employee Id</th>
             <th class="text-center py-2">Name</th>
+            <th class="text-center py-2">Role</th>
             <th class="text-center py-2">Status</th>
             <th class="text-center py-2">Action</th>
           </tr>
@@ -111,6 +114,11 @@
           <tr>
             <td class="px-2 py-1 text-center">{{ employee.employee_id }}</td>
             <td class="px-2 py-1 text-center">{{ employee.employee_name }}</td>
+            {% if employee.role == "" %}
+            <td class="px-2 py-1 text-center">Employee</td>
+            {% else %}
+            <td class="px-2 py-1 text-center">{{ employee.role }}</td>
+            {% endif %}
             <td class="px-2 py-1 text-center my-auto">
               {% if employee.is_active == 1 %}
               <span
@@ -125,6 +133,7 @@
             <td class="px-2 py-1 text-center">
               <button
                 class="btn btn-secondary btn-sm edit-data"
+                id="edit-data"
                 type="button"
                 data-id="{{ employee.employee_id }}"
                 title="Edit"
@@ -146,61 +155,125 @@
       </table>
     </div>
   </div>
-</div>
-{% endblock pageContent %} {% block ScriptBlock %}
-<script>
-     console.log($('.edit-data').length);
-   console.log($('.delete-data').length);
-   document.querySelector('.edit-data').addEventListener('click', function() {
-       console.log('Edit data clicked');
-   });
-</script>
-<script>
+  <script>
   
-$(document).ready(function() {
-    $(document).on('click', '.edit-data', function() {
-      console.log('1')
-      uni_modal(
-        "Edit Employee",
-        "{% url 'manage_employees-page' %}?id=" + $(this).attr("data-id"),
-        "modal-lg"
-      );
-    });
-
-    $(document).on('click', '.delete-data', function() {
-      _conf("Are you sure to delete this employee?", "delete_employee", [
-        $(this).attr("data-id"),
-      ]);
-    });
-});
-
-  function delete_employee($id) {
-    start_loader();
-    $.ajax({
-      headers: {
-        "X-CSRFToken": "{{csrf_token}}",
-      },
-      url: "{% url 'delete-employee' %}",
-      method: "POST",
-      data: {
-        id: $id,
-      },
-      dataType: "json",
-      error: (err) => {
-        console.log(err);
-        alert_toast("An error occurred.", "error");
-        end_loader();
-      },
-      success: function (resp) {
-        if (typeof resp == "object" && resp.status == "success") {
-          location.reload();
-        } else {
+  
+    $(function() {
+          
+          $('.edit-data').click(function() {
+        console.log('1')
+        uni_modal(
+          "Edit Employee",
+          "{% url 'manage_employees-page' %}?id=" + $(this).attr("data-id"),
+          "modal-lg"
+        );
+      });
+  
+      $(document).on('click', '.delete-data', function() {
+        _conf("Are you sure to delete this employee?", "delete_employee", [
+          $(this).attr("data-id"),
+        ]);
+      });
+  });
+  
+    function delete_employee($id) {
+      start_loader();
+      $.ajax({
+        headers: {
+          "X-CSRFToken": "{{csrf_token}}",
+        },
+        url: "{% url 'delete-employee' %}",
+        method: "POST",
+        data: {
+          id: $id,
+        },
+        dataType: "json",
+        error: (err) => {
+          console.log(err);
           alert_toast("An error occurred.", "error");
           end_loader();
+        },
+        success: function (resp) {
+          if (typeof resp == "object" && resp.status == "success") {
+            location.reload();
+          } else {
+            alert_toast("An error occurred.", "error");
+            end_loader();
+          }
+        },
+      });
+    }
+  </script>
+  <script>
+     $(function() {
+    $('#forgot-password').submit(function(e) {
+        e.preventDefault();
+        var _this = $(this)
+        
+        $('.err-msg').remove();
+        var el = $('<div>')
+        el.addClass("alert alert-danger err-msg")
+        el.hide()
+        if (_this[0].checkValidity() == false) {
+            _this[0].reportValidity();
+            return false;
         }
-      },
-    });
-  }
-</script>
+        
+        var formData = new FormData($(this)[0]);
+        
+        $.ajax({
+            headers: {
+                "X-CSRFToken": '{{csrf_token}}'
+            },
+            url: "{% url 'forgot_password_email' %}",
+            data: formData,
+            
+            cache: false,
+            contentType: false,
+            processData: false,
+            method: 'POST',
+            type: 'POST',
+            dataType: 'json',
+            error: err => {
+                console.log(err)
+                alert("An error occured", 'error');
+                
+            },
+            success: function(resp) {
+                if (resp.status == 'success') {
+                    el.removeClass("alert alert-danger err-msg")
+                    el.addClass("alert alert-success")
+                    el.text("A password reset email has been sent to your email address.")
+                } else {
+                    el.text("Check your Employee id and Email", 'error');
+                    
+                    console.error(resp)
+                }
+                _this.prepend(el)
+                el.show('slow')
+                $("html, body, .modal").scrollTop(0);
+                 // Hide the message after 5 seconds
+                setTimeout(function() {
+                    el.hide('slow');
+                }, 3000);
+            },
+            error: err => {
+                console.log(err)
+                alert("An error occured", 'error');
+
+                // Hide the message after 5 seconds
+                setTimeout(function() {
+                    el.hide('slow');
+                }, 3000);
+                
+            }
+        })
+    })
+})
+     
+   </script>
+</div>
+{% endblock pageContent %} {% block ScriptBlock %}
+
 
 {% endblock ScriptBlock %}
