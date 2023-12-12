@@ -15,7 +15,7 @@ from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import TimeSheet, LeaveRequest
+from .models import TimeSheet, LeaveRequest, Teams
 from .forms import EmployeeForm, LeaveRequestForm
 import json
 from django.views.decorators.http import require_http_methods
@@ -121,7 +121,7 @@ def home(request):
     context = {
         'page_title': 'Home',
         'employees': employees,
-        'manager': manager[0],
+        
         'admin' : admin[0],
         'scrum_emp': teams,
         'scrum_master': scrum_master,
@@ -131,6 +131,8 @@ def home(request):
         
         'total_employee': len(Employee.objects.all()),
     }
+    if manager:
+        context["manager"]= manager[0]
     if scrum_team:
         context['scrum_team'] = scrum_team[0][1]
     print(context)
