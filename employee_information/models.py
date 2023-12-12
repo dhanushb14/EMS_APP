@@ -1,11 +1,10 @@
-from datetime import datetime
 from django.db import models
-from django.utils import timezone
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from User.models import Employee
-
-
+from datetime import timedelta
+from django.db.models import Sum
+from django.utils import timezone
 # Create your models here.
 
 
@@ -59,6 +58,7 @@ class LeaveRequest(models.Model):
     employee_name = models.CharField(max_length=100) 
     start_date = models.DateField()
     end_date = models.DateField()
+    no_of_days = models.IntegerField()
     leave_type_choices = [
         ('Sick leave', 'Sick leave'),
         ('Personal leave', 'Personal leave'),
@@ -68,19 +68,35 @@ class LeaveRequest(models.Model):
     ]
     leave_type = models.CharField(max_length=20, choices=leave_type_choices)
     description = models.CharField(max_length=255)
-    comments =  models.CharField(max_length=255)
-    leave_status = [
+    comments = models.CharField(max_length=255)
+    leave_status_choices = [
         ('Approved', 'Approve'),
         ('Rejected', 'Reject'),
         ('Pending', 'Pending'),
     ]
     status = models.CharField(
-        max_length=20, choices=leave_status, default='Pending')
-    
+        max_length=20, choices=leave_status_choices, default='Pending')
+
     def save(self, *args, **kwargs):
         # Set the employee_name before saving
         self.employee_name = self.employee.employee_name
+
+        # Calculate the number of days excluding weekends
+        weekdays = 0
+        current_date = self.start_date
+        while current_date <= self.end_date:
+            # Check if the current day is not a weekend (Monday to Friday)
+            if current_date.weekday() < 5:
+                weekdays += 1
+            current_date += timedelta(days=1)
+
+        # Set the no_of_days field
+        self.no_of_days = weekdays
+
         super(LeaveRequest, self).save(*args, **kwargs)
+        if self.status == 'Approved':
+            self.employee.available_leave -= self.no_of_days
+            self.employee.save()
 
     def __str__(self):
         return f"{self.employee} {self.leave_type}"

@@ -67,99 +67,101 @@ padding: 0; /* Add this line */
         }
 }
 </style>
-<div class="italic-text">
-    <h2> Time Sheets</h2>
-</div>
-<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-    <div class="mdc-card py-2" style="background-color: #dcd0ff;">
-        <div class="d-flex justify-content-start align-items-center">
-            <label for="start_date" class="me-2">Project Name: </label>
-            <input type="text" id="project_name_filter" name="project_name" class="me-4">
-            <button type="button" id="applyFilterBtn" class="btn btn-primary" disabled>Apply Filter</button>
+<body class="body_bg">
+    <div class="italic-text">
+        <h2> Time Sheets</h2>
+    </div>
+    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+        <div class="mdc-card py-2" style="background-color: #dcd0ff;">
+            <div class="d-flex justify-content-start align-items-center">
+                <label for="start_date" class="me-2">Project Name: </label>
+                <input type="text" id="project_name_filter" name="project_name" class="me-4">
+                <button type="button" id="applyFilterBtn" class="btn btn-primary" disabled>Apply Filter</button>
+            </div>
         </div>
     </div>
-</div>
-<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-    <div class="mdc-card">
-        <div class="table-responsive">
-            <form id="timeSheetForm">
-            <table class="table table-bordered spaced-table">
-                <colgroup>
-                    <col width="15%">
-                    <col width="11.5%">
-                    <col width="11.5%">
-                    <col width="11.5%">
-                    <col width="11.5%">
-                    <col width="11.5%">
-                    <col width="11.5%">
-                    <col width="20%">
-                    <col width="8%">
-                </colgroup>
-                <thead style="height: 10px;" >
-                    <tr style="background-color: grey;">
-                        <th class="text-center ">Project name</th>
-                        <th class="text-center ">Emp Name</th>
-                        <th class="text-center ">Start Date</th>
-                        <th class="text-center ">End Date</th>
-                        <th class="text-center ">ST</th>
-                        <th class="text-center ">OT</th>
-                        <th class="text-center ">Status</th>
-                        <th class="text-center ">Comment</th>
-                        <th class="text-center "></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    {% for position in data %}    
-                        <tr class="highlight-row" >
-                        <td id='project_name' class=" text-center">{{ position.project_name }}</td>
+    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+        <div class="mdc-card">
+            <div class="table-responsive">
+                <form id="timeSheetForm">
+                <table class="table table-bordered spaced-table">
+                    <colgroup>
+                        <col width="15%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                        <col width="11.5%">
+                        <col width="20%">
+                        <col width="8%">
+                    </colgroup>
+                    <thead style="height: 10px;" >
+                        <tr style="background-color: grey;">
+                            <th class="text-center ">Project name</th>
+                            <th class="text-center ">Emp Name</th>
+                            <th class="text-center ">Start Date</th>
+                            <th class="text-center ">End Date</th>
+                            <th class="text-center ">ST</th>
+                            <th class="text-center ">OT</th>
+                            <th class="text-center ">Status</th>
+                            <th class="text-center ">Comment</th>
+                            <th class="text-center "></th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         
-                        <td id='username' class=" text-center">{{ position.username }}</td>
-                        <td  id='start_date' class=" text-center">{{ position.start_date }}</td>
-                        <td  id='end_date' class=" text-center">{{ position.end_date }}</td>
-                        <td  id='St' class=" text-center">{{ position.St }}</td>
-                        <td  id='ot' class=" text-center">{{ position.ot }}</td>
-                        {% if position.status == "Approved" %}
-                        <td id='status' class="text-center">Approved</td>
-                        {% elif position.status == "Rejected" %}
-                        <td id='status' class="text-center">Rejected</td>
-                        {% else %}
-                        <td id="status" class="text-center">
-                            <select name="status" id="status" style="width: 100%; height: 100%;">
-                                <option class="me-4" value="Approved">Approved</option>
-                                <option class="me-4" value="Rejected">Rejected</option>
+                        {% for position in data %}    
+                            <tr class="highlight-row" >
+                            <td id='project_name' class=" text-center">{{ position.project_name }}</td>
+                            
+                            <td id='username' class=" text-center">{{ position.username }}</td>
+                            <td  id='start_date' class=" text-center">{{ position.start_date }}</td>
+                            <td  id='end_date' class=" text-center">{{ position.end_date }}</td>
+                            <td  id='St' class=" text-center">{{ position.St }}</td>
+                            <td  id='ot' class=" text-center">{{ position.ot }}</td>
+                            {% if position.status == "Approved" %}
+                            <td id='status' class="text-center">Approved</td>
+                            {% elif position.status == "Rejected" %}
+                            <td id='status' class="text-center">Rejected</td>
+                            {% else %}
+                            <td id="status" class="text-center">
+                                <select name="status" id="status" style="width: 100%; height: 100%;">
+                                    <option class="me-4" value="Approved">Approved</option>
+                                    <option class="me-4" value="Rejected">Rejected</option>
+                                     
+                                </select>
+                             </td>
+                            {% endif %}
+                            <td class="text-center">
+                                
+                                <input type="text" id="comment" name="comment" style="width: 100%;height: 100%;">
                                  
-                            </select>
-                         </td>
-                        {% endif %}
-                        <td class="text-center">
-                            
-                            <input type="text" id="comment" name="comment" style="width: 100%;height: 100%;">
-                             
-                         </td>
-                        <td class="px-2 py-3 text-center">
-                           {% if position.status == "Approved" or position.status == "Rejected" %}
-                           <button id="send-btn" class="undo-btn" style="background-color:green !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;" >Undo</button>{% else %}
-                           <button id="send-btn" onclick="submitForm(event)" style="background-color:red !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">SEND</button>{% endif %}
-                            
-             
-                           <button id = "visibility" class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="button" data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
-                            <i class="material-icons mdc-button__icon">visibility</i>
-                        </button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        </form>
-        <div id="pagination" style="text-align: right;">
-            <span id="pageDisplay">Page 1</span>
-            <button id="prevBtn" disabled><</button>
-            <button id="nextBtn">></button>
+                             </td>
+                            <td class="px-2 py-3 text-center">
+                               {% if position.status == "Approved" or position.status == "Rejected" %}
+                               <button id="send-btn" class="undo-btn" style="background-color:green !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;" >Undo</button>{% else %}
+                               <button id="send-btn" onclick="submitForm(event)" style="background-color:red !important; color: white; border: none; padding: 3px 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">SEND</button>{% endif %}
+                                
+                 
+                               <button id = "visibility" class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="button" data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
+                                <i class="material-icons mdc-button__icon">visibility</i>
+                            </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            </form>
+            <div id="pagination" style="text-align: right;">
+                <span id="pageDisplay">Page 1</span>
+                <button id="prevBtn" disabled><</button>
+                <button id="nextBtn">></button>
+            </div>
         </div>
     </div>
-</div>
+</body>
 <script>
     document.getElementById('project_name_filter').addEventListener('input', function() {
     var projectName = this.value;

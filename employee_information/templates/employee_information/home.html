@@ -7,120 +7,122 @@
     border-left: 5px solid #ff8491;
   }
 </style>
-<div class="container mg-t">
-  <div class="row">
-    <div class="col-12">
-      <h2 class="fw-bold mb-4">Dashboard</h2>
+<body class="body_bg">
+  <div class="container mg-t">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="fw-bold mb-4">Dashboard</h2>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-5">
-      <div class="card">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-2 text-center my-auto">
-              <i
-                class="fa-solid fa-user my-auto"
-                style="color: #4723d9; font-size: 60px"
-              ></i>
-            </div>
-            <div class="col">
-              <p class="h2">{{ request.user.employee_name }} ( 122182 )</p>
-              <p>
+    <div class="row">
+      <div class="col-5">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-2 text-center my-auto">
                 <i
-                  class="fa-solid fa-briefcase me-2"
-                  style="color: #4723d9"
+                  class="fa-solid fa-user my-auto"
+                  style="color: #4723d9; font-size: 60px"
                 ></i>
-
-                Software Engineer
-              </p>
-              <p>
-                <i class="fa-solid fa-envelope me-2" style="color: #4723d9"></i
-                >manoj.r@intellecto.co.in
-              </p>
-              <p>
-                <i class="fa-solid fa-building me-2 mb-4" style="color: #4723d9"></i
-                >Intello Global Services
-              </p>
+              </div>
+              <div class="col">
+                <p class="h2">{{ request.user.employee_name }} ( 122182 )</p>
+                <p>
+                  <i
+                    class="fa-solid fa-briefcase me-2"
+                    style="color: #4723d9"
+                  ></i>
+  
+                  Software Engineer
+                </p>
+                <p>
+                  <i class="fa-solid fa-envelope me-2" style="color: #4723d9"></i
+                  >manoj.r@intellecto.co.in
+                </p>
+                <p>
+                  <i class="fa-solid fa-building me-2 mb-4" style="color: #4723d9"></i
+                  >Intello Global Services
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-7">
+        <div class="card">
+          <div class="card-body">
+            <p class="h2 text-center">
+              <i class="fa-solid fa-bell me-4" style="color: #4723d9"></i>Notice
+              Board
+            </p>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Comments</th>
+                </thead>
+                <tbody>
+                  <tr class="rejected-row">
+                    <td>29/11/2023</td>
+                    <td>TimeSheet</td>
+                    <td>Rejected</td>
+                    <td>Check the timings and resubmit</td>
+                  </tr>
+                  <tr class="approved-row">
+                    <td>29/11/2023</td>
+                    <td>Leave</td>
+                    <td>Approved</td>
+                    <td>Leave request approved</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-7">
-      <div class="card">
-        <div class="card-body">
-          <p class="h2 text-center">
-            <i class="fa-solid fa-bell me-4" style="color: #4723d9"></i>Notice
-            Board
-          </p>
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Comments</th>
-              </thead>
-              <tbody>
-                <tr class="rejected-row">
-                  <td>29/11/2023</td>
-                  <td>TimeSheet</td>
-                  <td>Rejected</td>
-                  <td>Check the timings and resubmit</td>
-                </tr>
-                <tr class="approved-row">
-                  <td>29/11/2023</td>
-                  <td>Leave</td>
-                  <td>Approved</td>
-                  <td>Leave request approved</td>
-                </tr>
-              </tbody>
-            </table>
+    <div class="card mt-5">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-2 text-center my-auto">
+            <i
+              class="fa-solid fa-sitemap my-auto"
+              style="color: #4723d9; font-size: 60px"
+            ></i>
+          </div>
+          <div class="col ms-2">
+            <p class="h2">Manager</p>
+            <p class="h5">Vipin Xavier</p>
+            <p>
+              <i class="fa-solid fa-envelope me-2" style="color: #4723d9"></i
+              >vipinxavier.k@intellecto.co.in
+            </p>
+            <p>
+              <i class="fa-solid fa-phone me-2" style="color: #4723d9"></i
+              >8248694043
+            </p>
+          </div>
+          <div class="col">
+            <p class="h2">Scrum Master</p>
+            <p class="h5">Dhanush Anand</p>
+            <p>
+              <i class="fa-solid fa-envelope me-2" style="color: #4723d9"></i
+              >dhanush.s@intellecto.co.in
+            </p>
+            <p>
+              <i class="fa-solid fa-phone me-2" style="color: #4723d9"></i
+              >7092463594
+            </p>
+          </div>
+          <div class="col">
+            <p class="h2">Team</p>
+            <p class="h5 my-auto">Next Gen Tech(NGT)</p>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="card mt-5">
-    <div class="card-body">
-      <div class="row">
-        <div class="col-2 text-center my-auto">
-          <i
-            class="fa-solid fa-sitemap my-auto"
-            style="color: #4723d9; font-size: 60px"
-          ></i>
-        </div>
-        <div class="col ms-2">
-          <p class="h2">Manager</p>
-          <p class="h5">Vipin Xavier</p>
-          <p>
-            <i class="fa-solid fa-envelope me-2" style="color: #4723d9"></i
-            >vipinxavier.k@intellecto.co.in
-          </p>
-          <p>
-            <i class="fa-solid fa-phone me-2" style="color: #4723d9"></i
-            >8248694043
-          </p>
-        </div>
-        <div class="col">
-          <p class="h2">Scrum Master</p>
-          <p class="h5">Dhanush Anand</p>
-          <p>
-            <i class="fa-solid fa-envelope me-2" style="color: #4723d9"></i
-            >dhanush.s@intellecto.co.in
-          </p>
-          <p>
-            <i class="fa-solid fa-phone me-2" style="color: #4723d9"></i
-            >7092463594
-          </p>
-        </div>
-        <div class="col">
-          <p class="h2">Team</p>
-          <p class="h5 my-auto">Next Gen Tech(NGT)</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+</body>
 {% endblock pageContent %}
