@@ -1,91 +1,10 @@
 {% extends "employee_information/base.html" %} {% block pageContent %}
-
-
-
-<div class="container mg-t">
-  <div class="row">
-    <div class="col">
-      <h2 class="fw-bold mb-4">Employee List</h2>
-    </div>
-    <div class="col d-flex flex-column align-items-end">
-      <!-- Button trigger modal -->
-      <button
-        type="button"
-        class="btn btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#exampleModal"
-      >
-        Create new team
-      </button>
-
-      <!-- Modal -->
-      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;">
-        <div class="modal-dialog modal-dialog-centered">
-     
-          <div class="modal-content">
-            <!-- Modal header -->
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">Create New Team</h1>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <!-- end of modal header  -->
-            <!-- Modal body -->
-            <div class="modal-body">
-              <form>
-                <div class="mb-3">
-                  <label for="recipient-name" class="col-form-label"
-                    >Name:</label
-                  >
-                  <input type="text" class="form-control" id="team_name" />
-                </div>
-                <div class="mb-3">
-                  <label for="message-text" class="col-form-label"
-                    >Scrum master:</label
-                  >
-                  <input class="form-control" id="scrum_master"></input>
-                </div>
-                <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-                id="cancelBtn"
-              >
-                Cancel
-              </button>
-              <button type="button" class="btn btn-primary" id="createBtn">
-                Create
-              </button>
-              </form>
-              <div class="table-responsive mt-5">
-                <div class="h2">Teams List</div>
-                <table class="table">
-                    <thead>
-                        <th>Name</th>
-                        <th>Scrum Master</th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Next-Gen-Tech (NGT)</td>
-                            <td>Dhanush Anand</td>
-                        </tr>
-                        <tr>
-                            <td>Innovators</td>
-                            <td>Vignesh S</td>
-                        </tr>
-                    </tbody>
-                </table>
-              </div>
-            </div>
-            <!-- end of modal body -->
-          </div>
-        </div>
+<body class="body_bg">
+  <div class="container mg-t">
+    <div class="row">
+      <div class="col">
+        <h2 class="fw-bold mb-4">Employee List</h2>
       </div>
-      <!-- Modal end -->
     </div>
   </div>
 </div>

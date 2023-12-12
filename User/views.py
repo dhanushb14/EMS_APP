@@ -1,3 +1,4 @@
+import base64
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Employee
@@ -7,6 +8,33 @@ import json
 from employee_information import urls
 from django.urls import reverse
 from django.contrib.auth.hashers import make_password
+from cryptography.fernet import Fernet
+
+
+def generate_key():
+    return Fernet.generate_key()
+
+key = generate_key()
+
+def encrypt_password(password):
+    cipher_suite = Fernet(key)
+    encrypted_password = cipher_suite.encrypt(password.encode())
+    encrypted_password_base64 = base64.b64encode(encrypted_password).decode()
+    return encrypted_password_base64
+
+def employee_create(request):
+    model = Employee
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        if 'password' in data:
+            # data['password'] = encrypt_password(data['password'])
+            data['password'] = make_password(data['password'])
+        model.objects.create(**data)
+        print(data)
+        return JsonResponse(data, safe=True)
+        
+    else:
+        return render(request, 'employee_information/signup.html')
 
 def employee_list(request):
     # Check the user's role
@@ -16,23 +44,6 @@ def employee_list(request):
         return render(request, 'home.html')  
     else:
         return render(request, 'unauthorized.html') 
-
-def employee_create(request):
-    print("employee_create")
-    model = Employee
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            if 'password' in data:
-                data['password'] = make_password(data['password'])
-            model.objects.create(**data)
-            
-            return JsonResponse(data, safe=True)
-        except:
-            print("except")
-        
-    else:
-        return render(request, 'employee_information/employee_signup.html')
 
 def employee_update(request, pk):
     employee = get_object_or_404(Employee, employee_id=pk)

@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.home, name="home-page"),
     path('login', auth_views.LoginView.as_view(
         template_name='employee_information/login.html', redirect_authenticated_user=True), name="login"),
+#     path('login',views.login,name='login'),
     path('userlogin', views.login_user, name="login-user"),
     path('logout', views.logoutuser, name="logout"),
     path('about', views.about, name="about-page"),
@@ -46,8 +47,9 @@ urlpatterns = [
 
     path('timesheet_bs/', views.timesheet_bs, name='timesheet_bs'),
     path('leave_bs/', views.leave_manager_bs, name='leave_bs'),
-    path('timesheet_create_bs/', views.timesheet_create_bs, name='timesheet_create_bs'),
+    path('timesheet_create_bs/', views.timesheet_create_bs,
+         name='timesheet_create_bs'),
     path('signup/', views.signup_bs, name='signup'),
     path('forgot_password/', views.forgot_password, name='forgot_password'),
-    path('forgot_password_email/', views.forgot_password_email, name='forgot_password_email'),
+    path('send_password',views.send_password,name='send_password')
 ]

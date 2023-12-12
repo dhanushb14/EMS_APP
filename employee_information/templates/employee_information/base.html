@@ -28,13 +28,11 @@
     />
     <style>
       .modal-backdrop {
-    display: none;
-    }
-    .submenu-active {
-  background-color: #afa5d9;
-}
-    </style>
-    <style>
+        display: none;
+      }
+      .body_bg {
+        background-color: rgb(247, 246, 251);
+      }
       @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
       :root {
         --header-height: 3rem;
@@ -121,7 +119,7 @@
       .nav_link {
         position: relative;
         color: var(--first-color-light);
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         transition: 0.3s;
       }
       .nav_link:hover {
@@ -148,7 +146,51 @@
         background-color: rgb(44, 44, 112);
         z-index: -1; /* Set a lower z-index to position it behind the text */
       }
-      
+      .sub_menu_nav_link {
+        display: grid;
+        grid-template-columns: max-content max-content;
+        align-items: center;
+        column-gap: 1rem;
+        padding: 0.5rem 0 0.5rem 0.5rem;
+      }
+      .sub_menu_nav_link {
+        position: relative;
+        color: var(--first-color-light);
+        /* margin-bottom: 0.5rem; */
+      }
+      .sub_menu_nav_link:hover {
+        color: var(--white-color);
+      }
+      .sub_menu_div_bg {
+        background-color: #b8b4e3;
+        margin-top: -10px;
+        margin-left: 10px;
+      }
+      .sub_menu_bg:hover {
+        background-color: #f7f6fb;
+        text-align: center;
+      }
+      .sub_menu_font {
+        color: #333333;
+        font-size: 16px;
+      }
+      .sub_menu_active_font {
+        color: var(--first-color);
+      }
+      .sub_menu_active {
+        margin-left: 2px;
+        background-color: #f7f6fb;
+        color: var(--first-color);
+        border-left: #471fd9 5px solid;
+      }
+      .sub_menu_icon {
+        font-size: 1.1rem;
+        color: #333333;
+        margin-left: 10px;
+      }
+      .sub_menu_active_icon {
+        color: var(--first-color);
+      }
       .height-100 {
         height: 100vh;
       }
@@ -173,16 +215,16 @@
         }
       }
       @media (max-width: 576px) {
-      .mg-t {
-        margin-top: 15%;
+        .mg-t {
+          margin-top: 15%;
+        }
       }
-    }
-  
-    @media (min-width: 577px) {
-      .mg-t {
-        margin-top: 6%;
+
+      @media (min-width: 577px) {
+        .mg-t {
+          margin-top: 6%;
+        }
       }
-    }
     </style>
   </head>
 
@@ -220,7 +262,8 @@
           </p>
           <div class="nav_list">
             <!-- super admin nav menus -->
-            {% if request.user.role == "superadmin" or request.user.role == "manager" or request.user.role == "scrummaster" %}
+            {% if request.user.role == "superadmin" or request.user.role ==
+            "manager" or request.user.role == "scrummaster" %}
             <!-- homepage -->
             <a
               href="{% url 'home-page' %}"
@@ -240,37 +283,72 @@
               <i class="fa-solid fa-user-group nav_icon"></i>
               <span class="nav_name">Employee List</span>
             </a>
-            {% endif %}
-            <!-- Time sheet -->
-            {% if request.user.role != "superadmin"%}
+            <!-- main menu of Time sheet Management collapse -->
             <a
-              href="{% url 'timesheets_create' %}"
-              class="nav_link {% if request.path == '/timesheets_create' %}active{% endif %}"
-            >
-              <i class="fa-solid fa-pen-to-square nav_icon"></i>
-              <span class="nav_name">Time Sheet</span>
-            </a>
-            {% endif %}
-            <a
-              href="{% url 'timesheet_manager' %}"
+              data-bs-toggle="collapse"
+              href="#TMSSubmenu"
+              role="button"
               class="nav_link {% if request.path == '/timesheet_manager' %}active{% endif %}"
-              title="Time Sheet"
+              title="Time Sheet Management"
             >
-            
               <i class="fa-solid fa-clock nav_icon"></i>
-              <span class="nav_name">TimeSheet Status</span>
+              <span class="nav_name dropdown-toggle">TMS</span>
             </a>
-            <!-- LMS -->
+            <!-- Time sheet Management collapsible sub menu-->
+
+            <div class="collapse sub_menu_div_bg" id="TMSSubmenu">
+              <!-- TMS My pending approvals -->
+              <div class="sub_menu_bg">
+                <a
+                  href="{% url 'timesheet_manager' %}"
+                  class="sub_menu_nav_link {% if request.path == '/timesheet_manager' %}sub_menu_active{% endif %}"
+                  title="My pending approvals"
+                >
+                  <i
+                    class="fa-regular fa-circle-check sub_menu_icon {% if request.path == '/timesheet_manager' %}sub_menu_active_icon{% endif %}"
+                  ></i>
+                  <span
+                    class="sub_menu_font {% if request.path == '/timesheet_manager' %}sub_menu_active_font{% endif %}"
+                    >Pending approvals</span
+                  >
+                </a>
+              </div>
+            </div>
+            <!-- end of Time sheet Management collapsible sub menu -->
+            <!-- main menu of Leave Management collapse -->
             <a
-              href="{% url 'leave_manager' %}"
+              data-bs-toggle="collapse"
+              href="#LMSSubmenu"
+              role="button"
               class="nav_link {% if request.path == '/leave_manager/' %}active{% endif %}"
-              title="LMS"
+              title="Leave Management"
             >
               <i class="fa-solid fa-calendar-days nav_icon"></i>
-              <span class="nav_name">Leave Management</span>
+              <span class="nav_name dropdown-toggle">LMS</span>
             </a>
+            <!-- Leave Management collapsible sub menu-->
+
+            <div class="collapse sub_menu_div_bg" id="LMSSubmenu">
+              <!-- LMS My pending approvals -->
+              <div class="sub_menu_bg">
+                <a
+                  href="{% url 'leave_manager' %}"
+                  class="sub_menu_nav_link {% if request.path == '/leave_manager/' %}sub_menu_active{% endif %}"
+                  title="My pending approvals"
+                >
+                  <i
+                    class="fa-regular fa-calendar-check sub_menu_icon {% if request.path == '/leave_manager/' %}sub_menu_active_icon{% endif %}"
+                  ></i>
+                  <span
+                    class="sub_menu_font {% if request.path == '/leave_manager/' %}sub_menu_active_font{% endif %}"
+                    >Pending approvals</span
+                  >
+                </a>
+              </div>
+            </div>
+            <!-- end of Leave Management collapsible sub menu -->
             <!-- end of super admin menus -->
-            
+
             {% else %}
             <!-- employee side nav menus -->
             <!-- homepage -->
@@ -296,42 +374,39 @@
             </a>
             <!-- Time sheet collapsible sub menu-->
 
-            <div class="collapse bg-light" id="TimeSheetSubmenu">
+            <div class="collapse sub_menu_div_bg" id="TimeSheetSubmenu">
               <!-- submit timesheet -->
-              <a
-                href="{% url 'timesheets_create' %}"
-                class="nav_link {% if request.path == '/timesheets_create' %}active{% endif %}"
-                title="Submit Time Sheet"
-              >
-                <i
-                  class="fa-solid fa-pen-to-square nav_icon"
-                  style="color: #471fd9"
-                ></i>
-                <span class="nav_name" style="color: #471fd9"
-                  >New Time Sheet</span
+              <div class="sub_menu_bg">
+                <a
+                  href="{% url 'timesheets_create' %}"
+                  class="sub_menu_nav_link {% if request.path == '/timesheets_create' %}sub_menu_active{% endif %}"
+                  title="Submit Time Sheet"
                 >
-              </a>
+                  <i
+                    class="fa-solid fa-pen-to-square sub_menu_icon {% if request.path == '/timesheets_create' %}sub_menu_active_icon{% endif %}"
+                  ></i>
+                  <span
+                    class="sub_menu_font {% if request.path == '/timesheets_create' %}sub_menu_active_font{% endif %}"
+                    >Submit Time Sheet</span
+                  >
+                </a>
+              </div>
               <!-- timesheet status -->
-              <a
-                href="{% url 'time_sheet_status' %}"
-                class="nav_link {% if request.path == '/time_sheet_status' %}active{% endif %}"
-                title="Time Sheet Status"
-              >
-                <i
-                  class="fa-regular fa-clock nav_icon"
-                  style="color: #471fd9"
-                ></i>
-                
-                {% if request.user.role == "employee" or request.user.role == "" %}
-                <span class="nav_name" style="color: #471fd9"
-                  >My Status</span
+              <div class="sub_menu_bg">
+                <a
+                  href="{% url 'time_sheet_status' %}"
+                  class="sub_menu_nav_link {% if request.path == '/time_sheet_status' %}sub_menu_active{% endif %}"
+                  title="Time Sheet Status"
                 >
-                {% else %}
-                <span class="nav_name" style="color: #471fd9"
-                  >Pending Request</span
-                >
-                {% endif %}
-              </a>
+                  <i
+                    class="fa-regular fa-clock sub_menu_icon {% if request.path == '/time_sheet_status' %}sub_menu_active_icon{% endif %}"
+                  ></i>
+                  <span
+                    class="sub_menu_font {% if request.path == '/time_sheet_status' %}sub_menu_active_font{% endif %} text-center"
+                    >Time Sheet Status</span
+                  >
+                </a>
+              </div>
             </div>
             <!-- end of Time sheet collapsible sub menu -->
             <!-- main menu of LMS collapse -->
@@ -349,25 +424,39 @@
             </a>
             <!-- LMS collapsible sub menu-->
 
-            <div class="collapse " id="LeaveSubmenu">
-              <!-- apply leave -->
-              <a
-                href="{% url 'leave_request' %}"
-                class="nav_link {% if request.path == '/leave_request/' %}active{% endif %}"
-                title="Apply Leave"
-              >
-                <i class="fa-regular fa-calendar-plus nav_icon"></i>
-                <span class="nav_name">Apply Leave</span>
+            <div class="collapse sub_menu_div_bg" id="LeaveSubmenu">
+              <div class="sub_menu_bg">
+                <!-- apply leave -->
+                <a
+                  href="{% url 'leave_request' %}"
+                  class="sub_menu_nav_link {% if request.path == '/leave_request/' %}sub_menu_active{% endif %}"
+                  title="Apply Leave"
+                >
+                  <i
+                    class="fa-regular fa-calendar-plus sub_menu_icon {% if request.path == '/leave_request/' %}sub_menu_active_icon{% endif %}"
+                  ></i>
+                  <span
+                    class="sub_menu_font {% if request.path == '/leave_request/' %}sub_menu_active_font{% endif %}"
+                    >Apply Leave</span
+                  >
+                </a>
+              </div>
+              <div class="sub_menu_bg">
                 <!-- leave status -->
-              </a>
-              <a
-                href="{% url 'leave_detail' %}"
-                class="nav_link {% if request.path == '/leave_detail/' %}active{% endif %}"
-                title="Leave Status"
-              >
-                <i class="fa-regular fa-calendar-check nav_icon"></i>
-                <span class="nav_name">Leave Status</span>
-              </a>
+                <a
+                  href="{% url 'leave_detail' %}"
+                  class="sub_menu_nav_link {% if request.path == '/leave_detail/' %}sub_menu_active{% endif %}"
+                  title="Leave Status"
+                >
+                  <i
+                    class="fa-regular fa-calendar-check sub_menu_icon {% if request.path == '/leave_detail/' %}sub_menu_active_icon{% endif %}"
+                  ></i>
+                  <span
+                    class="sub_menu_font {% if request.path == '/leave_detail/' %}sub_menu_active_font{% endif %}"
+                    >Leave Status</span
+                  >
+                </a>
+              </div>
             </div>
             <!-- end of LMS collapsible sub menu -->
             {% endif %}
@@ -383,146 +472,215 @@
 
     <!-- Container Main start -->
     <div>{% block pageContent %} {% endblock pageContent %}</div>
-    
+
     <!-- Container Main end -->
-    <div class="modal" tabindex="-1" id="uni_modal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;">
+    <div
+      class="modal"
+      tabindex="-1"
+      id="uni_modal"
+      style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Modal title</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
           </div>
           <div class="modal-body">
             <p>Modal body text goes here.</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-flat btn-primary rounded-0" id='submit' onclick="$('#uni_modal form').submit()">Save</button>
-            <button type="button" class="btn btn-sm btn-flat btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
-        </div>
+            <button
+              type="button"
+              class="btn btn-flat btn-primary rounded-0"
+              id="submit"
+              onclick="$('#uni_modal form').submit()"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-flat btn-secondary rounded-0"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
-    <div class="modal fade" id="confirm_modal"  style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;">
+    <div
+      class="modal fade"
+      id="confirm_modal"
+      style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh"
+    >
       <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-          <div class="modal-content rounded-0">
-              <div class="modal-header">
-                  <h5 class="modal-title">Confirmation</h5>
-              </div>
-              <div class="modal-body">
-                  <div id="delete_content"></div>
-              </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-sm btn-flat btn-primary rounded-0" id='confirm' onclick="">Continue</button>
-                  <button type="button" class="btn btn-sm btn-flat btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
-              </div>
+        <div class="modal-content rounded-0">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirmation</h5>
           </div>
+          <div class="modal-body">
+            <div id="delete_content"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-sm btn-flat btn-primary rounded-0"
+              id="confirm"
+              onclick=""
+            >
+              Continue
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-flat btn-secondary rounded-0"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       </div>
-  </div>
+    </div>
     <!-- jQuery -->
-    
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
       document.addEventListener("DOMContentLoaded", function (event) {
-  const showNavbar = (toggleId, navId, bodyId, headerId) => {
-    const toggle = document.getElementById(toggleId),
-      nav = document.getElementById(navId),
-      bodypd = document.getElementById(bodyId),
-      headerpd = document.getElementById(headerId);
+        const showNavbar = (toggleId, navId, bodyId, headerId) => {
+          const toggle = document.getElementById(toggleId),
+            nav = document.getElementById(navId),
+            bodypd = document.getElementById(bodyId),
+            headerpd = document.getElementById(headerId);
 
-    // Validate that all variables exist
-    if (toggle && nav && bodypd && headerpd) {
-      // Add 'show' class by default
-      nav.classList.add("show");
-      bodypd.classList.add("body-pd");
-      headerpd.classList.add("body-pd");
+          // Validate that all variables exist
+          if (toggle && nav && bodypd && headerpd) {
+            // Add 'show' class by default
+            nav.classList.add("show");
+            bodypd.classList.add("body-pd");
+            headerpd.classList.add("body-pd");
 
-      toggle.addEventListener("click", () => {
-        // toggle navbar
-        nav.classList.toggle("show");
-        // change icon
-        toggle.classList.toggle("bx-x");
-        // toggle padding to body
-        bodypd.classList.toggle("body-pd");
-        // toggle padding to header
-        headerpd.classList.toggle("body-pd");
+            toggle.addEventListener("click", () => {
+              // toggle navbar
+              nav.classList.toggle("show");
+              // change icon
+              toggle.classList.toggle("bx-x");
+              // toggle padding to body
+              bodypd.classList.toggle("body-pd");
+              // toggle padding to header
+              headerpd.classList.toggle("body-pd");
+            });
+          }
+        };
+
+        showNavbar("header-toggle", "nav-bar", "body-pd", "header");
       });
-    }
-  };
 
-  showNavbar("header-toggle", "nav-bar", "body-pd", "header");
-});
+      $(document).ready(function () {
+        // Define the paths of the TimeSheetSubmenu pages
+        var TimeSheetSubmenuPaths = [
+          "/timesheets_create",
+          "/time_sheet_status",
+        ];
 
+        // Check if the current path is a TimeSheetSubmenu page
+        if (TimeSheetSubmenuPaths.includes(window.location.pathname)) {
+          $("#TimeSheetSubmenu").addClass("show submenu-active");
+        }
+      });
+      $(document).ready(function () {
+        // Define the paths of the LeaveSubmenu pages
+        var LeaveSubmenuPaths = ["/leave_request/", "/leave_detail/"];
 
-$(document).ready(function() {
-  // Define the paths of the TimeSheetSubmenu pages
-  var TimeSheetSubmenuPaths = ['/timesheets_create', '/time_sheet_status'];
+        // Check if the current path is a LeaveSubmenu page
+        if (LeaveSubmenuPaths.includes(window.location.pathname)) {
+          $("#LeaveSubmenu").addClass("show submenu-active");
+        }
+      });
+      $(document).ready(function () {
+        // Define the paths of the Myapproval pages
+        var TMSSubmenuPaths = ["/timesheet_manager"];
 
-  // Check if the current path is a TimeSheetSubmenu page
-  if (TimeSheetSubmenuPaths.includes(window.location.pathname)) {
-    $('#TimeSheetSubmenu').addClass('show submenu-active');
-  }
+        // Check if the current path is a Myapproval page
+        if (TMSSubmenuPaths.includes(window.location.pathname)) {
+          $("#TMSSubmenu").addClass("show submenu-active");
+        }
+      });
+      $(document).ready(function () {
+        // Define the paths of the Myapproval pages
+        var LMSSubmenuPaths = ["/leave_manager/"];
 
-
-});
-
-
+        // Check if the current path is a Myapproval page
+        if (LMSSubmenuPaths.includes(window.location.pathname)) {
+          $("#LMSSubmenu").addClass("show submenu-active");
+        }
+      });
     </script>
     <script>
-      window.start_loader = function() {
-          $('body').removeClass('loaded')
-      }
-      window.end_loader = function() {
-          $('body').addClass('loaded')
-      }
-      window.uni_modal = function($title = '', $url = '', $size = "") {
-          start_loader()
-          $.ajax({
-              url: $url,
-              error: err => {
-                  console.log()
-                  alert("An error occured")
-              },
-              success: function(resp) {
-                  if (resp) {
-                      $('#uni_modal .modal-title').html($title)
-                      $('#uni_modal .modal-body').html(resp)
-                      if ($size != '') {
-                          $('#uni_modal .modal-dialog').addClass($size + '  modal-dialog-centered')
-                      } else {
-                          $('#uni_modal .modal-dialog').removeAttr("class").addClass("modal-dialog modal-md modal-dialog-centered")
-                      }
-                      $('#uni_modal').modal({
-                          backdrop: 'static',
-                          keyboard: false,
-                          focus: true,
-                          
-                      })
-                      // Check if the title or URL matches the one for uni_modal.html
-                if ($title === 'Edit TimeSheet' || $url.includes('view_timesheet')) {
-                    // If it does, hide the buttons
-                    $('#uni_modal .modal-footer').hide();
-                } else {
-                    // If it doesn't, show the buttons
-                    $('#uni_modal .modal-footer').show();
-                }
-                      $('#uni_modal').modal('show')
-                      end_loader()
-                  }
+      window.start_loader = function () {
+        $("body").removeClass("loaded");
+      };
+      window.end_loader = function () {
+        $("body").addClass("loaded");
+      };
+      window.uni_modal = function ($title = "", $url = "", $size = "") {
+        start_loader();
+        $.ajax({
+          url: $url,
+          error: (err) => {
+            console.log();
+            alert("An error occured");
+          },
+          success: function (resp) {
+            if (resp) {
+              $("#uni_modal .modal-title").html($title);
+              $("#uni_modal .modal-body").html(resp);
+              if ($size != "") {
+                $("#uni_modal .modal-dialog").addClass(
+                  $size + "  modal-dialog-centered"
+                );
+              } else {
+                $("#uni_modal .modal-dialog")
+                  .removeAttr("class")
+                  .addClass("modal-dialog modal-md modal-dialog-centered");
               }
-          })
-      }
-      window._conf = function($msg = '', $func = '', $params = []) {
-          $('#confirm_modal #confirm').attr('onclick', $func + "(" + $params.join(',') + ")")
-          $('#confirm_modal .modal-body').html($msg)
-          $('#confirm_modal').modal('show')
-      }
-      $(function() {
-
-      })
-
-      
-  </script>
+              $("#uni_modal").modal({
+                backdrop: "static",
+                keyboard: false,
+                focus: true,
+              });
+              // Check if the title or URL matches the one for uni_modal.html
+              if (
+                $title === "Edit TimeSheet" ||
+                $url.includes("view_timesheet")
+              ) {
+                // If it does, hide the buttons
+                $("#uni_modal .modal-footer").hide();
+              } else {
+                // If it doesn't, show the buttons
+                $("#uni_modal .modal-footer").show();
+              }
+              $("#uni_modal").modal("show");
+              end_loader();
+            }
+          },
+        });
+      };
+      window._conf = function ($msg = "", $func = "", $params = []) {
+        $("#confirm_modal #confirm").attr(
+          "onclick",
+          $func + "(" + $params.join(",") + ")"
+        );
+        $("#confirm_modal .modal-body").html($msg);
+        $("#confirm_modal").modal("show");
+      };
+      $(function () {});
+    </script>
   </body>
 </html>

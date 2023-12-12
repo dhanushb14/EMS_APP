@@ -1,7 +1,11 @@
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from dotenv import load_dotenv
+import smtplib
+import os
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
-from django.core.mail import send_mail, EmailMessage
-from User.models import  Employee 
+from User.models import Employee
 from django.contrib import messages
 from django.core import serializers
 from django.contrib.auth import authenticate, login, logout
@@ -11,8 +15,8 @@ from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import TimeSheet, LeaveRequest, Teams
-from .forms import EmployeeForm , LeaveRequestForm
+from .models import TimeSheet, LeaveRequest
+from .forms import EmployeeForm, LeaveRequestForm
 import json
 from django.views.decorators.http import require_http_methods
 from User.models import Employee
@@ -266,7 +270,7 @@ def delete_position(request):
 # Employees
 def employees(request):
     employee_list = Employee.objects.all()
-    
+
     context = {
         'employees': employee_list,
     }
@@ -282,15 +286,15 @@ def manage_employees(request):
      
      
         data = request.GET
-        #code_value = data.get('id')
-        #print(code_value)
+        # code_value = data.get('id')
+        # print(code_value)
         id = ''
         if 'id' in data:
-            #print(True)
+            # print(True)
             id = data['id']
         if id.isnumeric():
             employee = Employee.objects.filter(employee_id=id).first()
-            #print(employee)
+            # print(employee)
         context = {
             'employee': employee
 
@@ -314,7 +318,7 @@ def save_employee(request):
     except:
         resp['status'] = 'failed'
 
-    #print(json.dumps({"code": data['code'], "name": data['name'], "contact": data['contact'],"email": data['email'], "status": data['status']}))
+    # print(json.dumps({"code": data['code'], "name": data['name'], "contact": data['contact'],"email": data['email'], "status": data['status']}))
     return HttpResponse(json.dumps(resp), content_type="application/json")
 
 
@@ -352,7 +356,6 @@ def view_employee(request):
     return render(request, 'employee_information/view_employee.html', context)
 
 
-
 @login_required
 def time_sheet_status(request):
     current_user = request.user.employee_name
@@ -368,30 +371,28 @@ def time_sheet_status(request):
         start_date = data.get('start_date')
         end_date = data.get('end_date')
         current_user = request.user.employee_name
-        
 
         # Convert start_date and end_date to datetime objects
-        
-        
-        data = model.objects.filter(start_date__range=(start_date, end_date), end_date__range=(start_date, end_date))
-        
+
+        data = model.objects.filter(start_date__range=(
+            start_date, end_date), end_date__range=(start_date, end_date))
+
         data_result = []
-        #print(data.status)
-        
+        # print(data.status)
+
         for data in data:
             if current_user == data.username:
                 data_dict = {
-                        "project_name": data.project_name,
-                        "username": data.username,
-                        "start_date": data.start_date,
-                        "end_date": data.end_date,
-                        "St": data.St,
-                        "ot": data.ot,
-                        "status": data.status,
-                    }
+                    "project_name": data.project_name,
+                    "username": data.username,
+                    "start_date": data.start_date,
+                    "end_date": data.end_date,
+                    "St": data.St,
+                    "ot": data.ot,
+                    "status": data.status,
+                }
                 data_result.append(data_dict)
 
-        
         # data={n
 
         # place your data here
@@ -431,7 +432,6 @@ def time_sheet_status(request):
 
         #     }
 
-
         # ]
         return JsonResponse(data_result, safe=False)
     return render(request, 'employee_information/timesheet_status_bs.html', {'data_result': page_obj})
@@ -440,7 +440,7 @@ def time_sheet_status(request):
 @login_required
 def TimeSheetCreate(request):
     model = TimeSheet
-    
+
     current_user = request.user
     context = {
         'user': current_user,
@@ -449,12 +449,12 @@ def TimeSheetCreate(request):
 
     # template_name = 'employee_information/time_sheet_status.html'
     if request.method == 'POST':
-        
+
         data = json.loads(request.body)
-        
+
         data["username"] = request.user.employee_name
-        
-       #if data["method_1"] != "first_fetch":  # Loading the date into db
+
+       # if data["method_1"] != "first_fetch":  # Loading the date into db
         print("storing undo", data)
         if len(data)>7:
             print("first if")
@@ -464,7 +464,8 @@ def TimeSheetCreate(request):
             username = request.user.employee_name
             start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-            data_status = model.objects.filter(start_date=start_date, username=username)
+            data_status = model.objects.filter(
+                start_date=start_date, username=username)
             try:
                 if data_status[0].status == "uncheck":
 
@@ -495,10 +496,9 @@ def TimeSheetCreate(request):
                         username = request.user.employee_name
                     )
             except Exception:
-                
-                
-                    model.objects.create(**data)
-            
+
+                model.objects.create(**data)
+
             data.pop("username", None)
             return JsonResponse(data, safe=False)
         else:    # Fetching the data with start and end date
@@ -512,8 +512,8 @@ def TimeSheetCreate(request):
             # Convert start_date and end_date to datetime objects
             start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-            #import pdb
-            #pdb.set_trace()
+            # import pdb
+            # pdb.set_trace()
             try:
             # Filter data based on start_date and end_date
                 print("try in")
@@ -528,7 +528,7 @@ def TimeSheetCreate(request):
                 print("status",data[0].status)
                 data = {
                     "start_date": data[0].start_date,
-                    "end_date" : data[0].end_date,
+                    "end_date": data[0].end_date,
                     "project_name": data[0].project_name,
                     "monday_value": data[0].monday_value,
                     "tuesday_value": data[0].tuesday_value,
@@ -720,7 +720,7 @@ def download_list_data(request):
     if request.method == 'POST':
         # Get the JSON data from the request body
         table_data = json.loads(request.body)['table_data']
-        print("table_data: " , table_data)
+        print("table_data: ", table_data)
 
         # Create a HttpResponse object with the appropriate CSV header.
         response = HttpResponse(content_type='text/csv')
@@ -730,7 +730,8 @@ def download_list_data(request):
         writer = csv.writer(response)
 
         # Write your headers
-        headers = ['Project Name', 'Employee Name', 'Start Date', 'End Date', 'ST', 'OT', 'Status', 'Approved_by']
+        headers = ['Project Name', 'Employee Name', 'Start Date',
+                   'End Date', 'ST', 'OT', 'Status', 'Approved_by']
         writer.writerow(headers)
 
         # Write your data to the CSV writer.
@@ -740,24 +741,27 @@ def download_list_data(request):
 
         return response
 
+
 @login_required
 def view_timesheet(request):
-    model=TimeSheet
+    model = TimeSheet
     print("view_timesheet")
     if request.method == 'GET':
         data = request.GET
-        print("here1",data["id"])
+        print("here1", data["id"])
         print(data["data-project"])
         print(data["data-start_date"])
         date_string_start = data["data-start_date"]
         try:
             date_string_start = date_string_start.replace("Sept", "Sep")
-            
+
             date_object = datetime.strptime(date_string_start, "%b. %d, %Y")
             formatted_date_start = date_object.strftime("%Y-%m-%d")
-            data_retrived = model.objects.filter(username=data["id"],project_name=data["data-project"], start_date=formatted_date_start)
+            data_retrived = model.objects.filter(
+                username=data["id"], project_name=data["data-project"], start_date=formatted_date_start)
         except Exception:
-            data_retrived = model.objects.filter(username=data["id"],project_name=data["data-project"], start_date=date_string_start)
+            data_retrived = model.objects.filter(
+                username=data["id"], project_name=data["data-project"], start_date=date_string_start)
             formatted_date_start = data["data-start_date"]
         try:
             date_string_end = data["data-end_date"]
@@ -768,19 +772,20 @@ def view_timesheet(request):
             formatted_date_end = data["data-end_date"]
 
         result = list(range(0, len(data_retrived[0].tasks), 7))
-        
-        print("data_retrived",data_retrived[0].tasks)
-        split_list_tasks= [data_retrived[0].tasks[i:i+7] for i in range(0, len(data_retrived[0].tasks), 7)]
 
+        print("data_retrived", data_retrived[0].tasks)
+        split_list_tasks = [data_retrived[0].tasks[i:i+7]
+                            for i in range(0, len(data_retrived[0].tasks), 7)]
 
-        print("split_list",split_list_tasks)
+        print("split_list", split_list_tasks)
         if len(data_retrived[0].tasks) < 7:
             tasks = []
         else:
             tasks = data_retrived[0].tasks
 
-        print("tasks",tasks)
-        zipped_values = zip(data_retrived[0].tasks, data_retrived[0].monday_value, data_retrived[0].tuesday_value, data_retrived[0].wednesday_value, data_retrived[0].thursday_value, data_retrived[0].friday_value, data_retrived[0].saturday_value, data_retrived[0].sunday_value)
+        print("tasks", tasks)
+        zipped_values = zip(data_retrived[0].tasks, data_retrived[0].monday_value, data_retrived[0].tuesday_value, data_retrived[0].wednesday_value,
+                            data_retrived[0].thursday_value, data_retrived[0].friday_value, data_retrived[0].saturday_value, data_retrived[0].sunday_value)
         position = {
                     "start_date": formatted_date_start,
                     "end_date" : formatted_date_end,
@@ -830,12 +835,12 @@ def view_timesheet(request):
         date_string_start = data["start_date"]
         try:
             date_string_start = date_string_start.replace("Sept", "Sep")
-            
+
             date_object = datetime.strptime(date_string_start, "%b. %d, %Y")
             formatted_date_start = date_object.strftime("%Y-%m-%d")
-            
+
         except Exception:
-            
+
             formatted_date_start = data["start_date"]
         try:
             date_string_end = data["end_date"]
@@ -852,7 +857,7 @@ def view_timesheet(request):
         # print("retrived: ", retrived[0].project_name)
         model.objects.filter(project_name=data["project_name"],
                              start_date=formatted_date_start,
-                             
+
                              ).update(
                                 monday_value=data["monday_value"],
                                 tuesday_value=data["tuesday_value"],
@@ -875,7 +880,8 @@ def view_timesheet(request):
                                 tasks=data["tasks"],
                              )
         return JsonResponse(data, safe=False)
-    
+
+
 def leave_request_manager(request):
     if request.method == 'POST':
         print('in')
@@ -890,27 +896,25 @@ def leave_request_manager(request):
         status = data.get('status')
         comments = data.get('comments')
 
-        
-
         try:
             # Retrieve the LeaveRequest based on the associated Employee
             # leave_request = LeaveRequest.objects.get(employee__id=employee_id)
             # leave_request.status = status
             # leave_request.comments = review_comments
             # leave_request.save()
-            #print(request.POST)
-            LeaveRequest.objects.filter(id=id).update(status=status, comments=comments)
+            # print(request.POST)
+            LeaveRequest.objects.filter(id=id).update(
+                status=status, comments=comments)
             print("success")
             data_result = {
                 'message': 'success',
                 'status': status,
                 'comments': comments,
-               'employee_id': employee_id,
+                'employee_id': employee_id,
             }
             return JsonResponse(data_result, safe=False)
 
-            
-            #messages.success(request, 'Leave request updated successfully.')
+            # messages.success(request, 'Leave request updated successfully.')
         except LeaveRequest.DoesNotExist:
             data_result = 'failed'
             return JsonResponse(data_result, safe=False)
@@ -919,14 +923,17 @@ def leave_request_manager(request):
         return redirect('leave_manager')
 
     # If it's not a POST request, retrieve all leave requests
-    
+
     all_leave_requests = LeaveRequest.objects.all()
     return render(request, 'employee_information/leave_bs.html', {'all_leave_requests': all_leave_requests})
 
 
 def user_leave_request(request):
     leave_requests = LeaveRequest.objects.filter(employee=request.user)
-    return render(request, 'employee_information/user_leave_request.html', {'leave_requests': leave_requests})
+    employee = Employee.objects.get(employee_name=request.user.employee_name)
+    available_leave = employee.available_leave
+    return render(request, 'employee_information/user_leave_request.html', {'leave_requests': leave_requests,'available_leave':available_leave})
+
 
 def create_leave_request(request):
     if request.method == 'POST':
@@ -945,84 +952,71 @@ def create_leave_request(request):
 
     return render(request, 'employee_information/leave_request_form.html', {'form': form})
 
+
 def timesheet_bs(request):
     return render(request, 'employee_information/timesheet_bs.html')
 
+
 def leave_manager_bs(request):
-    return render(request,'employee_information/leave_bs.html')
+    return render(request, 'employee_information/leave_bs.html')
+
 
 def timesheet_create_bs(request):
-    return render(request,'employee_information/timesheet_create_bs.html')
+    return render(request, 'employee_information/timesheet_create_bs.html')
+
 
 def signup_bs(request):
-    return render(request,'employee_information/signup.html')
+    return render(request, 'employee_information/signup.html')
+
 
 def forgot_password(request):
-    
-    return render(request,'employee_information/forgot_password.html')
-        # resp={"success": True}
-        # try:
-        #     employee_check = Employee.objects.get(id=data['id'])
-        #     if (employee_check):
-        #         print('true')
-        #         save_employee = Employee.objects.filter(id=data['id']).update(employee_id=data['code'], employee_name=data['name'],phonenumber=data['contact'], email_id=data['email'], is_active=data['status'], role=data['role'])
-        #         #print(save_employee)
-        #         resp['status'] = 'success'
-        # except:
-        #     resp['status'] = 'failed'
+    return render(request, 'employee_information/forgot_password.html')
 
-        # #print(json.dumps({"code": data['code'], "name": data['name'], "contact": data['contact'],"email": data['email'], "status": data['status']}))
-        # return HttpResponse(json.dumps(resp), content_type="application/json")
 
-def forgot_password_email(request):
-    from smtplib import SMTPException
-    from django.conf import settings
+load_dotenv()
 
-    if request.method == 'POST':
-        print("in in in")
-        data = request.POST
-        email = data['email']
-        employee_id = data['emp_id']
-        print(email, employee_id)
-        resp={"success": True}
-        employee_check = Employee.objects.all()
-        print(employee_check)
-        for user in employee_check:
-            
-            try:
-                print(user.email_id, email)
-                print(user.employee_id, employee_id)
-                if (user.email_id == email and user.employee_id == employee_id):
-                    print('true')
-                    #save_employee = Employee.objects.filter(employee_id=employee_id).update(is_active=True)
-                    #print(save_employee)
-                    # send_mail(
-                    #     "Subject here",
-                    #     "Here is the message.",
-                    #     "from@example.com",
-                    #     ["to@example.com"],
-                    #     fail_silently=False,
-                    # )
-                    print(settings.EMAIL_HOST_USER)
-                    try:
-                        send_mail(
-                            "Timesheet Forgot password",
-                            "Here is the message.",
-                            settings.EMAIL_HOST_USER,
-                            ["bragadeesh.s@intellecto.co.in"],
-                            fail_silently=False,
-                        )
-                    except:
-                        print("failed here")
-                        return JsonResponse({'status': 'success'})
-                    print("success")
-                    return JsonResponse({'status': 'success'})
-                
-                
 
-            except:
-                print("failed 123")
-        return JsonResponse({'status': 'success'})        
-        #return HttpResponse(json.dumps(resp), content_type="application/json")
-    
-        
+def send_email(employee_email, employee_name, decrypted_password, employee_id):
+    sender_email = os.getenv("SENDER_EMAIL")
+    sender_password = os.getenv("SENDER_PASSWORD")
+    subject = 'Password Recovery'
+
+    message = MIMEMultipart()
+    message['From'] = sender_email
+    message['To'] = employee_email
+    message['Subject'] = subject
+
+    body = f'Hi {employee_name}, Your employee id: {employee_id} and password: {decrypted_password}'
+    message.attach(MIMEText(body, 'plain'))
+
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()
+        server.login(sender_email, sender_password)
+
+        server.sendmail(sender_email, employee_email, message.as_string())
+
+import base64
+from User.views import key
+from cryptography.fernet import Fernet
+
+def decrypt_password(password):
+    cipher_suite = Fernet(key)
+    encrypted_password = base64.b64decode(password)
+    decrypted_password = cipher_suite.decrypt(encrypted_password).decode()
+    return decrypted_password
+
+
+def send_password(request):
+    employee_email = request.POST.get('email')
+    try:
+        employee = Employee.objects.get(email_id=employee_email)
+        employee_id = employee.employee_id
+        employee_name = employee.employee_name
+        password = employee.password
+        print(employee,employee_id,employee_name,password)
+        decrypted_password =  decrypt_password(password)
+        print(decrypted_password)
+        send_email(employee_email, employee_name, decrypted_password, employee_id)
+        return render(request, 'employee_information/forgot_password.html', {'user_exists': True})
+    except Employee.DoesNotExist:
+        return render(request, 'employee_information/forgot_password.html', {'user_exists': False})

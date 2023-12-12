@@ -19,16 +19,6 @@ class LeaveRequestForm(forms.ModelForm):
             'leave_type': forms.Select(attrs={'class': 'form-select'}),
         }
 
-# class LeaveRequestReview(forms.ModelForm):
-#     class Meta:
-#         model = LeaveRequest
-#         fields = ['status', 'comments']
-#         widgets = {
-#             'status': forms.Select(attrs={'class': 'form-select'}),
-#             'comments': forms.Textarea(attrs={'rows': 4, 'cols': 15, 'class': 'form-control'}),
-#         }
-
-
 class LeaveRequestReview(forms.ModelForm):
     class Meta:
         model = LeaveRequest
