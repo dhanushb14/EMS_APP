@@ -85,6 +85,7 @@ class LeaveRequest(models.Model):
         ('Unplanned leave', 'Unplanned leave'),
         ('Emergency leave', 'Emergency leave'),
         ('Project holiday', 'Project holiday'),
+        ('Work from home', 'Work from home'),
     ]
     leave_type = models.CharField(max_length=20, choices=leave_type_choices)
     description = models.CharField(max_length=255)

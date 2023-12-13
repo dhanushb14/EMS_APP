@@ -55,34 +55,30 @@ from tempfile import NamedTemporaryFile
 # Login
 
 
-def login_user(request):
-    logout(request)
-    resp = {"status": 'failed', 'msg': ''}
-    username = ''
-    password = ''
-    if request.POST:
-        username = request.POST['username']
-        password = request.POST['password']
-        print(username, password)
+# def login_user(request):
+#     logout(request)
+#     resp = {"status": 'failed', 'msg': ''}
+#     username = ''
+#     password = ''
+#     if request.POST:
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         print(username, password)
 
-        user = authenticate(username=username, password=password)
-        print(user)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                resp['status'] = 'success'
-            else:
-                resp['msg'] = "Incorrect username or password"
-        else:
-            resp['msg'] = "Incorrect username or password"
-    return HttpResponse(json.dumps(resp), content_type='application/json')
+#         user = authenticate(username=username, password=password)
+#         print(user)
+#         if user is not None:
+#             if user.is_active:
+#                 login(request, user)
+#                 resp['status'] = 'success'
+#             else:
+#                 resp['msg'] = "Incorrect username or password"
+#         else:
+#             resp['msg'] = "Incorrect username or password"
+#     return HttpResponse(json.dumps(resp), content_type='application/json')
 
 # Logout
 
-
-def logoutuser(request):
-    logout(request)
-    return redirect('/')
 
 # Create your views here.
 
@@ -988,7 +984,8 @@ def send_email(employee_email, employee_name, decrypted_password, employee_id):
     message['To'] = employee_email
     message['Subject'] = subject
 
-    body = f'Hi {employee_name}, Your employee id: {employee_id} and password: {decrypted_password}'
+    body = f"Hi {employee_name},\n\nHere's your employee id: {employee_id} and password: {decrypted_password}.\n\nRegards,\nIntellecto Global Services"
+
     message.attach(MIMEText(body, 'plain'))
 
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
@@ -996,17 +993,6 @@ def send_email(employee_email, employee_name, decrypted_password, employee_id):
         server.login(sender_email, sender_password)
 
         server.sendmail(sender_email, employee_email, message.as_string())
-
-import base64
-from User.views import key
-from cryptography.fernet import Fernet
-
-def decrypt_password(password):
-    cipher_suite = Fernet(key)
-    encrypted_password = base64.b64decode(password)
-    decrypted_password = cipher_suite.decrypt(encrypted_password).decode()
-    return decrypted_password
-
 
 def send_password(request):
     employee_email = request.POST.get('email')
@@ -1016,9 +1002,9 @@ def send_password(request):
         employee_name = employee.employee_name
         password = employee.password
         print(employee,employee_id,employee_name,password)
-        decrypted_password =  decrypt_password(password)
-        print(decrypted_password)
-        send_email(employee_email, employee_name, decrypted_password, employee_id)
+        # decrypted_password =  decrypt_password(password)
+        # print(decrypted_password)
+        send_email(employee_email, employee_name, password, employee_id)
         return render(request, 'employee_information/forgot_password.html', {'user_exists': True})
     except Employee.DoesNotExist:
         return render(request, 'employee_information/forgot_password.html', {'user_exists': False})
