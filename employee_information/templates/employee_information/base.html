@@ -298,7 +298,7 @@
             <!-- Time sheet Management collapsible sub menu-->
             <div class="collapse sub_menu_div_bg" id="TMSSubmenu">
               <div class="sub_menu_bg">
-                {% if request.user.role != "employee" %}
+                {% if request.user.role != "employee"%}
                 <!-- TMS My pending approvals -->
                 <a
                   href="{% url 'timesheet_manager' %}"
@@ -546,31 +546,9 @@
 
         showNavbar("header-toggle", "nav-bar", "body-pd", "header");
       });
-
-      $(document).ready(function () {
-        // Define the paths of the TimeSheetSubmenu pages
-        var TimeSheetSubmenuPaths = [
-          "/timesheets_create",
-          "/time_sheet_status",
-        ];
-
-        // Check if the current path is a TimeSheetSubmenu page
-        if (TimeSheetSubmenuPaths.includes(window.location.pathname)) {
-          $("#TimeSheetSubmenu").addClass("show submenu-active");
-        }
-      });
-      $(document).ready(function () {
-        // Define the paths of the LeaveSubmenu pages
-        var LeaveSubmenuPaths = ["/leave_request/", "/leave_detail/"];
-
-        // Check if the current path is a LeaveSubmenu page
-        if (LeaveSubmenuPaths.includes(window.location.pathname)) {
-          $("#LeaveSubmenu").addClass("show submenu-active");
-        }
-      });
       $(document).ready(function () {
         // Define the paths of the Myapproval pages
-        var TMSSubmenuPaths = ["/timesheet_manager"];
+        var TMSSubmenuPaths = ["/timesheet_manager","/timesheets_create","/time_sheet_status",];
 
         // Check if the current path is a Myapproval page
         if (TMSSubmenuPaths.includes(window.location.pathname)) {
@@ -579,7 +557,7 @@
       });
       $(document).ready(function () {
         // Define the paths of the Myapproval pages
-        var LMSSubmenuPaths = ["/leave_manager/"];
+        var LMSSubmenuPaths = ["/leave_manager/","/leave_request/", "/leave_detail/"];
 
         // Check if the current path is a Myapproval page
         if (LMSSubmenuPaths.includes(window.location.pathname)) {

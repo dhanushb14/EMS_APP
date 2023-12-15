@@ -919,10 +919,12 @@ def leave_request_manager(request):
 
         # Redirect to the same page or another page after processing the form
         return redirect('leave_manager')
-
+    
     # If it's not a POST request, retrieve all leave requests
-
-    all_leave_requests = LeaveRequest.objects.all()
+    if request.user.role=='scrummaster':
+        all_leave_requests = LeaveRequest.objects.exclude(employee__role='manager',employee=request.user)
+    else:
+        all_leave_requests = LeaveRequest.objects.exclude(employee=request.user)
     return render(request, 'employee_information/leave_bs.html', {'all_leave_requests': all_leave_requests})
 
 
