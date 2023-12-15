@@ -16,27 +16,42 @@
               <table class="table table-bordered">
                 <thead>
                   <tr class="table-secondary">
-                    <th scope="col" class="text-center ">Employee ID</th>
-                    <th scope="col" class="text-center">Employee Name</th>
-                    <th scope="col" class="text-center">Date</th>
-                    <th scope="col" class="text-center">No of Days</th>
-                    <th scope="col" class="text-center">Leave Type</th>
-                    <th scope="col" class="text-center">Description</th>
-                    <th scope="col" class="text-center">Status</th>
-                    <th scope="col" class="text-center">Comments</th>
-                    <th scope="col" class="text-center">Action</th>
+                    {% if request.user.role == "scrummaster" %}
+                    <th class="text-center">Employee Name</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Request Type</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Comments</th>
+                    {% else %}
+                    <th class="text-center">Employee Name</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">No of Days</th>
+                    <th class="text-center">Request Type</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Comments</th>
+                    <th class="text-center">Action</th>
+                    {% endif %}
                   </tr>
                 </thead>
                 <tbody>
                   {% for leave_request in all_leave_requests %}
                     <tr>
-                      <td class="text-center" id="employee_id">{{ leave_request.employee }}</td>
-                      <td class="text-center" id="employee_id">{{ leave_request.employee_name }}</td>
-                      <td class="text-center">{{ leave_request.start_date | date:"j/n/Y"}} <br>to <br> {{ leave_request.end_date | date:"j/n/Y" }}</td>
+                      {% if request.user.role == "scrummaster" %}
+                      <td class="text-center" id="employee_name">{{ leave_request.employee_name }}</td>
+                      <td class="col-2">{{ leave_request.start_date | date:"j/n/Y"}} to {{ leave_request.end_date | date:"j/n/Y" }}</td>
+                      <td class="text-center">{{ leave_request.leave_type }}</td>
+                      <td class="text-center">{{ leave_request.status }}</td>
+                      <td class="text-center">{{ leave_request.comments }}</td>
+                      {% else %}
+                      <td class="text-center" id="employee_name">{{ leave_request.employee_name }}</td>
+                      <td class="col-2">{{ leave_request.start_date | date:"j/n/Y"}} to {{ leave_request.end_date | date:"j/n/Y" }}</td>
                       <td class="text-center">{{ leave_request.no_of_days }}</td>
                       <td class="text-center">{{ leave_request.leave_type }}</td>
                       <td class="text-center" id="description">{{ leave_request.description }}</td>
-                      <td class="text-center">
+                      <!-- show editable fields only if status is pending -->
+                        {% if leave_request.status == 'Pending' %}
+                      <td class="text-center col-2">
                           <select name="status" id="status" class="form-select">
                             <option value="Approved" {% if leave_request.status == 'Approved' %}selected{% endif %}>Approved</option>
                             <option value="Rejected" {% if leave_request.status == 'Rejected' %}selected{% endif %}>Rejected</option>
@@ -46,20 +61,108 @@
                       <td class="text-center col-2">
                         <textarea name="comments" id="comments"  cols="15" class="form-control">{{ leave_request.comments }}</textarea>
                       </td>
-                      <td class="">
+                        {% else %}
+                      <td class="text-center col-2">{{ leave_request.status }}</td>
+                      <td class="text-center col-2">{{ leave_request.comments }}</td>
+                        {% endif %}
+                      <td class="text-center col-1">
+                        {% if leave_request.status == 'Pending' %}
                         <button type="submit" class="btn btn-primary btn-sm send-btn mt-3" data-id="{{ leave_request.id }}">Send</button>
+                        {% else %}
+                        <button type="submit" class="btn btn-success btn-sm send-btn mt-3" data-id="{{ leave_request.id }}">Success</button>
+                        {% endif %}
+                        <button class="btn btn-secondary btn-sm edit-data mt-3 visibility-btn"
+                        type="button"
+                        data-toggle="modal"
+                        data-target="#myModal"
+                        data-id="{{ leave_request.id }}"
+                        data-employee="{{ leave_request.employee_id_fk }}"
+                        data-employee-name="{{ leave_request.employee }}"
+                        data-start-date="{{ leave_request.start_date | date:"j/n/Y" }}"
+                        data-end-date="{{ leave_request.end_date | date:"j/n/Y" }}"
+                        data-no-of-days="{{ leave_request.no_of_days }}"
+                        data-leave-type="{{ leave_request.leave_type }}"
+                        data-description="{{ leave_request.description }}"
+                        data-status="{{ leave_request.status }}"
+                        data-comments="{{ leave_request.comments }}"
+                        title="View Details">
+                        <i class="fa-solid fa-pen"></i>
+                        </button>
                       </td>
+                    {% endif %}
                     </tr>
                   {% endfor %}
                 </tbody>
               </table>
             </div>
-            </form>
-          
+          </form>        
         </div>
       </div>
     </div>
   </div>
+  <!-- popup to edit leave request -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Edit Leave Request</h4>
+        <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th class="text-center">Employee ID</th>
+                <th class="text-center">Employee Name</th>
+                <th class="text-center">Date Range</th>
+                <th class="text-center">No of days</th>
+                <th class="text-center">Request Type</th>
+                <th class="text-center">Description</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Comments</th>
+              </tr>
+            </thead>
+            <tbody>
+        <form method="post" action="">
+                {% csrf_token %}
+              <tr>
+                <td id="modal-employee-id" class="text-center"></td>
+                <td id="modal-employee-name" class="text-center"></td>
+                <td id="modal-date-range" class="text-center"></td>
+                <td id="modal-no-of-days" class="text-center"></td>
+                <td id="modal-leave-type" class="text-center"></td>
+                <td id="modal-description" class="text-center"></td>
+                <td id="modal-status" class="text-center">
+                  <select name="modal-status" id="modal-status-input" class="form-select">
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </td>
+                <td id="modal-comments" class="text-center">
+                  <textarea name="modal-comments" id="modal-comments-input" cols="15" class="form-control"></textarea>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex justify-content-end">
+          <div>
+            <button type="submit" class="btn btn-sm btn-primary mt-3 submit-btn">Submit</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- end of popup to edit leave request -->
 </body>
 <script>
   document.querySelectorAll('.send-btn').forEach(function(button) {
@@ -84,7 +187,97 @@ function sendData(data) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': getCookie('csrftoken')  // Django requires CSRF token for POST requests
+      'X-CSRFToken': getCookie('csrftoken')
+    },
+    body: JSON.stringify(data)
+  }).then(function(response) {
+    if (response.ok) {
+      alert('Data sent successfully');
+    } else {
+      alert('Error: ' + response.statusText);
+    }
+  });
+}
+
+// Function to get CSRF token
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+<script>
+  // Wait for the document to be ready
+  document.addEventListener("DOMContentLoaded", function () {
+    // Select all elements with the class 'visibility-btn'
+    var visibilityButtons = document.querySelectorAll('.visibility-btn');
+
+    // Loop through each button and attach a click event
+    visibilityButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        // Get the data attributes from the button
+        var id = button.getAttribute('data-id');
+        var employeeId = button.getAttribute('data-employee');
+        var employeeName = button.getAttribute('data-employee-name');
+        var startDate = button.getAttribute('data-start-date');
+        var endDate = button.getAttribute('data-end-date');
+        var noOfDays = button.getAttribute('data-no-of-days');
+        var leaveType = button.getAttribute('data-leave-type');
+        var description = button.getAttribute('data-description');
+        var status = button.getAttribute('data-status');
+        var comments = button.getAttribute('data-comments');
+
+        // Populate the modal with the data
+        document.getElementById('modal-employee-id').innerText = employeeId;
+        document.getElementById('modal-employee-name').innerText = employeeName;
+        document.getElementById('modal-date-range').innerText = startDate + ' to ' + endDate;
+        document.getElementById('modal-no-of-days').innerText =noOfDays;
+        document.getElementById('modal-leave-type').innerText = leaveType;
+        document.getElementById('modal-description').innerText = description;
+        document.getElementById('modal-status-input').value = status;
+        document.getElementById('modal-comments-input').value = comments;
+
+        // Add more lines to populate additional fields as needed
+
+        // Show the modal
+        $('#myModal').modal('show');
+      });
+    });
+  });
+</script>
+<script>
+  document.querySelectorAll('.submit-btn').forEach(function(button) {
+  var onClick = function() {
+    event.preventDefault();
+    var row = this.closest('tr');
+    var data = {
+      id: this.dataset.id,
+      employee_id: row.querySelector('#modal-employee-id').textContent,
+      description: row.querySelector('#modal-description').textContent,
+      status: row.querySelector('#modal-status').value,
+      comments: row.querySelector('#modal-comments').value
+    };
+    submitData(data);
+  };
+  button.removeEventListener('click', onClick);
+  button.addEventListener('click', onClick);
+});
+
+function submitData(data) {
+  fetch("{% url 'leave_manager' %}", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken')
     },
     body: JSON.stringify(data)
   }).then(function(response) {

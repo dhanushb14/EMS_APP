@@ -27,7 +27,7 @@
             <div class="col-2 text-center my-auto">
               <i
                 class="fa-solid fa-user my-auto"
-                style="color: rgb(175, 109, 251); font-size: 60px"
+                style="color: #4723d9; font-size: 60px"
               ></i>
             </div>
             <div class="col">
@@ -35,7 +35,7 @@
               <p>
                 <i
                   class="fa-solid fa-briefcase me-2"
-                  style="color: rgb(175, 109, 251);"
+                  style="color: #4723d9;"
                 ></i>
 
                 {% if request.user.role == "superadmin" %}Super Admin
@@ -44,11 +44,11 @@
                 {% else %}Employee{% endif %}
               </p>
               <p>
-                <i class="fa-solid fa-envelope me-2" style="color: rgb(175, 109, 251);"></i
+                <i class="fa-solid fa-envelope me-2" style="color: #4723d9;"></i
                 >{{ request.user.email_id}}
               </p>
               <p>
-                <i class="fa-solid fa-building me-2 mb-4" style="color: rgb(175, 109, 251);"></i
+                <i class="fa-solid fa-building me-2 mb-4" style="color: #4723d9;"></i
                 >Intello Global Services
               </p>
             </div>
@@ -60,7 +60,7 @@
       <div class="card">
         <div class="card-body">
           <p class="h2 text-center">
-            <i class="fa-solid fa-bell me-4" style="color: rgb(175, 109, 251);"></i>Notice
+            <i class="fa-solid fa-bell me-4" style="color: #4723d9;"></i>Notice
             Board
           </p>
           <div class="table-responsive">
@@ -132,7 +132,7 @@
         <div class="col-2 text-center my-auto">
           <i
             class="fa-solid fa-sitemap my-auto"
-            style="color: rgb(175, 109, 251); font-size: 60px"
+            style="color: #4723d9; font-size: 60px"
           ></i>
         </div>
         {% if request.user.role != "manager" %}
@@ -142,11 +142,11 @@
                 <p class="h2">Manager</p>
                 <p class="h5">{{manager.employee_name}}</p>
                 <p>
-                  <i class="fa-solid fa-envelope me-2" style="color: rgb(175, 109, 251);"></i
+                  <i class="fa-solid fa-envelope me-2" style="color: #4723d9;"></i
                   >{{manager.email_id}}
                 </p>
                 <p>
-                  <i class="fa-solid fa-phone me-2" style="color: rgb(175, 109, 251);"></i
+                  <i class="fa-solid fa-phone me-2" style="color: #4723d9;"></i
                   >{{manager.phonenumber}}
                 </p>
               </div>
@@ -169,11 +169,11 @@
                 <p class="h2">Admin</p>
                 <p class="h5">{{admin.employee_name}}</p>
                 <p>
-                  <i class="fa-solid fa-envelope me-2" style="color: rgb(175, 109, 251);"></i
+                  <i class="fa-solid fa-envelope me-2" style="color: #4723d9;"></i
                   >{{admin.email_id}}
                 </p>
                 <p>
-                  <i class="fa-solid fa-phone me-2" style="color: rgb(175, 109, 251);"></i
+                  <i class="fa-solid fa-phone me-2" style="color: #4723d9;"></i
                   >{{admin.phonenumber}}
                 </p>
               </div>
@@ -184,11 +184,11 @@
             <p class="h2">Scrum Master</p>
             <p class="h5">{{scrum_master.employee_name}}</p>
             <p>
-              <i class="fa-solid fa-envelope me-2" style="color: rgb(175, 109, 251);"></i
+              <i class="fa-solid fa-envelope me-2" style="color: #4723d9;"></i
               >{{scrum_master.email_id}}
             </p>
             <p>
-              <i class="fa-solid fa-phone me-2" style="color: rgb(175, 109, 251);"></i
+              <i class="fa-solid fa-phone me-2" style="color: #4723d9;"></i
               >{{scrum_master.phonenumber}}
             </p>
           </div>

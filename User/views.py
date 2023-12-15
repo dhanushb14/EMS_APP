@@ -1,49 +1,100 @@
-import base64
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Employee
-from django.urls import reverse
-from django.http import HttpResponse, JsonResponse
-import json
-from employee_information import urls
-from django.urls import reverse
-from django.contrib.auth.hashers import make_password
+from .forms import EmployeeSignUpForm
+from django.contrib.auth import login, logout
 from cryptography.fernet import Fernet
 
+key = Fernet.generate_key()
+fernet = Fernet(key)
 
-def generate_key():
-    return Fernet.generate_key()
-
-key = generate_key()
 
 def encrypt_password(password):
-    cipher_suite = Fernet(key)
-    encrypted_password = cipher_suite.encrypt(password.encode())
-    encrypted_password_base64 = base64.b64encode(encrypted_password).decode()
-    return encrypted_password_base64
+    encrypted_password = fernet.encrypt(password.encode())
+    return encrypted_password
+
+
+def decrypt_password(encrypted_password):
+    try:
+        decrypted_password = fernet.decrypt(encrypted_password).decode()
+        print('Password decrypted successfully')
+        return decrypted_password
+    except Exception as e:
+        print(f"Error decrypting password: {e}")
+        return None
+
 
 def employee_create(request):
-    model = Employee
     if request.method == 'POST':
-        data = json.loads(request.body)
-        if 'password' in data:
-            # data['password'] = encrypt_password(data['password'])
-            data['password'] = make_password(data['password'])
-        model.objects.create(**data)
-        print(data)
-        return JsonResponse(data, safe=True)
-        
+        form = EmployeeSignUpForm(request.POST)
+        if form.is_valid():
+            # employee = form.save(commit=False)
+
+            # print("Original Password:", employee.password)
+            # encrypted_password = encrypt_password(
+            #     employee.password)
+            # print("Encrypted Password:", encrypted_password)
+
+            # employee.password = encrypted_password.decode('utf-8')
+
+            try:
+                form.save()
+                print('Form saved successfully')
+                return render(request, 'employee_information/login.html')
+            except Exception as e:
+                print("Error saving form:", e)
+        else:
+            print('Form not saved. Errors:', form.errors)
+    form = EmployeeSignUpForm()
+    return render(request, 'employee_information/signup.html', {'form': form})
+
+
+def user_login(request):
+    if request.method == 'POST':
+        employee_id = request.POST.get('employee_id')
+        employee_password = request.POST.get('password')
+        print('Credentials entered by user:', employee_id, employee_password)
+
+        try:
+            get_user = Employee.objects.get(employee_id=employee_id)
+            stored_password = get_user.password
+            print('Password stored in DB:', stored_password)
+
+            # decrypted_password = decrypt_password(
+            #     stored_password)
+            # print("Decrypted Password:", decrypted_password)
+
+            # if employee_password == decrypted_password:
+            if employee_password == stored_password:
+                login(request, get_user)
+                return redirect('/')
+            else:
+                print('Incorrect password')
+        except Employee.DoesNotExist:
+            print('User not found')
+        except Exception as e:
+            print(f'Error during login: {e}')
     else:
-        return render(request, 'employee_information/signup.html')
+        print('Not a POST request')
+
+    print('Redirecting to the login template')
+    return render(request, 'employee_information/login.html')
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('/')
+
 
 def employee_list(request):
     # Check the user's role
     if request.user.role == 'Manager':
         return render(request, 'home.html')
     elif request.user.role == 'Employee':
-        return render(request, 'home.html')  
+        return render(request, 'home.html')
     else:
-        return render(request, 'unauthorized.html') 
+        return render(request, 'unauthorized.html')
+
 
 def employee_update(request, pk):
     employee = get_object_or_404(Employee, employee_id=pk)
@@ -54,7 +105,6 @@ def employee_update(request, pk):
         pass
     else:
         return render(request, 'home.html', {'employee': employee})
-   
 
 
 # def employee_delete(request, pk):
@@ -65,4 +115,3 @@ def employee_update(request, pk):
 #         return redirect('employee_list')
 #     else:
 #         return render(request, 'employee_confirm_delete.html', {'employee': employee})
-
