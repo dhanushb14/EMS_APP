@@ -71,7 +71,7 @@
                         {% else %}
                         <button type="submit" class="btn btn-success btn-sm send-btn mt-3" data-id="{{ leave_request.id }}">Success</button>
                         {% endif %}
-                        <button class="btn btn-secondary btn-sm edit-data mt-3 visibility-btn"
+                        <button class="btn btn-secondary btn-sm edit-data mt-3 visibility-btn "
                         type="button"
                         data-toggle="modal"
                         data-target="#myModal"
@@ -101,7 +101,7 @@
     </div>
   </div>
   <!-- popup to edit leave request -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -162,7 +162,7 @@
     </div>
   </div>
 </div>
-  <!-- end of popup to edit leave request -->
+  end of popup to edit leave request -->
 </body>
 <script>
   document.querySelectorAll('.send-btn').forEach(function(button) {
@@ -254,7 +254,7 @@ function getCookie(name) {
     });
   });
 </script>
-<script>
+<!-- <script>
   document.querySelectorAll('.submit-btn').forEach(function(button) {
   var onClick = function() {
     event.preventDefault();
@@ -304,5 +304,31 @@ function getCookie(name) {
   }
   return cookieValue;
 }
+</script> -->
+<script>
+  $(function() {
+        
+        $('.edit-data').click(function() {
+          var id = $(this).attr('data-id');
+          var employee_name = $(this).attr('data-employee');
+          var startDate = $(this).attr('data-start-date');
+          var endDate = $(this).attr('data-end-date');
+
+          var no_of_days = $(this).attr('data-no-of-days');
+          var leave_type = $(this).attr('data-leave-type');
+          var description = $(this).attr('data-description');
+          var status = $(this).attr('data-status');
+          var comments = $(this).attr('data-comments');
+          console.log("123")
+          uni_modal("Edit Leave Request", "{% url 'leave_request_manager_model' %}?id=" + id + "&data-employee=" + employee_name + "&data-start-date=" + startDate + "&data-end-date=" + endDate
+          + "&data-no-of-days=" + no_of_days + "&data-leave-type=" + leave_type + "&data-description=" + description 
+          + "&data-status=" + status+ "&data-comments=" + comments, 'modal-xl');
+        })
+        
+    })
+
+
+
+    
 </script>
 {% endblock pageContent %}

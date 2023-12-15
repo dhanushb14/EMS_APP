@@ -951,12 +951,16 @@ def leave_request_manager(request):
         return redirect('leave_manager')
     
     # If it's not a POST request, retrieve all leave requests
-    if request.user.role=='scrummaster':
-        all_leave_requests = LeaveRequest.objects.exclude(employee__role='manager',employee=request.user)
-    else:
-        all_leave_requests = LeaveRequest.objects.exclude(employee=request.user)
+    # if request.user.role=='scrummaster':
+    #     all_leave_requests = LeaveRequest.objects.exclude(employee__role='manager',employee=request.user)
+    # else:
+    all_leave_requests = LeaveRequest.objects.all()
     return render(request, 'employee_information/leave_bs.html', {'all_leave_requests': all_leave_requests})
 
+def leave_request_manager_model(request):
+    if request.method == 'GET':
+        data = request.GET
+        return render(request, 'employee_information/leave_bs_uni_modal.html', {'data': data})
 
 def user_leave_request(request):
     leave_requests = LeaveRequest.objects.filter(employee=request.user)
