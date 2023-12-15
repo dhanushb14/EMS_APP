@@ -23,6 +23,13 @@ class Teams(models.Model):
             scrum_master.save()  # Save the Employee object
         super(Teams, self).save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        if self.scrum_master_id:  # Check if a scrum_master is set
+            scrum_master = Employee.objects.get(id=self.scrum_master_id)  # Fetch the actual Employee object
+            scrum_master.role = 'employee'  # Change the role or perform any other necessary actions
+            scrum_master.save()  # Save the Employee object
+        super(Teams, self).delete(*args, **kwargs)
+
     def __str__(self):
         return self.team_name
 

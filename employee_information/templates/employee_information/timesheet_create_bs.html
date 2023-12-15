@@ -817,6 +817,76 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
     .then(response => response.json())
     .then(data => {
         console.log("here5")
+        console.log(data)
+
+        ///////// leave backend ////////////////////
+    // Define an array of IDs of the input fields
+    var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
+    var ovtIds = ['ovt_monday', 'ovt_tuesday', 'ovt_wednesday', 'ovt_thursday', 'ovt_friday', 'ovt_saturday', 'ovt_sunday']
+    for( var k=0; k<data["leave_date"].length; k++ ){
+    if (data["leave_date"][k].status=="Approved") {
+      console.log("leaveDate has value")
+      for (var i = 0; i <= 0; i++) {
+        var startdate = data["leave_date"][k].start_date
+        var enddate = data["leave_date"][k].end_date
+        console.log("inside for loop leave")
+
+        // Get the start date and end date from the table fields
+        var startDateField = document.getElementById('start_date').value;
+        var startDateField = new Date(startDateField);
+        var endDateField = document.getElementById('end_date').value;
+        var endDateField = new Date(endDateField);
+
+        var startdate = new Date(startdate);
+        var enddate = new Date(enddate);
+        
+        console.log("date values")
+        console.log(startdate, enddate, startDateField, endDateField)
+
+        if (startDateField <= startdate && startDateField <= enddate) {
+          console.log("condition passed")
+          // total_days = startdate - enddate;
+          var total_days = Math.round((enddate - startdate) / (1000 * 60 * 60 * 24));
+          
+          var starting_date = Math.round((startdate - startDateField) / (1000 * 60 * 60 * 24));
+          console.log(total_days, starting_date)
+          if (total_days == 0){
+            console.log("inside second if")
+            var dayId = dayIds[starting_date];
+            var ovtId = ovtIds[starting_date];
+            document.getElementById(dayId).setAttribute('readonly', true)
+            document.getElementById(ovtId).setAttribute('readonly', true)
+            document.getElementById(dayId).style.setProperty("background-color", "grey", "important");
+            document.getElementById(ovtId).style.setProperty("background-color", "grey", "important");
+          }
+          else{
+            
+            for (var i = starting_date; total_days>= 0; i++){
+              console.log("inside second for leave")
+              var dayId = dayIds[i];
+              var ovtId = ovtIds[i];
+              document.getElementById(dayId).setAttribute('readonly', true)
+              document.getElementById(ovtId).setAttribute('readonly', true)
+              document.getElementById(dayId).style.setProperty("background-color", "grey", "important");
+              document.getElementById(ovtId).style.setProperty("background-color", "grey", "important");
+              total_days--;
+            }
+        }
+        }
+        else{
+          console.log("came else part")
+        }
+
+
+
+        
+      }
+        
+
+       
+    }}
+
+
         if (!data.project_name){
           
 
@@ -1078,6 +1148,49 @@ if (savedTableData) {
         }, 3000);
         location.reload();
         })
+});
+</script>
+<script>
+  // Check for leave date on page load
+window.addEventListener('load', function() {
+  console.log("loaded here")
+    var leaveDate = "{{ leave_date }}"; // Replace with the actual leave date from the context
+    console.log("leaveDate",leaveDate)
+    // Define an array of IDs of the input fields
+var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
+    if (leaveDate) {
+      console.log("leaveDate has value")
+      for (var i = 0; i < leaveDate.length; i++) {
+        var startdate = leaveDate[i].start_date;
+        var enddate = leaveDate[i].end_date;
+
+        // Get the start date and end date from the table fields
+        var startDateField = document.getElementById('start_date');
+        var endDateField = document.getElementById('end_date');
+
+        console.log(startdate, enddate, startDateField, endDateField)
+
+        if (startDateField.value >= startdate && startDateField.value <= enddate) {
+          console.log("condition passed")
+          total_days = startdate - enddate;
+          starting_date = startdate - startDateField.value;
+
+          for (var i = starting_date; i<= total_days; i++){
+            var dayId = dayIds[i];
+            document.getElementById(dayId).setAttribute('readonly', true)
+          }
+        }
+
+
+
+        
+      }
+        
+
+        // Set the table fields as read-only
+        startDateField.setAttribute('readonly', true);
+        endDateField.setAttribute('readonly', true);
+    }
 });
 </script>
 {% endblock pageContent %}

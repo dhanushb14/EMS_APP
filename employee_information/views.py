@@ -1,5 +1,9 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from datetime import datetime
+from dateutil.relativedelta import relativedelta, MO
+from datetime import datetime
+import datetime
 from dotenv import load_dotenv
 import smtplib
 import os
@@ -122,7 +126,7 @@ def home(request):
         'page_title': 'Home',
         'employees': employees,
         
-        'admin' : admin[0],
+        
         'scrum_emp': teams,
         'scrum_master': scrum_master,
         'allManagers': manager,
@@ -131,6 +135,8 @@ def home(request):
         
         'total_employee': len(Employee.objects.all()),
     }
+    if admin:
+        context["admin"]= admin[0]
     if manager:
         context["manager"]= manager[0]
     if scrum_team:
@@ -442,6 +448,16 @@ def time_sheet_status(request):
 @login_required
 def TimeSheetCreate(request):
     model = TimeSheet
+    leave = LeaveRequest
+    from datetime import datetime
+    now1 = datetime.now()
+    # Get the most recent past Monday
+    start_date = now1 + relativedelta(weekday=MO(-1))
+    # Get the next Sunday (6 days after the start_date)
+    end_date = start_date + relativedelta(days=6)
+    # Filter the leave objects
+    leave_date = leave.objects.filter(employee_name=request.user.employee_name, start_date__gte=start_date, end_date__lte=end_date)
+    print(leave_date)
 
     current_user = request.user
     context = {
@@ -552,11 +568,21 @@ def TimeSheetCreate(request):
                     "status": data[0].status,
                     "tasks": data[0].tasks,
                     "th_hour": data[0].th_hour,
+                    "leave_date": leave_date,
 
                 }
                 print("data",data)
             except Exception:
-                data = 0
+                try:
+                    leave_date_list = list(leave_date.values())
+                    data = {
+                        "leave_start_date": leave_date[0].start_date,
+                        "leave_end_date": leave_date[0].end_date,
+                        "leave_status": leave_date[0].status,
+                        "leave_date" : leave_date_list,
+                    }
+                except:
+                    print("failed with leave date")
                 print("111111111111111111111111111111111111111111111111111")
                 # For testing
             # data =            {
@@ -573,6 +599,10 @@ def TimeSheetCreate(request):
     if request.method == 'GET':
         #print('IN')
         return render(request, 'employee_information/timesheet_create_bs.html', context)
+    if leave_date:
+        context["leave_date"] = leave_date
+        print("leave_date", leave_date)
+    print("final context", context)
     return render(request, 'employee_information/timesheet_create_bs.html', context)
 
 
