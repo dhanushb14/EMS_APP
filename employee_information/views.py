@@ -998,6 +998,7 @@ def user_leave_request(request):
         employee = get_object_or_404(Employee, employee_id=request.user.employee_id)
         employee.reset_available_leave()
         print("reset available leave function called")
+        available_leave = employee.available_leave
     except:
         pass
     return render(request, 'employee_information/user_leave_request.html', {'leave_requests': leave_requests,'available_leave':available_leave})
