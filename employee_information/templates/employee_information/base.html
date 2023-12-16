@@ -227,9 +227,9 @@
     </style>
   </head>
 
-  <body id="body-pd">
+  <body id="body-pd" class="body-pd">
     <!-- top bar -->
-    <header class="header" id="header">
+    <header class="header body-pd" id="header">
       <!-- toggle icon -->
       <div class="header_toggle">
         <i
@@ -248,7 +248,7 @@
     </header>
     <!-- end of top bar -->
     <!-- side nav bar -->
-    <div class="l-navbar" id="nav-bar">
+    <div class="l-navbar show" id="nav-bar">
       <nav class="nav">
         <div>
           <!-- brand logo -->
@@ -528,9 +528,9 @@
           if (toggle && nav && bodypd && headerpd) {
             // Add 'show' class by default
             // Comment out the following lines to disable the opening animation
-            nav.classList.add("show");
-            bodypd.classList.add("body-pd");
-            headerpd.classList.add("body-pd");
+            // nav.classList.add("show");
+            // bodypd.classList.add("body-pd");
+            // headerpd.classList.add("body-pd");
 
             toggle.addEventListener("click", () => {
               // toggle navbar
