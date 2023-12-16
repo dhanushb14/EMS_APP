@@ -601,7 +601,9 @@
               // Check if the title or URL matches the one for uni_modal.html
               if (
                 $title === "Edit TimeSheet" ||
-                $url.includes("view_timesheet")
+                $url.includes("view_timesheet") ||
+                $title === "Edit Leave Request" ||
+                $url.includes("leave_request_manager_model")
               ) {
                 // If it does, hide the buttons
                 $("#uni_modal .modal-footer").hide();

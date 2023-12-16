@@ -38,7 +38,7 @@ urlpatterns = [
     path('view_timesheet/', views.view_timesheet, name='view_timesheet'),
 
     path('leave_manager/', views.leave_request_manager, name='leave_manager'),
-    path('leave_manager_model/', views.leave_request_manager_model, name='leave_request_manager_model'),
+    path('leave_request_manager_model/', views.leave_request_manager_model, name='leave_request_manager_model'),
     path('leave_request/', views.create_leave_request, name='leave_request'),
     path('leave_detail/', views.user_leave_request, name='leave_detail'),
 

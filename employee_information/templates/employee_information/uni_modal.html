@@ -4,6 +4,19 @@ input[type="text"]:not(#project_name):not(#task) {
   width: 100px;
 }
 </style>
+<style>
+  .small-alert {
+    width: 40%;
+    text-align: center;
+    z-index: 1;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(138, 235, 138);
+    margin: auto;
+  }
+  </style>
 <div class="container mg-t">
   
   <div class="row" style="background-color: #ecd5ef; min-height: 7%">
@@ -138,7 +151,7 @@ input[type="text"]:not(#project_name):not(#task) {
         <tr class="table-secondary fw-light" id="calculationrow" style="border: transparent;">
           <td class="text-center" colspan="2">
               Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
-              <input type="text" id="St" name="ST" placeholder="0"  value={{position.St}}  readonly>
+              <input type="text" id="St1" name="ST" placeholder="0"  value={{position.St}}  readonly>
           </td>
           <td class=" text-center" colspan="2">
               Over Time: &nbsp;&nbsp;&nbsp&nbsp;
@@ -248,7 +261,7 @@ function hidePopup(event) {
     });
 
     console.log("ot",ot)
-    $('#St').val(st);
+    $('#St1').val(st);
     document.getElementById('ot1').value = ot;
     $('#total_hour').val(total);
     $('#th_monday').val(th_mon);
@@ -316,6 +329,10 @@ $(document).on('input[class$="_value"], input[class^="ovt_"]').on('input', calcu
         //var formData = new FormData(document.getElementById("timeSheetForm"));
 
     // Send the form data to the server using fetch
+    
+    var el = $('<div>')
+    el.addClass("alert alert-danger err-msg")
+    el.hide()
     fetch("{% url 'view_timesheet' %}", {
                   // enter your url
         method: "POST",
@@ -355,24 +372,44 @@ $(document).on('input[class$="_value"], input[class^="ovt_"]').on('input', calcu
             return response.json();
         } else {
             throw new Error("Error: " + response.status);
+            alert_toast("An error occured", 'error');
         }
     })
+
     .then(function(data) {
+      if(data == "success"){
+        el.removeClass("alert alert-danger err-msg")
+        el.text("Success")
+        el.show('slow')
+      }
         // Do something with the response data
     })
     .catch(function(error) {
         // Handle any errors that occurred during the request
         console.error(error);
+        alert_toast("An error occured", 'error');
     });
+
+        
+
         var messageBox_submit = document.createElement("div");
-        messageBox_submit.textContent = "Time Sheet Edited";
-        messageBox_submit.classList.add("message-box");
-        document.body.appendChild(messageBox_submit);
+
+        var modal = document.querySelector('#uni_modal .modal-body');
+        console.log(modal)
+        messageBox_submit.textContent = "Time Sheet Submitted";
+        messageBox_submit.classList.add("alert", "alert-success", "small-alert");
+        
+
+        // Insert the message box at the top of the modal
+        modal.insertBefore(messageBox_submit, modal.firstChild);
+        // modal.appendChild(messageBox_submit);
 
         // Show the message box
         setTimeout(function() {
             messageBox_submit.remove();
-        }, 1700);
+            location.reload()
+        }, 1500);
+        
 });
 
 </script>

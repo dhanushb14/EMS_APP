@@ -907,7 +907,8 @@ def view_timesheet(request):
                                 th_hour=data["th_hour"],
                                 tasks=data["tasks"],
                              )
-        return JsonResponse(data, safe=False)
+        print("return")
+        return JsonResponse(data="success", safe=False)
 
 
 def leave_request_manager(request):
@@ -960,7 +961,33 @@ def leave_request_manager(request):
 def leave_request_manager_model(request):
     if request.method == 'GET':
         data = request.GET
+        print("uni", data)
         return render(request, 'employee_information/leave_bs_uni_modal.html', {'data': data})
+    
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        print("post", data)
+        if data["dateRange"]:
+            
+            start_date = data["dateRange"].split("to")[0].strip()
+            end_date = data["dateRange"].split("to")[1].strip()
+        else:
+            start_date = [""]
+            end_date = [""]
+        try:
+            LeaveRequest.objects.filter(id=data.id).update(
+                employee_name=data.employeeName,
+                start_date=start_date,
+                end_date=end_date,
+                no_of_days=data.no_of_days,
+                leave_type=data.leave_type,
+                description=data.description,
+                comments=data.comments,
+                status=data.status)
+            return JsonResponse({'message': 'ok'})
+        except:
+            return JsonResponse({'message': 'failed'})
+        print('post', data)
 
 def user_leave_request(request):
     leave_requests = LeaveRequest.objects.filter(employee=request.user)

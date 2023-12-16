@@ -108,64 +108,7 @@
       </div>
     </div>
   </div>
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">Edit Leave Request</h4>
-        <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-      ></button>
-      </div>
-      <div class="modal-body">
-        <div class="table-responsive">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th class="text-center">Name</th>
-                <th class="text-center">Start Date</th>
-                <th class="text-center">End Date</th>
-                <th class="text-center">Days</th>
-                <th class="text-center">Type</th>
-                <th class="text-center">Description</th>
-                <th class="text-center">Status</th>
-                <th class="text-center">Comments</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td id="modal-employee-name" class="text-center"></td>
-                <td id="modal-start-date" class="text-center"></td>
-                <td id="modal-end-date" class="text-center"></td>
-                <td id="modal-no-of-days" class="text-center"></td>
-                <td id="modal-leave-type" class="text-center"></td>
-                <td id="modal-description" class="text-center"></td>
-                <td id="modal-status" class="text-center">
-                  <select name="modal-status" id="modal-status-input" class="form-select">
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
-                    <option value="Pending">Pending</option>
-                  </select>
-                </td>
-                <td id="modal-comments" class="text-center">
-                  <textarea name="modal-comments" id="modal-comments-input" cols="15" class="form-control"></textarea>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="d-flex justify-content-end">
-          <div>
-            <button type="submit" class="btn btn-sm btn-primary mt-3">Submit</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+
 </body>
 <script>
   document.querySelectorAll('.send-btn').forEach(function(button) {
@@ -321,10 +264,12 @@ function getCookie(name) {
           var description = $(this).attr('data-description');
           var status = $(this).attr('data-status');
           var comments = $(this).attr('data-comments');
+         
           console.log("123")
-          uni_modal("Edit Leave Request", "{% url 'leave_request_manager_model' %}?id=" + id + "&data-employee=" + employee_name + "&data-start-date=" + startDate + "&data-end-date=" + endDate
-          + "&data-no-of-days=" + no_of_days + "&data-leave-type=" + leave_type + "&data-description=" + description 
-          + "&data-status=" + status+ "&data-comments=" + comments, 'modal-xl');
+          console.log(id, employee_name, startDate, endDate, no_of_days, leave_type, description, status, comments)
+          uni_modal("Edit Leave Request", "{% url 'leave_request_manager_model' %}?id=" + id + "&employee_name=" + employee_name + "&startDate=" + startDate + "&endDate=" + endDate
+          + "&no_of_days=" + no_of_days + "&leave_type=" + leave_type + "&description=" + description 
+          + "&status=" + status+ "&comments=" + comments, 'modal-xl');
         })
         
     })

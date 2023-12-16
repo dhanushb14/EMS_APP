@@ -1,3 +1,16 @@
+<style>
+  .small-alert {
+    width: 40%;
+    text-align: center;
+    z-index: 1;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(138, 235, 138);
+    margin: auto;
+  }
+  </style>
 <div class="container mg-t">
 
         <div class="table-responsive">
@@ -18,21 +31,34 @@
         <form method="post" action="">
                 {% csrf_token %}
               <tr>
-                <td id="modal-employee-id" class="text-center"></td>
-                <td id="modal-employee-name" class="text-center"></td>
-                <td id="modal-date-range" class="text-center"></td>
-                <td id="modal-no-of-days" class="text-center"></td>
-                <td id="modal-leave-type" class="text-center"></td>
-                <td id="modal-description" class="text-center"></td>
-                <td id="modal-status" class="text-center">
-                  <select name="modal-status" id="modal-status-input" class="form-select">
-                    <option value="Approved">Approved</option>
+                <td id="data-employee-id" class="text-center">{{data.id}}</td>
+                <td id="data-employee-name" class="text-center">{{data.employee_name}}</td>
+                <td id="data-date-range" class="text-center">{{data.startDate}} to {{data.endDate}}</td>
+                <td id="data-no-of-days" class="text-center">{{data.no_of_days}}</td>
+                <td id="data-leave-type" class="text-center">{{data.leave_type}}</td>
+                <td id="data-description" class="text-center">{{data.description}}</td>
+                <td id="data-status" class="text-center">
+                  {% if data.status == 'Approved' %}
+                  <select name="data-status" id="data-status-input" class="form-select">
+                    <option value="Approved" selected>Approved</option>
                     <option value="Rejected">Rejected</option>
                     <option value="Pending">Pending</option>
                   </select>
+                  {% elif data.status == 'Rejected' %}
+                  <select name="data-status" id="data-status-input" class="form-select">
+                    <option value="Approved" >Approved</option>
+                    <option value="Rejected" selected>Rejected</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                  {% else %}
+                  <select name="data-status" id="data-status-input" class="form-select">
+                    <option value="Approved" >Approved</option>
+                    <option value="Rejected" selected>Rejected</option>
+                    <option value="Pending">Pending</option>
+                  {% endif %}
                 </td>
-                <td id="modal-comments" class="text-center">
-                  <textarea name="modal-comments" id="modal-comments-input" cols="15" class="form-control"></textarea>
+                <td id="data-comments" class="text-center">
+                  <textarea name="data-comments" id="data-comments-input" cols="15" class="form-control"></textarea>
                 </td>
               </tr>
             </tbody>
@@ -40,10 +66,63 @@
         </div>
         <div class="d-flex justify-content-end">
           <div>
-            <button type="submit" class="btn btn-primary mt-3 submit-btn">Submit</button>
+            <button type="submit" class="btn btn-primary mt-3 submit-btn" id="submit-btn">Submit</button>
           </div>
         </form>
         </div>
       
 </div>
+<script>
+  document.getElementById('submit-btn').addEventListener('click', function () {
+    console.log("script in ")
+    // Get the data attributes from the button
+    data = {
+         'id' : document.getElementById('data-employee-id').textContent,
+         'employeeName' : document.getElementById('data-employee-name').textContent,
+         'dateRange' : document.getElementById('data-date-range').textContent,
+        //  'startDate' : document.getElementById('data-start-date').textContent,
+        //  'endDate' : document.getElementById('data-end-date').textContent,
+         'noOfDays' : document.getElementById('data-no-of-days').textContent,
+         'leaveType' : document.getElementById('data-leave-type').textContent,
+         'description' : document.getElementById('data-description').textContent,
+         'status' : document.getElementById('data-status-input').value,
+         'comments' : document.getElementById('data-comments-input').value,
+
+    }
+
+        fetch("{% url 'leave_request_manager_model' %}", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken')  // Django requires CSRF token for POST requests
+    },
+    body: JSON.stringify(data)
+  }).then(function(response) {
+    if (response.ok) {
+      console.log('Data sent successfully');
+      var messageBox_submit = document.createElement("div");
+
+        var modal = document.querySelector('#uni_modal .modal-body');
+        console.log(modal)
+        messageBox_submit.textContent = "Time Sheet Submitted";
+        messageBox_submit.classList.add("alert", "alert-success", "small-alert");
+        
+
+        // Insert the message box at the top of the modal
+        modal.insertBefore(messageBox_submit, modal.firstChild);
+        // modal.appendChild(messageBox_submit);
+
+        // Show the message box
+        setTimeout(function() {
+            messageBox_submit.remove();
+            location.reload()
+        }, 1500);
+        
+    } else {
+      alert('Error: ' + response.statusText);
+    }
+  });
+});
+
+</script>
   <!-- end of popup to edit leave request -->

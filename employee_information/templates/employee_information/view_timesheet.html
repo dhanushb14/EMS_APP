@@ -359,28 +359,33 @@ $('input[id$="_value"], input[id^="ovt_"]').on('input', calculateTotalHours);
     })
     .then(function(response) {
         // Handle the response from the server
+        console.log("working1")
         if (response.ok) {
             return response.json();
+            location.reload()
         } else {
             throw new Error("Error: " + response.status);
         }
     })
     .then(function(data) {
-        // Do something with the response data
+        if(data == "success" ){
+        // Do spromething with the response data
+        location.reload()}
     })
     .catch(function(error) {
         // Handle any errors that occurred during the request
         console.error(error);
     });
         var messageBox_submit = document.createElement("div");
-        messageBox_submit.textContent = "Time Sheet Edited";
-        messageBox_submit.classList.add("message-box");
+        messageBox_submit.textContent = "Time Sheet submitted";
+        messageBox_submit.classList.add("alert", "alert-success");
         document.body.appendChild(messageBox_submit);
 
         // Show the message box
         setTimeout(function() {
             messageBox_submit.remove();
-        }, 1700);
+        }, 2700);
+        location.reload()
 });
 
 </script>
