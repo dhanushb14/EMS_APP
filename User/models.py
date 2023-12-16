@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.utils import timezone
+from django.apps import apps
 
 class EmployeeManager(BaseUserManager):
     def create_user(self, employee_id, password=None, role=None, **extra_fields):
@@ -39,6 +41,28 @@ class Employee(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'employee_id'
     REQUIRED_FIELDS = ['employee_name', 'phonenumber', 'role', 'email_id']
+
+    def reset_available_leave(self):
+        print("came to reset_available_leave function in models")
+        current_month = timezone.now().month
+        print(current_month)
+        print(self.employee_name)
+        LeaveRequest = apps.get_model('employee_information', 'LeaveRequest')
+        data = LeaveRequest.objects.filter(employee_name = self.employee_name, status='Approved')
+        print(data)
+        
+        self.available_leave = 2
+        for i in data:
+            
+            print("1")
+            print(i.start_date.month, current_month)
+            
+            if i.start_date.month == current_month:
+                print("came to if condition")
+                
+                self.available_leave = self.available_leave - 1
+        self.save()
+
     def save(self, *args, **kwargs):
         try:
             if not self.id:

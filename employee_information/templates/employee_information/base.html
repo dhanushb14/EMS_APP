@@ -55,7 +55,7 @@
         padding: 0 1rem;
         font-family: var(--body-font);
         font-size: var(--normal-font-size);
-        transition: 0.5s;
+        /* transition: 0.5s; */
       }
       a {
         text-decoration: none;
@@ -72,7 +72,7 @@
         padding: 0 1rem;
         background-color: var(--white-color);
         z-index: var(--z-fixed);
-        transition: 0.5s;
+        /* transition: 0.5s; */
       }
       .header_toggle {
         color: var(--first-color);
@@ -87,7 +87,7 @@
         height: 100vh;
         background-color: var(--first-color);
         padding: 0.5rem 1rem 0 0;
-        transition: 0.5s;
+        /* transition: 0.5s; */
         z-index: var(--z-fixed);
       }
       .nav {
@@ -527,6 +527,7 @@
           // Validate that all variables exist
           if (toggle && nav && bodypd && headerpd) {
             // Add 'show' class by default
+            // Comment out the following lines to disable the opening animation
             nav.classList.add("show");
             bodypd.classList.add("body-pd");
             headerpd.classList.add("body-pd");

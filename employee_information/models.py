@@ -126,6 +126,9 @@ class LeaveRequest(models.Model):
         if self.status == 'Approved':
             self.employee.available_leave -= self.no_of_days
             self.employee.save()
+        if self.status == 'Approved':
+            self.employee.available_leave -= 1
+            self.employee.save()
 
     def __str__(self):
         return f"{self.employee} {self.leave_type}"
