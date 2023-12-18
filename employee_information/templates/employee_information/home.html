@@ -212,7 +212,7 @@
           
             <div class="col">
               <p class="h2">Scrum Masters</p>
-              {% if scrum_emp %}
+              {% if not team_member and request.user.role != "employee" %}
                 {% for emp in scrum_emp %}
                   <p class="h6">{{ forloop.counter }}. {{emp.scrum_master}}</p>
                 {% endfor %}
@@ -222,7 +222,7 @@
             </div>
             <div class="col">
               <p class="h2">Team</p>
-              {% if scrum_emp %}
+              {% if not team_member and request.user.role != "employee" %}
                 {% for team in scrum_emp %}
                   <p class="h6 my-auto">{{ forloop.counter }}. {{team.team_name}}</p>
                 {% endfor %}

@@ -34,6 +34,7 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=100)
     role = models.CharField(max_length=100, default='employee')
     available_leave = models.IntegerField(default=2)
+    work_from_home  = models.IntegerField(default=3)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -52,6 +53,7 @@ class Employee(AbstractBaseUser, PermissionsMixin):
         print(data)
         
         self.available_leave = 2
+        self.work_from_home = 3
         for i in data:
             
             print("1")
@@ -59,8 +61,10 @@ class Employee(AbstractBaseUser, PermissionsMixin):
             
             if i.start_date.month == current_month:
                 print("came to if condition")
-                
-                self.available_leave = self.available_leave - 1
+                if i.leave_type == "Work from home":
+                    self.work_from_home = self.work_from_home - 1
+                else:
+                    self.available_leave = self.available_leave - 1
         self.save()
 
     def save(self, *args, **kwargs):

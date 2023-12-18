@@ -134,15 +134,24 @@ def home(request):
     }
     if admin:
         context["admin"]= admin[0]
+    else:
+        context["admin"]= None
     if manager:
         context["manager"]= manager[0]
+    else:
+        context["manager"]= None
     if scrum_team:
         context['scrum_team'] = scrum_team[0][1]
-    print(context)
+    else:
+        context['scrum_team'] = None
+    
     if team_member:
         context['member_team_name'] = team_member.team_name
         context['team_member'] = employe_team
-    
+    else:
+        context['member_team_name'] = None
+        context['team_member'] = None
+    print("context",context)
     return render(request, 'employee_information/home.html', context)
 
 
@@ -454,7 +463,7 @@ def TimeSheetCreate(request):
     end_date = start_date + relativedelta(days=6)
     # Filter the leave objects
     leave_date = leave.objects.filter(employee_name=request.user.employee_name, start_date__gte=start_date, end_date__lte=end_date)
-    print(leave_date)
+    print("leave_date",leave_date)
 
     current_user = request.user
     context = {
@@ -541,6 +550,7 @@ def TimeSheetCreate(request):
                 print("monday_value",data[0].monday_value)
                 print("project:",len(data[0].project_name))
                 print("status",data[0].status)
+                
                 data = {
                     "start_date": data[0].start_date,
                     "end_date": data[0].end_date,
@@ -565,9 +575,16 @@ def TimeSheetCreate(request):
                     "status": data[0].status,
                     "tasks": data[0].tasks,
                     "th_hour": data[0].th_hour,
-                    "leave_date": leave_date,
+                    
+
 
                 }
+                if leave_date[0]:
+                    leave_date_list = list(leave_date.values())
+                    data["leave_date"] = leave_date_list
+                    data["leave_start_date"] = leave_date[0].start_date
+                    data["leave_end_date"] = leave_date[0].end_date
+                    data["leave_status"] = leave_date[0].status
                 print("data",data)
             except Exception:
                 try:
@@ -924,8 +941,8 @@ def leave_request_manager(request):
         employee_id = data.get('employee_id')
         id = data.get('id')
         status = data.get('status')
-        comments = data.get('comments')
-
+        comments = data['comments']
+        print("comments", comments)
         try:
             # Retrieve the LeaveRequest based on the associated Employee
             # leave_request = LeaveRequest.objects.get(employee__id=employee_id)
@@ -942,11 +959,13 @@ def leave_request_manager(request):
                 'comments': comments,
                 'employee_id': employee_id,
             }
+            print("all success")
             return JsonResponse(data_result, safe=False)
 
             # messages.success(request, 'Leave request updated successfully.')
         except LeaveRequest.DoesNotExist:
             data_result = 'failed'
+            print("failed")
             return JsonResponse(data_result, safe=False)
 
         # Redirect to the same page or another page after processing the form
@@ -980,17 +999,26 @@ def leave_request_manager_model(request):
             start_date = [""]
             end_date = [""]
         try:
-            LeaveRequest.objects.filter(id=data.id).update(
-                employee_name=data.employeeName,
-                start_date=start_date,
-                end_date=end_date,
-                no_of_days=data.no_of_days,
-                leave_type=data.leave_type,
-                description=data.description,
-                comments=data.comments,
-                status=data.status)
+            date_object = datetime.strptime(start_date, "%d/%m/%Y")
+            formatted_start_date = date_object.strftime("%Y-%m-%d")
+            date_object = datetime.strptime(end_date, "%d/%m/%Y")
+            formatted_end_date = date_object.strftime("%Y-%m-%d")
+            print(type(start_date), end_date)
+
+
+            LeaveRequest.objects.filter(id=data["id"]).update(
+                employee_name=data["employeeName"],
+                start_date=formatted_start_date,
+                end_date=formatted_end_date,
+                no_of_days=data["noOfDays"],
+                leave_type=data["leaveType"],
+                description=data["description"],
+                comments=data["comments"],
+                status=data["status"],)
+            print("success")
             return JsonResponse({'message': 'ok'})
-        except:
+        except Exception as e:
+            print("failed ", e)
             return JsonResponse({'message': 'failed'})
         print('post', data)
 
@@ -1004,9 +1032,10 @@ def user_leave_request(request):
         employee.reset_available_leave()
         print("reset available leave function called")
         available_leave = employee.available_leave
+        work_from_home = employee.work_from_home
     except:
         pass
-    return render(request, 'employee_information/user_leave_request.html', {'leave_requests': leave_requests,'available_leave':available_leave})
+    return render(request, 'employee_information/user_leave_request.html', {'leave_requests': leave_requests,'available_leave':available_leave, 'work_from_home': work_from_home})
 
 
 def create_leave_request(request):

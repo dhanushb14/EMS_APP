@@ -1,6 +1,37 @@
 {% extends "employee_information/base.html" %}
 {% block pageContent %}
 {% load widget_tweaks %}
+<style>
+  .alert {
+      position: fixed;  /* Position the alert absolutely within its parent */
+      left: 50%; 
+      top: 50%;
+      bottom: 50%;
+      left: 50%; /* Move the alert to the right by 50% of the parent's width */
+      transform: translateX(-50%);  /* Move the alert to the left by 50% of its own width */
+      
+      
+      
+      
+      width: 30%;
+      text-align: center;
+  }
+  
+  .alert-success {
+      color: #3c763d;
+      background-color: #dff0d8;
+      border-color: #d6e9c6;
+      height: fit-content;
+      
+  }
+  
+  .alert-danger {
+      color: #a94442;
+      background-color: #f2dede;
+      border-color: #ebccd1;
+  }
+</style>
+
 <body class="body_bg">
   <div class="container mg-t  ">
     <div class="row">
@@ -120,10 +151,23 @@
                       {% endif %}
                       <td class="text-center">
                         {% if leave_request.status == 'Pending' %}
-                        <button type="submit" class="btn btn-primary send-btn mt-2" data-id="{{ leave_request.id }}"><i class="fa-solid fa-paper-plane p-1"></i></button>
+
+                        <span id="data-id1" style="display: none;">"{{leave_request.id}}"</span>
+                        <span id="data-employee1" style="display: none;">"{{leave_request.employee}}"</span>
+                        <span id="data-employee-name1" style="display: none;">"{{leave_request.employee_name}}"</span>
+                        <span id="data-start-date1" style="display: none;">"{{leave_request.start_date}}"</span>
+                        <span id="data-end-date1" style="display: none;">"{{leave_request.end_date}}"</span>
+                        <span id="data-no-of-days1" style="display: none;">"{{leave_request.no_of_days}}"</span>
+                        <span id="data-leave-type1" style="display: none;">"{{leave_request.leave_type}}"</span>
+                        <span id="data-description1" style="display: none;">"{{leave_request.description}}"</span>
+                        <span id="data-status1" style="display: none;">"{{leave_request.status}}"</span>
+                        <span id="data-comments1" style="display: none;">"{{leave_request.comments}}"</span>
+
+
+                        <button id = "submit" type="submit" class="btn btn-primary send-btn mt-2" data-id="{{ leave_request.id }}"><i class="fa-solid fa-paper-plane p-1"></i></button>
                         {% else %}
-                        <button type="submit" class="btn btn-success btn-sm send-btn my-auto" data-id="{{ leave_request.id }}"><i class="fa-solid fa-check"></i></button>
-                        <button class="btn btn-secondary btn-sm edit-data my-auto visibility-btn"
+                        <button id="success" type="submit-empty" class="btn btn-success btn-sm  my-auto" data-id="{{ leave_request.id }}" ><i class="fa-solid fa-check"></i></button>
+                        <button id= "visibility" class="btn btn-secondary btn-sm edit-data my-auto visibility-btn"
                         type="button"
                         data-toggle="modal"
                         data-target="#myModal"
@@ -140,6 +184,7 @@
                         title="View Details">
                         <i class="fa-solid fa-pen"></i>
                         </button>
+                        
                         {% endif %}
                       </td>
                     </tr>
@@ -156,10 +201,39 @@
 
 </body>
 <script>
+  console.log("view_modal function called")
+                        var id = document.getElementById('data-id1').textContent;
+                        console.log(id)
+                        var employeeName = document.getElementById('data-employee-name1').textContent;
+                        console.log(employeeName)
+                        var startDate = document.getElementById('data-start-date1').textContent;
+                        console.log(startDate)
+                        var endDate = document.getElementById('data-end-date1').textContent;
+                        console.log(endDate)
+                        var noOfDays = document.getElementById('data-no-of-days1').textContent;
+                        console.log(noOfDays)
+                        var leaveType = document.getElementById('data-leave-type1').textContent;
+                        console.log(leaveType)
+                        var description = document.getElementById('data-description1').textContent;
+                        console.log(description)
+                        var status = document.getElementById('data-status1').textContent;
+                        console.log(status)
+                        var comments = document.getElementById('data-comments1').textContent;
+                        console.log(comments)
+  function view_modal(){
+                        
+
+                        uni_modal("Edit Leave Request", "{% url 'leave_request_manager_model' %}?id=" + id + "&employee_name=" + employeeName + "&startDate=" + startDate + "&endDate=" + endDate
+                              + "&no_of_days=" + noOfDays + "&leave_type=" + leaveType + "&description=" + description 
+                              + "&status=" + status+ "&comments=" + comments, 'modal-xl');
+                            
+                       }
+</script>
+<script>
   document.querySelectorAll('.send-btn').forEach(function(button) {
   var onClick = function() {
     event.preventDefault();
-    var row = this.closest('tr');
+    var row = button.closest('tr');
     var data = {
       id: this.dataset.id,
       employee_id: row.querySelector('#employee_id').textContent,
@@ -167,13 +241,21 @@
       status: row.querySelector('#status').value,
       comments: row.querySelector('#comments').value
     };
+    if (data["status"] == 'Approved' || data["status"] == 'Rejected'){
     sendData(data);
+    }
   };
   button.removeEventListener('click', onClick);
   button.addEventListener('click', onClick);
 });
 
+        var messageBox = document.createElement("div");
+        
 function sendData(data) {
+  event.preventDefault();
+  var button = event.target;
+  var row = button.closest('tr');
+  console.log(row)
   fetch("{% url 'leave_manager' %}", {
     method: 'POST',
     headers: {
@@ -183,10 +265,62 @@ function sendData(data) {
     body: JSON.stringify(data)
   }).then(function(response) {
     if (response.ok) {
-      alert('Data sent successfully');
+      messageBox.textContent = "The Values are Saved";
+      messageBox.classList.add("alert", "alert-success");
+      document.body.appendChild(messageBox);
+      setTimeout(function() {
+            messageBox.remove();
+            // location.reload()
+        }, 1700);
     } else {
       alert('Error: ' + response.statusText);
     }
+    return response.json();
+  }).then(function(data_result) {
+    console.log("data_result",data_result)
+    // Status
+    var statusField = row.querySelector('td:nth-child(7)');
+    statusField.innerHTML = data_result.status;
+    statusField.setAttribute('readonly', true);
+
+    // comments
+    var commentField = row.querySelector('td:nth-child(8)');
+    console.log("commentField", commentField)
+    commentField.innerHTML = data_result.comments;
+    commentField.setAttribute('readonly', true);
+
+    // Action button
+    var actionField = row.querySelector('td:nth-child(9)');
+    console.log("actionField", actionField)
+
+     // Replace with your actual button ID
+     var id = document.getElementById('data-id1').textContent;
+     console.log("id", id)
+      var employeeName = document.getElementById('data-employee-name1').textContent;
+      console.log(employeeName)
+      var startDate = document.getElementById('data-start-date1').textContent;
+      console.log(startDate)
+      var endDate = document.getElementById('data-end-date1').textContent;
+      console.log(endDate)
+      var noOfDays = document.getElementById('data-no-of-days1').textContent;
+      console.log(noOfDays)
+      var leaveType = document.getElementById('data-leave-type1').textContent;
+      console.log(leaveType)
+      var description = document.getElementById('data-description1').textContent;
+      console.log(description)
+      var status = document.getElementById('data-status1').textContent;
+      console.log(status)
+      var comments = document.getElementById('data-comments1').textContent;
+      console.log(comments)
+
+    actionField.innerHTML = '<button id="success" type="submit-empty" class="btn btn-success btn-sm my-auto" data-id="{{ leave_request.id }}"><i class="fa-solid fa-check"></i></button>' +
+                       '<button id= "visibility" onclick="view_modal()" class="btn btn-secondary btn-sm edit-data my-auto visibility-btn" type="button" data-toggle="modal" data-target="#myModal" title="View Details"><i class="fa-solid fa-pen"></i></button>';
+
+                       
+
+  /// Get the select element and textarea
+  
+
   });
 }
 
