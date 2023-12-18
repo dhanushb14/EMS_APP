@@ -1,5 +1,6 @@
 {% extends "employee_information/base.html" %}
 {% block pageContent %}
+{% load widget_tweaks %}
 <body class="body_bg">
   <div class="container mg-t  ">
     <div class="row">
@@ -7,6 +8,50 @@
         <h2 class="fw-bold mb-4">Leave Management</h2>
       </div>
     </div>
+    <div class="row mx-auto" style="background-color: #ecd5ef; min-height: 7%">
+      <form method="get">
+        <div class="row">
+          <div class="col-auto my-2">
+            {% render_field filter_queryset.form.employee_name|attr:"class:form-control name"|attr:"placeholder:Name"%}
+          </div>
+          <div class="col-auto my-2">
+            <div class="input-group">
+              <span class="input-group-text">Start Date</span>
+              {% render_field filter_queryset.form.start_date|add_class:"form-control start_date"|attr:"type:date"%}
+            </div>
+          </div>
+          <div class="col-auto my-2">
+            <div class="input-group">
+              <span class="input-group-text">End Date</span>
+              {% render_field filter_queryset.form.end_date|add_class:"form-control end_date"|attr:"type:date"%}
+            </div>
+          </div>
+          <div class="col-auto my-2">
+            <div class="input-group">
+              <span class="input-group-text" id="basic-addon1">Status</span>
+              {{filter_queryset.form.status|add_class:"form-control status"}} 
+            </div>
+          </div>
+          <div class="col-auto ms-auto ms-xs-1 me-1 my-2">                
+            <button
+            class="btn text-light me-2"
+            style="background-color: #4981b2 !important"
+            type="submit"
+          >
+            Apply Filters
+          </button>
+          <button
+            class="btn text-light"
+            style="background-color: #b24949 !important"
+            id="clear"
+          >
+          <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      </form>
+    </div>
+    <div class="mt-2">
     <div class="row">
       <div class="col">
         <div class="card">
@@ -272,10 +317,16 @@ function getCookie(name) {
           + "&status=" + status+ "&comments=" + comments, 'modal-xl');
         })
         
-    })
-
-
-
-    
+    })   
 </script>
+<script>
+  $(document).ready(function() {
+    $('#clear').on('click', function() {
+      $('.name').val('');
+      $('.start_date').val('');
+      $('.end_date').val('');
+      $('.status').val('');
+    });
+  });
+  </script>
 {% endblock pageContent %}

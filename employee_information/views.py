@@ -21,6 +21,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import TimeSheet, LeaveRequest, Teams
 from .forms import EmployeeForm, LeaveRequestForm
+from .filters import FilterForm
 import json
 from django.views.decorators.http import require_http_methods
 from User.models import Employee
@@ -954,9 +955,13 @@ def leave_request_manager(request):
     # If it's not a POST request, retrieve all leave requests
     if request.user.role=='scrummaster':
         all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).order_by('start_date')
+        filter_queryset = FilterForm(request.GET,queryset=all_leave_requests)
+        all_leave_requests = filter_queryset.qs
     else:
         all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).order_by('start_date')
-    return render(request, 'employee_information/leave_bs.html', {'all_leave_requests': all_leave_requests})
+        filter_queryset = FilterForm(request.GET,queryset=all_leave_requests)
+        all_leave_requests = filter_queryset.qs
+    return render(request, 'employee_information/leave_bs.html', {'all_leave_requests': all_leave_requests,'filter_queryset':filter_queryset})
 
 def leave_request_manager_model(request):
     if request.method == 'GET':

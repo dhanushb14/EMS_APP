@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     
     'User',
-    'whitenoise'
+    'whitenoise',
+    'django_filters',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

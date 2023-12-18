@@ -25,6 +25,7 @@ def decrypt_password(encrypted_password):
 
 
 def employee_create(request):
+    errors = False
     if request.method == 'POST':
         form = EmployeeSignUpForm(request.POST)
         if form.is_valid():
@@ -45,11 +46,13 @@ def employee_create(request):
                 print("Error saving form:", e)
         else:
             print('Form not saved. Errors:', form.errors)
+            errors = form.errors
     form = EmployeeSignUpForm()
-    return render(request, 'employee_information/signup.html', {'form': form})
+    return render(request, 'employee_information/signup.html', {'form': form, 'errors':errors})
 
 
 def user_login(request):
+    wrong_credentials = False
     if request.method == 'POST':
         employee_id = request.POST.get('employee_id')
         employee_password = request.POST.get('password')
@@ -67,9 +70,11 @@ def user_login(request):
             # if employee_password == decrypted_password:
             if employee_password == stored_password:
                 login(request, get_user)
+                wrong_credentials = False
                 return redirect('/')
             else:
                 print('Incorrect password')
+                wrong_credentials = True
         except Employee.DoesNotExist:
             print('User not found')
         except Exception as e:
@@ -78,7 +83,7 @@ def user_login(request):
         print('Not a POST request')
 
     print('Redirecting to the login template')
-    return render(request, 'employee_information/login.html')
+    return render(request, 'employee_information/login.html',{'wrong_credentials': wrong_credentials})
 
 
 def user_logout(request):

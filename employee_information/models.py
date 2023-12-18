@@ -98,8 +98,8 @@ class LeaveRequest(models.Model):
     description = models.CharField(max_length=255)
     comments = models.CharField(max_length=255)
     leave_status_choices = [
-        ('Approved', 'Approve'),
-        ('Rejected', 'Reject'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
         ('Pending', 'Pending'),
     ]
     status = models.CharField(
