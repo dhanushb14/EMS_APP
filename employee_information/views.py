@@ -942,7 +942,7 @@ def leave_request_manager(request):
         id = data.get('id')
         status = data.get('status')
         comments = data['comments']
-        print("comments", comments)
+        print("comments", comments, employee_id, id, status)
         try:
             # Retrieve the LeaveRequest based on the associated Employee
             # leave_request = LeaveRequest.objects.get(employee__id=employee_id)
@@ -984,39 +984,61 @@ def leave_request_manager(request):
 
 def leave_request_manager_model(request):
     if request.method == 'GET':
-        data = request.GET
-        print("uni", data)
+        try:
+            
+            data = request.GET
+            employee_name = data["employee_name"].replace('"', "")
+            startDate = data["startDate"].replace('"', "")
+            endDate = data["endDate"].replace('"', "")
+            no_of_days = data["no_of_days"].replace('"', "")
+            leave_type = data["leave_type"].replace('"', "")
+            description = data["description"].replace('"', "")
+            status = data["status"].replace('"', "")
+            comments = data["comments"].replace('"', "")
+            id = data["id"].replace('"', "")
+            
+            data={
+                "employee_name": employee_name,
+                "startDate": startDate,
+                "endDate": endDate,
+                "no_of_days": no_of_days,
+                "leave_type": leave_type,
+                "description": description,
+                "status": status,
+                "comments": comments,
+                "id": id,
+
+            }
+            print("dataaa", data)
+            
+        except:
+            data = request.GET
+            print("uni", data)
         return render(request, 'employee_information/leave_bs_uni_modal.html', {'data': data})
     
     if request.method == 'POST':
         data = json.loads(request.body)
         print("post", data)
-        if data["dateRange"]:
-            
-            start_date = data["dateRange"].split("to")[0].strip()
-            end_date = data["dateRange"].split("to")[1].strip()
-        else:
-            start_date = [""]
-            end_date = [""]
+        
         try:
-            date_object = datetime.strptime(start_date, "%d/%m/%Y")
-            formatted_start_date = date_object.strftime("%Y-%m-%d")
-            date_object = datetime.strptime(end_date, "%d/%m/%Y")
-            formatted_end_date = date_object.strftime("%Y-%m-%d")
-            print(type(start_date), end_date)
+            
 
-
-            LeaveRequest.objects.filter(id=data["id"]).update(
-                employee_name=data["employeeName"],
-                start_date=formatted_start_date,
-                end_date=formatted_end_date,
-                no_of_days=data["noOfDays"],
-                leave_type=data["leaveType"],
-                description=data["description"],
+            try:
+                LeaveRequest.objects.filter(id=int(data["id"].replace('"', ''))).update(
+                
+                
                 comments=data["comments"],
                 status=data["status"],)
-            print("success")
-            return JsonResponse({'message': 'ok'})
+                print("success")
+                return JsonResponse({'message': 'ok'})
+            except:
+                LeaveRequest.objects.filter(id=data["id"]).update(
+                
+                
+                comments=data["comments"],
+                status=data["status"],)
+                print("success")
+                return JsonResponse({'message': 'ok'})
         except Exception as e:
             print("failed ", e)
             return JsonResponse({'message': 'failed'})

@@ -53,8 +53,8 @@
                   {% else %}
                   <select name="data-status" id="data-status-input" class="form-select">
                     <option value="Approved" >Approved</option>
-                    <option value="Rejected" selected>Rejected</option>
-                    <option value="Pending">Pending</option>
+                    <option value="Rejected" >Rejected</option>
+                    <option value="Pending" selected>Pending</option>
                   {% endif %}
                 </td>
                 <td id="data-comments" class="text-center">
@@ -77,7 +77,11 @@
     event.preventDefault()
     console.log("script in ")
     // Get the data attributes from the button
-    var comments = document.getElementById('data-comments-input').value,
+    try{
+    var comments = document.getElementById('data-comments-input').value}
+    catch {
+      var comments = document.getElementById('data-comments-input').textContent
+    }
     data = {
         'comments' : comments,
          'id' : document.getElementById('data-employee-id').textContent,
