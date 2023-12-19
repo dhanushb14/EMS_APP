@@ -59,6 +59,9 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
+SESSION_COOKIE_AGE = 900
+SESSION_SAVE_EVERY_REQUEST = True
+
 ROOT_URLCONF = 'ems.urls'
 
 TEMPLATES = [

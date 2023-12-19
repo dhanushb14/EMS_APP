@@ -48,7 +48,7 @@
                 >{{ request.user.email_id}}
               </p>
               <p>
-                <i class="fa-solid fa-building me-2 mb-4" style="color: #4723d9;"></i
+                <i class="fa-solid fa-building me-3 mb-4" style="color: #4723d9;"></i
                 >Intello Global Services
               </p>
             </div>
@@ -138,7 +138,7 @@
         {% if request.user.role != "manager" %}
           {% if request.user.role != "superadmin" %}
             <!-- employee and scrummaster manager -->
-            <div class="col ms-5 ms-lg-2">
+            <div class="col-lg-3 col-8 ms-5 ms-lg-2">
               <p class="h2">Manager</p>
               <p class="h5">{{manager.employee_name}}</p>
               <p>
@@ -217,24 +217,26 @@
           {% else %}
             <!-- admin's scrummasters list -->
             <div class="col-lg-3 col-6 mt-5 mt-lg-0">
+              {% if not team_member and request.user.role != "employee" %}
+              {% for emp in scrum_emp %}
               <p class="h2">Scrum Masters</p>
-              {% if scrum_emp %}
-                {% for emp in scrum_emp %}
                   <p class="h6">{{ forloop.counter }}. {{emp.scrum_master}}</p>
                 {% endfor %}
               {% else %}
+              <p class="h2">Scrum Master</p>
                 <p class="h6">Nil</p>
               {% endif %}
             </div>
             <!-- End of admin's scrummasters list -->
             <!-- admin's teams list -->
             <div class="col-lg-3 col-6 mt-5 mt-lg-0">
-              <p class="h2">Teams</p>
               {% if not team_member and request.user.role != "employee" %}
-                {% for team in scrum_emp %}
+              {% for team in scrum_emp %}
+              <p class="h2">Teams</p>
                   <p class="h6 my-auto">{{ forloop.counter }}. {{team.team_name}}</p>
                 {% endfor %}
               {% else %}
+              <p class="h2">Team</p>
                 <p class="h6">Nil</p>
               {% endif %}
             </div>

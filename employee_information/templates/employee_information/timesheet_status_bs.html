@@ -73,9 +73,10 @@
         <td class="text-center">Pending</td>
         {% endif %} 
         <td>
-          <div class="form-group">
-            <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea>
-          </div>
+          <!-- <div class="form-group"> -->
+            <!-- <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea> -->
+          <!-- </div> -->
+          {{ position.comments }}
         </td>
         {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
         <td class="text-center">Manager</td>
