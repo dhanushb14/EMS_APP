@@ -220,8 +220,7 @@ input[type="text"]:not(#project_name):not(#task) {
 }
 
     $(function() {
-        console.log('in')
-        var previousMonday = getPreviousMonday();
+            var previousMonday = getPreviousMonday();
         var formattedDate = previousMonday.toISOString().split('T')[0];
         $('#start_date').val(formattedDate);
         var startDate = new Date(formattedDate);
@@ -243,7 +242,7 @@ input[type="text"]:not(#project_name):not(#task) {
             var formattedStartDate = startDate.toISOString().split('T')[0];
             var formattedEndDate = endDate.toISOString().split('T')[0];
             var username = document.body.getAttribute('data-username');
-            console.log(username);
+            
 
             
 
@@ -264,8 +263,6 @@ input[type="text"]:not(#project_name):not(#task) {
         .then(response => response.json())
         .then(data => {
           if (!data) {
-            console.log(data)
-            console.log("here4 reload")
             location.reload();}
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
@@ -297,8 +294,6 @@ input[type="text"]:not(#project_name):not(#task) {
                 document.getElementById("th_saturday").value = data?.th_hour[5] || '0';
                 document.getElementById("th_sunday").value = data?.th_hour[6] || '0';
 
-                console.log("here4")
-                console.log(data)
                 if (data.monday_value.length <= 1) {
                     document.getElementById("task").value = data?.tasks[0] || '';
                     document.getElementById("monday_value").value = data?.monday_value[0] || '0';
@@ -319,13 +314,13 @@ input[type="text"]:not(#project_name):not(#task) {
                     document.getElementById("friday_value").value = data?.friday_value[0] || '0';
                     document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
                     document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
-                    console.log("here1: ", data.monday_value.length)
+                    
                     var totallength = (data.monday_value.length) 
                     
                     var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
                     var rows = tbody.getElementsByTagName("tr");
                     var taskNameRow = rows[rows.length - 5];
-                    console.log("taskNameRow", taskNameRow)
+                    
                     for (var i = 1; i < totallength-1; i++) {
                         var newRow = document.createElement("tr");
                                             
@@ -359,9 +354,66 @@ input[type="text"]:not(#project_name):not(#task) {
                     }}
                 
                 
-                console.log("here10", data?.project_name, data?.status)
+                
+                if (data.status!="uncheck") {
+                    messageBox1.style.display = "block"; // Show the message box
+                    
+                    // Removing buttons
+                    document.getElementById("submitBtn").style.display = "none";
+                    document.getElementById("discardBtn").style.display = "none";
+                    document.getElementById("saveBtn").style.display = "none";
+                    
+                    // Making inputs read-only
+                    document.getElementById("project_name").readOnly = true;
+                    document.getElementById("monday_value").readOnly = true;
+                    document.getElementById("tuesday_value").readOnly = true;
+                    document.getElementById("wednesday_value").readOnly = true;
+                    document.getElementById("thursday_value").readOnly = true;
+                    document.getElementById("friday_value").readOnly = true;
+                    document.getElementById("saturday_value").readOnly = true;
+                    document.getElementById("sunday_value").readOnly = true;
+                    document.getElementById("ovt_monday").readOnly = true;
+                    document.getElementById("ovt_tuesday").readOnly = true;
+                    document.getElementById("ovt_wednesday").readOnly = true;
+                    document.getElementById("ovt_thursday").readOnly = true;
+                    document.getElementById("ovt_friday").readOnly = true;
+                    document.getElementById("ovt_saturday").readOnly = true;
+                    document.getElementById("ovt_sunday").readOnly = true;
+                    document.getElementById("St").readOnly = true;
+                    document.getElementById("ot").readOnly = true;
+                    document.getElementById("total_hour").readOnly = true;
+
+                    
+
+                }
+                else{
+                      messageBox1.style.display = "none"; // Hide the message box
+                      document.getElementById("submitBtn").style.display = "block";
+                      document.getElementById("discardBtn").style.display = "block";
+                      document.getElementById("saveBtn").style.display = "block";
+
+                      // Making inputs read-only
+                    document.getElementById("project_name").readOnly = false;
+                    document.getElementById("monday_value").readOnly = false;
+                    document.getElementById("tuesday_value").readOnly = false;
+                    document.getElementById("wednesday_value").readOnly = false;
+                    document.getElementById("thursday_value").readOnly = false;
+                    document.getElementById("friday_value").readOnly = false;
+                    document.getElementById("saturday_value").readOnly = false;
+                    document.getElementById("sunday_value").readOnly = false;
+                    document.getElementById("ovt_monday").readOnly = false;
+                    document.getElementById("ovt_tuesday").readOnly = false;
+                    document.getElementById("ovt_wednesday").readOnly = false;
+                    document.getElementById("ovt_thursday").readOnly = false;
+                    document.getElementById("ovt_friday").readOnly = false;
+                    document.getElementById("ovt_saturday").readOnly = false;
+                    document.getElementById("ovt_sunday").readOnly = false;
+                    document.getElementById("St").readOnly = false;
+                    document.getElementById("ot").readOnly = false;
+                    document.getElementById("total_hour").readOnly = false;
+                    }
                 if (!data.leave_date){
-                  console.log("happy")
+                  
                   id5 = ["monday_value", "tuesday_value", "wednesday_value", "thursday_value", "friday_value"]
                   id6 = ["ovt_monday", "ovt_tuesday", "ovt_wednesday", "ovt_thursday", "ovt_friday"]
                   for (i=0; i <= id5.length; i++){
@@ -378,26 +430,26 @@ input[type="text"]:not(#project_name):not(#task) {
                   }
                 }
                 else {
-                  console.log("no")
+                  
                       // Define an array of IDs of the input fields
     var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
     
     var ovtIds = ['ovt_monday', 'ovt_tuesday', 'ovt_wednesday', 'ovt_thursday', 'ovt_friday', 'ovt_saturday', 'ovt_sunday'];
-    console.log("3")
-    console.log(data)
-    console.log("inside first for", data["leave_date"])
+    
+    
+    
     
     for( var k = 0; k<=data["leave_date"].length; k++ ){
-      console.log("inside first for")
-      console.log(data["leave_date"][k])
-      console.log(data["leave_date"][k].status)
+      
+      
+      
       
     if (data["leave_date"][k].status == "Approved") {
-      console.log("leaveDate has value")
+      
       for (var i = 0; i <= 0; i++) {
         var startdate = data["leave_date"][k].start_date
         var enddate = data["leave_date"][k].end_date
-        console.log("inside for loop leave")
+        
 
         // Get the start date and end date from the table fields
         var startDateField = document.getElementById('start_date').value;
@@ -408,18 +460,18 @@ input[type="text"]:not(#project_name):not(#task) {
         var startdate = new Date(startdate);
         var enddate = new Date(enddate);
         
-        console.log("date values")
-        console.log(startdate, enddate, startDateField, endDateField)
+        
+        
 
         if (startDateField <= startdate && startDateField <= enddate) {
-          console.log("condition passed")
+          
           // total_days = startdate - enddate;
           var total_days = Math.round((enddate - startdate) / (1000 * 60 * 60 * 24));
           
           var starting_date = Math.round((startdate - startDateField) / (1000 * 60 * 60 * 24));
-          console.log(total_days, starting_date)
+          
           if (total_days == 0){
-            console.log("inside second if")
+            
             var dayId = dayIds[starting_date];
             var ovtId = ovtIds[starting_date];
             document.querySelectorAll("."+dayId).forEach(element => {
@@ -432,16 +484,16 @@ input[type="text"]:not(#project_name):not(#task) {
               document.getElementById(ovtId).style.setProperty("background-color", "grey", "important");
           }
           else{
-            console.log("inside first script")
+            
             let days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
             for(let i = 0; i < days.length; i++) {
                 let inputElements = document.querySelectorAll('.'+days[i]+'_value');
-                console.log("inputElements", inputElements)
+                
                 inputElements.forEach(inputElement => {
                     let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
                     if (color == 'rgb(128, 128, 128)') {
-                      console.log("rgn matched")
+                      
                         inputElement.style.backgroundColor = 'transparent';
                         inputElement.ariaPlaceholder = '0';
                         inputElement.readOnly = false;
@@ -451,7 +503,7 @@ input[type="text"]:not(#project_name):not(#task) {
                 inputElements4.forEach(inputElement => {
                     let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
                     if (color == 'rgb(128, 128, 128)') {
-                      console.log("rgn matched")
+                      
                         inputElement.style.backgroundColor = 'transparent';
                         inputElement.ariaPlaceholder = '0';
                         inputElement.readOnly = false;
@@ -459,12 +511,12 @@ input[type="text"]:not(#project_name):not(#task) {
                 });
             }
             for (var i = starting_date; total_days>= 0; i++){
-              console.log("1.4")
-              console.log("inside second for leave")
+              
+              
               var dayId = dayIds[i];
               var ovtId = ovtIds[i];
-              console.log(dayId, ovtId)
-              console.log(document.querySelectorAll("."+dayId))
+              
+              
               document.querySelectorAll("."+dayId).forEach(element => {
               element.value = 0
               element.setAttribute('readonly', true);
@@ -479,7 +531,7 @@ input[type="text"]:not(#project_name):not(#task) {
         }
         }
         else{
-          console.log("came else part")
+          
         }
 
 
@@ -493,7 +545,7 @@ input[type="text"]:not(#project_name):not(#task) {
                 }
                 if (data?.status!="uncheck") {
                     messageBox1.style.display = "block"; // Show the message box
-                    console.log("error came here")
+                    
                     // Removing buttons
                     document.getElementById("submitBtn").style.display = "none";
                     document.getElementById("discardBtn").style.display = "none";
@@ -524,7 +576,7 @@ input[type="text"]:not(#project_name):not(#task) {
                 }
                 else{
                   if (!data.leave_date){
-                  console.log("happy")
+                  
                   id5 = ["monday_value", "tuesday_value", "wednesday_value", "thursday_value", "friday_value"]
                   id6 = ["ovt_monday", "ovt_tuesday", "ovt_wednesday", "ovt_thursday", "ovt_friday"]
                   for (i=0; i <= id5.length; i++){
@@ -541,25 +593,25 @@ input[type="text"]:not(#project_name):not(#task) {
                   }
                 }
                 else {
-                  console.log("no")
+                  
                       // Define an array of IDs of the input fields
     var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
     
     var ovtIds = ['ovt_monday', 'ovt_tuesday', 'ovt_wednesday', 'ovt_thursday', 'ovt_friday', 'ovt_saturday', 'ovt_sunday'];
-    console.log(data)
-    console.log("inside first for", data["leave_date"])
-    console.log("4")
+    
+    
+    
     for( var k = 0; k<=data["leave_date"].length; k++ ){
-      console.log("inside first for")
-      console.log(data["leave_date"][k])
-      console.log(data["leave_date"][k].status)
+      
+      
+      
       
     if (data["leave_date"][k].status == "Approved") {
-      console.log("leaveDate has value")
+      
       for (var i = 0; i <= 0; i++) {
         var startdate = data["leave_date"][k].start_date
         var enddate = data["leave_date"][k].end_date
-        console.log("inside for loop leave")
+        
 
         // Get the start date and end date from the table fields
         var startDateField = document.getElementById('start_date').value;
@@ -570,18 +622,18 @@ input[type="text"]:not(#project_name):not(#task) {
         var startdate = new Date(startdate);
         var enddate = new Date(enddate);
         
-        console.log("date values")
-        console.log(startdate, enddate, startDateField, endDateField)
+        
+        
 
         if (startDateField <= startdate && startDateField <= enddate) {
-          console.log("condition passed")
+          
           // total_days = startdate - enddate;
           var total_days = Math.round((enddate - startdate) / (1000 * 60 * 60 * 24));
           
           var starting_date = Math.round((startdate - startDateField) / (1000 * 60 * 60 * 24));
-          console.log(total_days, starting_date)
+          
           if (total_days == 0){
-            console.log("inside second if")
+            
             var dayId = dayIds[starting_date];
             var ovtId = ovtIds[starting_date];
             document.querySelectorAll("."+dayId).forEach(element => {
@@ -596,12 +648,12 @@ input[type="text"]:not(#project_name):not(#task) {
           else{
             
             for (var i = starting_date; total_days>= 0; i++){
-              console.log("1.3")
-              console.log("inside second for leave")
+              
+              
               var dayId = dayIds[i];
               var ovtId = ovtIds[i];
-              console.log(dayId, ovtId)
-              console.log(document.querySelectorAll("."+dayId))
+              
+              
               document.querySelectorAll("."+dayId).forEach(element => {
               element.value = 0
               element.setAttribute('readonly', true);
@@ -616,22 +668,13 @@ input[type="text"]:not(#project_name):not(#task) {
         }
         }
         else{
-          console.log("came else part")
+          
         }
 
 
-
-        
-      }
-        
-
-       
-    }}
-                }
-                  
-                    if (data?.status!="uncheck"){
-                    console.log("else partition")
-                    console.log("here3 reload")
+        if (data?.status!="uncheck"){
+                    
+                    
                     location.reload();}
 
                     else{
@@ -661,6 +704,15 @@ input[type="text"]:not(#project_name):not(#task) {
                     document.getElementById("total_hour").readOnly = false;
                     }
                                 }
+        
+      }
+        
+
+       
+    }}
+                }
+                  
+                    
                             
 
                     // fetch("{% url 'timesheets_create' %}", {
@@ -678,7 +730,7 @@ input[type="text"]:not(#project_name):not(#task) {
         });
       
 
-        console.log("camehere")
+        
         var data1 = localStorage.getItem('tableData');         
         var formattedStartDate = startDate.toISOString().split('T')[0];
         var formattedEndDate = endDate.toISOString().split('T')[0];
@@ -696,24 +748,24 @@ input[type="text"]:not(#project_name):not(#task) {
         })
         .then(response => response.json())
         .then(data => {
-            console.log("here2")
+            
             if (data) {
-              console.log("no data")
+              
             }
             else if(data1) {
-              console.log("table data present")
+              
               // Check if there is any saved table data in local storage
         var savedTableData = localStorage.getItem('tableData');
         var taskInputs = localStorage.getItem('taskInputs')
-        console.log(savedTableData)
-        console.log(taskInputs)
+        
+        
         if (savedTableData) {
-          console.log("here6")
+          
             // Parse the saved table data
             var tableData = JSON.parse(savedTableData);
-            console.log(tableData)
+            
             applyDynamicRowStyling()
-            console.log("after apply")
+            
 
             // Populate the table with the saved data
             document.getElementById('project_name').value = tableData["project_name"];
@@ -741,9 +793,9 @@ input[type="text"]:not(#project_name):not(#task) {
             document.getElementById('th_sunday').value = tableData.th_hour[6];
 
             var data5 = JSON.parse(localStorage.getItem('taskInputs'));
-            console.log(data5)
+            
             if (data5.monday_value.length <= 1) {
-              console.log("here7")
+              
                         document.getElementById("task").value = data5?.tasks[0] || '';
                         document.getElementById("monday_value").value = data5?.monday_value[0] || '';
                         document.getElementById("tuesday_value").value = data5?.tuesday_value[0] || '';
@@ -755,7 +807,7 @@ input[type="text"]:not(#project_name):not(#task) {
 
             }
             else{
-              console.log("here8")
+              
                         document.getElementById("task").value = data5?.tasks[0] || '';
                         document.getElementById("monday_value").value = data5?.monday_value[0] || '';
                         document.getElementById("tuesday_value").value = data5?.tuesday_value[0] || '';
@@ -769,10 +821,10 @@ input[type="text"]:not(#project_name):not(#task) {
                         var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
                         var rows = tbody.getElementsByTagName("tr");
                         var taskNameRow = rows[rows.length - 5];
-                        console.log("taskNameRow", taskNameRow, rows.length)
+                        
                         
                         for (var i = 1; i <= totallength-1; i++) {
-                          console.log("here12345", i, totallength)
+                          
                             var newRow = document.createElement("tr");
                                                   
                             newRow.innerHTML += `
@@ -814,11 +866,11 @@ input[type="text"]:not(#project_name):not(#task) {
             }
             
             else{
-              console.log("else error")
+              
             }
             if (data ) {
-            console.log('second')
-                console.log("data", data)
+            
+                
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
                 applyDynamicRowStyling()
@@ -848,11 +900,11 @@ input[type="text"]:not(#project_name):not(#task) {
                 document.getElementById("th_saturday").value = data?.th_hour[5] || '0';
                 document.getElementById("th_sunday").value = data?.th_hour[6] || '0';
 
-                console.log("here3")
-                console.log(data.tasks.length)
-                console.log(data.tasks)
+                
+                
+                
                 if (data.monday_value.length <= 1) {
-                  console.log("here3.1")
+                  
                     document.getElementById("task").value = data?.tasks[0] || '0';
                     
                     document.getElementById("monday_value").value = data?.monday_value[0] || '0';
@@ -865,7 +917,7 @@ input[type="text"]:not(#project_name):not(#task) {
 
                 }
                 else{
-                    console.log("here3.2")
+                    
                     document.getElementById("task").value = data?.tasks[0] || '0';
                     document.getElementById("monday_value").value = data?.monday_value[0] || '0';
                     document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '0';
@@ -916,12 +968,12 @@ input[type="text"]:not(#project_name):not(#task) {
                         taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
                     }
                 }
-                console.log("here123")
+                
 
                 /////////////////////////////////////////////////////////////////////////////////////
 
                 if (!data.leave_date){
-                  console.log("happy")
+                  
                   id5 = ["monday_value", "tuesday_value", "wednesday_value", "thursday_value", "friday_value"]
                   id6 = ["ovt_monday", "ovt_tuesday", "ovt_wednesday", "ovt_thursday", "ovt_friday"]
                   for (i=0; i <= id5.length; i++){
@@ -938,25 +990,25 @@ input[type="text"]:not(#project_name):not(#task) {
                   }
                 }
                 else{
-                  console.log("no")
+                  
                       // Define an array of IDs of the input fields
     var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
     
     var ovtIds = ['ovt_monday', 'ovt_tuesday', 'ovt_wednesday', 'ovt_thursday', 'ovt_friday', 'ovt_saturday', 'ovt_sunday'];
-    console.log(data)
-    console.log("inside first for", data["leave_date"])
-    console.log("5")
+    
+    
+    
     for( var k = 0; k<=data["leave_date"].length; k++ ){
-      console.log("inside first for")
-      console.log(data["leave_date"][k])
-      console.log(data["leave_date"][k].status)
+      
+      
+      
       
     if (data["leave_date"][k].status == "Approved") {
-      console.log("leaveDate has value")
+      
       for (var i = 0; i <= 0; i++) {
         var startdate = data["leave_date"][k].start_date
         var enddate = data["leave_date"][k].end_date
-        console.log("inside for loop leave")
+        
 
         // Get the start date and end date from the table fields
         var startDateField = document.getElementById('start_date').value;
@@ -967,18 +1019,18 @@ input[type="text"]:not(#project_name):not(#task) {
         var startdate = new Date(startdate);
         var enddate = new Date(enddate);
         
-        console.log("date values")
-        console.log(startdate, enddate, startDateField, endDateField)
+        
+        
 
         if (startDateField <= startdate && startDateField <= enddate) {
-          console.log("condition passed")
+          
           // total_days = startdate - enddate;
           var total_days = Math.round((enddate - startdate) / (1000 * 60 * 60 * 24));
           
           var starting_date = Math.round((startdate - startDateField) / (1000 * 60 * 60 * 24));
-          console.log(total_days, starting_date)
+          
           if (total_days == 0){
-            console.log("inside second if")
+            
             var dayId = dayIds[starting_date];
             var ovtId = ovtIds[starting_date];
             document.querySelectorAll("."+dayId).forEach(element => {
@@ -993,12 +1045,12 @@ input[type="text"]:not(#project_name):not(#task) {
           else{
             
             for (var i = starting_date; total_days>= 0; i++){
-              console.log("1.2")
-              console.log("inside second for leave")
+              
+              
               var dayId = dayIds[i];
               var ovtId = ovtIds[i];
-              console.log(dayId, ovtId)
-              console.log(document.querySelectorAll("."+dayId))
+              
+              
               document.querySelectorAll("."+dayId).forEach(element => {
               element.value = 0
               element.setAttribute('readonly', true);
@@ -1013,21 +1065,12 @@ input[type="text"]:not(#project_name):not(#task) {
         }
         }
         else{
-          console.log("came else part")
+          
         }
 
 
 
-        
-      }
-        
-
-       
-    }}
-                }
-
-
-                if (data?.project_name && data?.status!="uncheck") {
+        if (data?.project_name && data?.status!="uncheck") {
                     messageBox1.style.display = "block"; // Show the message box
                     // Removing buttons
                     document.getElementById("submitBtn").style.display = "none";
@@ -1057,6 +1100,15 @@ input[type="text"]:not(#project_name):not(#task) {
                     
 
                 }
+      }
+        
+
+       
+    }}
+                }
+
+
+                
             
             }});   
 
@@ -1181,13 +1233,13 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
     var saturdayColor = window.getComputedStyle(saturdayInput).getPropertyValue('background-color');
     var sundayColor = window.getComputedStyle(sundayInput).getPropertyValue('background-color');
 
-    console.log('Monday color:', mondayColor);
-    console.log('Tuesday color:', tuesdayColor);
-    console.log('Wednesday color:', wednesdayColor);
-    console.log('Thursday color:', thursdayColor);
-    console.log('Friday color:', fridayColor);
-    console.log('Saturday color:', saturdayColor);
-    console.log('Sunday color:', sundayColor);
+    
+    
+    
+    
+    
+    
+    
     
     
     let newRowContent = `
@@ -1199,16 +1251,16 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
               let colors = [mondayColor, tuesdayColor, wednesdayColor, thursdayColor, fridayColor, saturdayColor, sundayColor];
 
               for(let i = 0; i < days.length; i++) {
-                console.log(colors[i])
-                console.log(colors[i] == 'rgb(128, 128, 128)')
+                
+                
                   if (colors[i] == 'rgb(128, 128, 128)') {
-                    console.log("inside colors")
+                    
                       newRowContent += `
                       <td class="text-center">
                           <input class="${days[i]}_value" type="text" id="${days[i]}_value" name="${days[i]}_value" placeholder="0" style="border: none; background-color: rgb(128,128,128);" value="0" readonly>
                       </td>`;
                   } else {
-                    console.log("else colors")
+                    
                       newRowContent += `
                       <td class="text-center">
                           <input class="${days[i]}_value" type="text" id="${days[i]}_value" name="${days[i]}_value" placeholder="0" style="border: none;">
@@ -1265,7 +1317,7 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
             th_hour : Array.from(document.querySelectorAll('.th_hour')).map(input => input.value),
             tasks : Array.from(document.querySelectorAll('.task-input')).map(input => input.value),
         }
-        console.log("taskinputs:", taskInputs)
+        
         localStorage.setItem('taskInputs', JSON.stringify(taskInputs));
 
         var messageBox = document.createElement("div");
@@ -1284,7 +1336,7 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
   window.addEventListener('load', function() {
     var startDate = new Date(document.getElementById('start_date').value);
     var endDate = new Date(document.getElementById('end_date').value);
-    console.log(startDate, endDate)
+    
     var formattedStartDate = startDate.toISOString().split('T')[0];
     var formattedEndDate = endDate.toISOString().split('T')[0];
     fetch("{% url 'timesheets_create' %}", {
@@ -1301,29 +1353,29 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
     })
     .then(response => response.json())
     .then(data => {
-        console.log("here5")
-        console.log(data)
-        console.log(data["leave_date"].length)
+        
+        
+        
 
         ///////// leave backend ////////////////////
     // Define an array of IDs of the input fields
     var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
     
     var ovtIds = ['ovt_monday', 'ovt_tuesday', 'ovt_wednesday', 'ovt_thursday', 'ovt_friday', 'ovt_saturday', 'ovt_sunday'];
-    console.log(data)
-    console.log("inside first for", data["leave_date"])
-    console.log("6")
+    
+    
+    
     for( var k = 0; k<=data["leave_date"].length; k++ ){
-      console.log("inside first for")
-      console.log(data["leave_date"][k])
-      console.log(data["leave_date"][k].status)
+      
+      
+      
       
     if (data["leave_date"][k].status == "Approved") {
-      console.log("leaveDate has value")
+      
       for (var i = 0; i <= 0; i++) {
         var startdate = data["leave_date"][k].start_date
         var enddate = data["leave_date"][k].end_date
-        console.log("inside for loop leave")
+        
 
         // Get the start date and end date from the table fields
         var startDateField = document.getElementById('start_date').value;
@@ -1334,18 +1386,18 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
         var startdate = new Date(startdate);
         var enddate = new Date(enddate);
         
-        console.log("date values")
-        console.log(startdate, enddate, startDateField, endDateField)
+        
+        
 
         if (startDateField <= startdate && startDateField <= enddate) {
-          console.log("condition passed")
+          
           // total_days = startdate - enddate;
           var total_days = Math.round((enddate - startdate) / (1000 * 60 * 60 * 24));
           
           var starting_date = Math.round((startdate - startDateField) / (1000 * 60 * 60 * 24));
-          console.log(total_days, starting_date)
+          
           if (total_days == 0){
-            console.log("inside second if")
+            
             var dayId = dayIds[starting_date];
             var ovtId = ovtIds[starting_date];
             document.querySelectorAll("."+dayId).forEach(element => {
@@ -1360,12 +1412,12 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
           else{
             
             for (var i = starting_date; total_days>= 0; i++){
-              console.log("1.1")
-              console.log("inside second for leave")
+              
+              
               var dayId = dayIds[i];
               var ovtId = ovtIds[i];
-              console.log(dayId, ovtId)
-              console.log(document.querySelectorAll("."+dayId))
+              
+              
               document.querySelectorAll("."+dayId).forEach(element => {
               element.value = 0
               element.setAttribute('readonly', true);
@@ -1380,7 +1432,7 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
         }
         }
         else{
-          console.log("came else part")
+          
         }
 
 
@@ -1391,7 +1443,39 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
 
        
     }}
+    if (data?.project_name && data?.status!="uncheck") {
+                    messageBox1.style.display = "block"; // Show the message box
+                    // Removing buttons
+                    document.getElementById("submitBtn").style.display = "none";
+                    document.getElementById("discardBtn").style.display = "none";
+                    document.getElementById("saveBtn").style.display = "none";
+                    
+                    // Making inputs read-only
+                    document.getElementById("project_name").readOnly = true;
+                    document.getElementById("monday_value").readOnly = true;
+                    document.getElementById("tuesday_value").readOnly = true;
+                    document.getElementById("wednesday_value").readOnly = true;
+                    document.getElementById("thursday_value").readOnly = true;
+                    document.getElementById("friday_value").readOnly = true;
+                    document.getElementById("saturday_value").readOnly = true;
+                    document.getElementById("sunday_value").readOnly = true;
+                    document.getElementById("ovt_monday").readOnly = true;
+                    document.getElementById("ovt_tuesday").readOnly = true;
+                    document.getElementById("ovt_wednesday").readOnly = true;
+                    document.getElementById("ovt_thursday").readOnly = true;
+                    document.getElementById("ovt_friday").readOnly = true;
+                    document.getElementById("ovt_saturday").readOnly = true;
+                    document.getElementById("ovt_sunday").readOnly = true;
+                    document.getElementById("St").readOnly = true;
+                    document.getElementById("ot").readOnly = true;
+                    document.getElementById("total_hour").readOnly = true;
 
+                    
+
+                }
+    else{
+      
+    }
 
         if (!data.project_name){
           
@@ -1399,10 +1483,10 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
 // Check if there is any saved table data in local storage
 var savedTableData = localStorage.getItem('tableData');
 var taskInputs = localStorage.getItem('taskInputs')
-console.log(savedTableData)
-console.log(taskInputs)
+
+
 if (savedTableData) {
-  console.log("here6")
+  
     // Parse the saved table data
     var tableData = JSON.parse(savedTableData);
     applyDynamicRowStyling()
@@ -1432,9 +1516,9 @@ if (savedTableData) {
     document.getElementById('th_sunday').value = tableData.th_hour[6];
 
     var data = JSON.parse(localStorage.getItem('taskInputs'));
-    console.log(data)
+    
     if (data.monday_value.length <= 1) {
-      console.log("here7")
+      
                 document.getElementById("task").value = data?.tasks[0] || '';
                 document.getElementById("monday_value").value = data?.monday_value[0] || '';
                 document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
@@ -1446,7 +1530,7 @@ if (savedTableData) {
 
     }
     else{
-      console.log("here8")
+      
                 document.getElementById("task").value = data?.tasks[0] || '';
                 document.getElementById("monday_value").value = data?.monday_value[0] || '';
                 document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
@@ -1546,7 +1630,6 @@ if (savedTableData) {
         // Remove the table data and task inputs from local storage
         localStorage.removeItem('tableData');
         localStorage.removeItem('taskInputs');
-        console.log("here2 reload")
         location.reload();
 }});
 </script>
@@ -1554,7 +1637,6 @@ if (savedTableData) {
   // submit button
   document.getElementById("submitBtn").addEventListener("click", function() {
         event.preventDefault()
-        console.log("sendbtm here")
         var taskInputs = document.querySelectorAll('.task-input');
         var tasks = Array.from(taskInputs).map(input => input.value);
         var start_date = document.getElementById('start_date').value;
@@ -1641,7 +1723,6 @@ if (savedTableData) {
     .then(function(data) {
         //
     
-        console.log("here1 reload")
         var messageBox_submit = document.createElement("div");
         messageBox_submit.textContent = "Time Sheet Submitted";
         messageBox_submit.classList.add("alert", "alert-success");
@@ -1659,13 +1740,10 @@ if (savedTableData) {
 <script>
   // Check for leave date on page load
 window.addEventListener('load', function() {
-  console.log("loaded here")
     var leaveDate = "{{ leave_date }}"; // Replace with the actual leave date from the context
-    console.log("leaveDate",leaveDate)
     // Define an array of IDs of the input fields
     var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
     if (leaveDate) {
-      console.log("leaveDate has value")
       for (var i = 0; i < leaveDate.length; i++) {
         var startdate = leaveDate[i].start_date;
         var enddate = leaveDate[i].end_date;
@@ -1674,10 +1752,8 @@ window.addEventListener('load', function() {
         var startDateField = document.getElementById('start_date');
         var endDateField = document.getElementById('end_date');
 
-        console.log(startdate, enddate, startDateField, endDateField)
 
         if (startDateField.value >= startdate && startDateField.value <= enddate) {
-          console.log("condition passed")
           total_days = startdate - enddate;
           starting_date = startdate - startDateField.value;
 
@@ -1702,7 +1778,6 @@ window.addEventListener('load', function() {
 <script>
   // checking leave backend
   window.onload = function() {
-    console.log("inside first script")
     let days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
     for(let i = 0; i < days.length; i++) {
