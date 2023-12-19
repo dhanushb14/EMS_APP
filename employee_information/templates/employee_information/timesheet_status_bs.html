@@ -8,26 +8,40 @@
   </div>
   
   <div class="row mx-auto" style="background-color: #ecd5ef; min-height: 7%">
-    <div class="col-auto my-auto">
-      <label for="start_date" class="col-form-label">Start Date</label>
+    <div class="col-auto my-2">
+      <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">Start Date</span>
+        <input type="date" id="start_date" class="form-control" /> 
+      </div>
     </div>
-    <div class="col-auto my-auto">
-      <input type="date" id="start_date" class="form-control" />
+    <div class="col-auto my-2">
+      <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">End Date</span>
+        <input type="date" id="end_date" class="form-control" />
+      </div>
     </div>
-    <div class="col-auto my-auto">
-      <label for="end_date" class="col-form-label">End Date</label>
-    </div>
-    <div class="col-auto my-auto">
-      <input type="date" id="end_date" class="form-control" />
-    </div>
-    <div class="col-auto my-auto ms-3">
+    <div class="col-auto my-2 mx-2">
       <button
-        class="btn btn-sm text-light px-3"
+        class="btn text-light px-3"
         style="background-color: #4981b2 !important"
         id="applyFilterBtn"
       >
         Apply Filters
       </button>
+      <a href="{% url 'time_sheet_status' %}">
+        <button
+            class="btn text-light ms-3"
+            style="background-color: #b24949 !important"
+            id="clear"
+          >
+          Clear
+      </button>
+      </a>
+    </div>
+    <div class="col-auto my-2 ms-auto">
+      <button class="btn text-light mx-3" id="saveBtn" style="background-color: #978d9a">
+        Download List Data
+    </button>
     </div>
   </div>
   <div class="row mt-5 mx-auto">
@@ -74,12 +88,7 @@
     </table>
   </div>
   <div class="row">
-    <div class="col-auto me-auto">
-        <button class="btn btn-md text-light" id="saveBtn" style="background-color: #978d9a">
-            Download List Data
-        </button>
-    </div>
-    <div class="col-auto ms-auto" id="pagination" style="text-align: right;">
+    <div class="col-auto mx-auto" id="pagination" style="text-align: right;">
       {% if data_result.has_previous %}
           <button onclick="location.href='?page={{ data_result.previous_page_number }}'"><</button>
       {% endif %}
@@ -201,6 +210,5 @@
         });
     });
 });
-
 </script>
 {% endblock pageContent %}

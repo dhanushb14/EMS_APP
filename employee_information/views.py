@@ -134,17 +134,25 @@ def home(request):
     }
     if admin:
         context["admin"]= admin[0]
+    else:
+        context["admin"]= None
     if manager:
         context["manager"]= manager[0]
+    else:
+        context["manager"]= None
     if scrum_team:
         context['scrum_team'] = scrum_team[0][1]
-    print(context)
+    else:
+        context['scrum_team'] = None
+    
     if team_member:
         context['member_team_name'] = team_member.team_name
         context['team_member'] = employe_team
-    
+    else:
+        context['member_team_name'] = None
+        context['team_member'] = None
+    print("context",context)
     return render(request, 'employee_information/home.html', context)
-
 
 def about(request):
     context = {
@@ -961,7 +969,11 @@ def leave_request_manager(request):
         all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).order_by('start_date')
         filter_queryset = FilterForm(request.GET,queryset=all_leave_requests)
         all_leave_requests = filter_queryset.qs
-    return render(request, 'employee_information/leave_bs.html', {'all_leave_requests': all_leave_requests,'filter_queryset':filter_queryset})
+    paginator = Paginator(all_leave_requests,2)
+    page = request.GET.get('page')
+    paginated_results = paginator.get_page(page)
+    num_of_pages = "a" * paginated_results.paginator.num_pages
+    return render(request, 'employee_information/leave_bs.html', {'num_of_pages': num_of_pages,'filter_queryset':filter_queryset,'paginated_results':paginated_results})
 
 def leave_request_manager_model(request):
     if request.method == 'GET':

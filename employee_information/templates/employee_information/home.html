@@ -20,17 +20,17 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-5">
+    <div class="col-lg-5 col-md-12 mb-5 mb-lg-0">
       <div class="card">
         <div class="card-body">
           <div class="row">
             <div class="col-2 text-center my-auto">
               <i
-                class="fa-solid fa-user my-auto"
+                class="fa-solid fa-user my-auto ms-2"
                 style="color: #4723d9; font-size: 60px"
               ></i>
             </div>
-            <div class="col">
+            <div class="col ms-5 ms-lg-4">
               <p class="h2">{{ request.user.employee_name }} ( {{ request.user.employee_id }} )</p>
               <p>
                 <i
@@ -131,56 +131,55 @@
       <div class="row">
         <div class="col-2 text-center my-auto">
           <i
-            class="fa-solid fa-sitemap my-auto"
+            class="fa-solid fa-sitemap my-auto ms-2"
             style="color: #4723d9; font-size: 60px"
           ></i>
         </div>
         {% if request.user.role != "manager" %}
           {% if request.user.role != "superadmin" %}
-
-              <div class="col ms-2">
-                <p class="h2">Manager</p>
-                <p class="h5">{{manager.employee_name}}</p>
-                <p>
-                  <i class="fa-solid fa-envelope me-2" style="color: #4723d9;"></i
-                  >{{manager.email_id}}
-                </p>
-                <p>
-                  <i class="fa-solid fa-phone me-2" style="color: #4723d9;"></i
-                  >{{manager.phonenumber}}
-                </p>
-              </div>
-
+            <!-- employee and scrummaster manager -->
+            <div class="col ms-5 ms-lg-2">
+              <p class="h2">Manager</p>
+              <p class="h5">{{manager.employee_name}}</p>
+              <p>
+                <i class="fa-solid fa-envelope me-2" style="color: #4723d9;"></i
+                >{{manager.email_id}}
+              </p>
+              <p>
+                <i class="fa-solid fa-phone me-2" style="color: #4723d9;"></i
+                >{{manager.phonenumber}}
+              </p>
+            </div>
+            <!-- end of employee and scrummaster manager -->
           {% else %}
-
-              <div class="col ms-2">
-                <p class="h2">Manager</p>
-                {% for name in allManagers %}
-                  <p class="h6">{{ forloop.counter }}. {{name}}</p>
-                  {% endfor %}
-              </div>
-          {% endif %}
-
-        
-              
+            <!-- admin's managers list  -->
+            <div class="col-lg-3 col-8 ms-5 ms-lg-2">
+              <p class="h2">Managers</p>
+              {% for name in allManagers %}
+                <p class="h6">{{ forloop.counter }}. {{name}}</p>
+                {% endfor %}
+            </div>
+            <!-- end of admin's managers list  -->
+          {% endif %}              
         {% else %}
-        
-              <div class="col ms-2">
-                <p class="h2">Admin</p>
-                <p class="h5">{{admin.employee_name}}</p>
-                <p>
-                  <i class="fa-solid fa-envelope me-2" style="color: #4723d9;"></i
-                  >{{admin.email_id}}
-                </p>
-                <p>
-                  <i class="fa-solid fa-phone me-2" style="color: #4723d9;"></i
-                  >{{admin.phonenumber}}
-                </p>
-              </div>
-          
+          <!-- Manager's admin details -->
+          <div class="col-lg-3 col-8 ms-5 ms-lg-2">
+            <p class="h2">Admin</p>
+            <p class="h5">{{admin.employee_name}}</p>
+            <p>
+              <i class="fa-solid fa-envelope me-2" style="color: #4723d9;"></i
+              >{{admin.email_id}}
+            </p>
+            <p>
+              <i class="fa-solid fa-phone me-2" style="color: #4723d9;"></i
+              >{{admin.phonenumber}}
+            </p>
+          </div>
+          <!-- end of Manager's admin details -->
         {% endif %}
         {% if scrum_master %}
-          <div class="col">
+          <!-- Employee's scrummaster -->
+          <div class="col mt-5 mt-lg-0">
             <p class="h2">Scrum Master</p>
             <p class="h5">{{scrum_master.employee_name}}</p>
             <p>
@@ -192,27 +191,34 @@
               >{{scrum_master.phonenumber}}
             </p>
           </div>
-          <div class="col">
+          <!-- end of Employee's scrummaster -->
+          <!-- Employee's team -->
+          <div class="col mt-5 mt-lg-0">
             <p class="h2">Team</p>
             <p class="h5 my-auto">{{scrum_team}}</p>
           </div>
+          <!-- end of Employee's team -->
         {% else %}
           {% if request.user.role == 'scrummaster' %}
-            <div class="col">
-              <p class="h2">Team Member</p>
+            <!-- Scrummaster's team members -->
+            <div class="col mt-5 mt-lg-0">
+              <p class="h2">Team Members</p>
               {% for i in team_member %}
                 <p class="h6">{{forloop.counter}}. {{i}}</p>
               {% endfor %}
             </div>
-            <div class="col">
+            <!-- End of Scrummaster's team members -->
+            <!-- Scrummaster's teamname -->
+            <div class="col mt-5 mt-lg-0">
               <p class="h2">Team</p>
               <p class="h5 my-auto">{{member_team_name}}</p>
             </div>
+            <!-- End of Scrummaster's teamname -->
           {% else %}
-          
-            <div class="col">
+            <!-- admin's scrummasters list -->
+            <div class="col-lg-3 col-6 mt-5 mt-lg-0">
               <p class="h2">Scrum Masters</p>
-              {% if scrum_emp %}
+              {% if not team_member and request.user.role != "employee" %}
                 {% for emp in scrum_emp %}
                   <p class="h6">{{ forloop.counter }}. {{emp.scrum_master}}</p>
                 {% endfor %}
@@ -220,9 +226,11 @@
                 <p class="h6">Nil</p>
               {% endif %}
             </div>
-            <div class="col">
-              <p class="h2">Team</p>
-              {% if scrum_emp %}
+            <!-- End of admin's scrummasters list -->
+            <!-- admin's teams list -->
+            <div class="col-lg-3 col-6 mt-5 mt-lg-0">
+              <p class="h2">Teams</p>
+              {% if not team_member and request.user.role != "employee" %}
                 {% for team in scrum_emp %}
                   <p class="h6 my-auto">{{ forloop.counter }}. {{team.team_name}}</p>
                 {% endfor %}
@@ -230,11 +238,10 @@
                 <p class="h6">Nil</p>
               {% endif %}
             </div>
+            <!-- end of  admin's teams list -->
           {% endif %}
-        {% endif %}
-          
-        </div>
+        {% endif %}     
+      </div>
     </div>
   </div>
-</div>
 {% endblock pageContent %}

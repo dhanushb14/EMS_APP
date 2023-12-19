@@ -8,7 +8,7 @@
         <h2 class="fw-bold mb-4">Leave Management</h2>
       </div>
     </div>
-    <div class="row mx-auto" style="background-color: #ecd5ef; min-height: 7%">
+    <div class="row mx-auto mt-2" style="background-color: #ecd5ef; min-height: 7%">
       <form method="get">
         <div class="row">
           <div class="col-auto my-2">
@@ -39,20 +39,19 @@
             type="submit"
           >
             Apply Filters
-          </button>
-          <button
-            class="btn text-light"
-            style="background-color: #b24949 !important"
-            id="clear"
-          >
-          <i class="fa-solid fa-xmark"></i>
-          </button>
+            </button>
+            <button
+              class="btn text-light"
+              style="background-color: #b24949 !important"
+              id="clear"
+            >
+            Clear
+            </button>
+          </div>
         </div>
-      </div>
       </form>
     </div>
-    <div class="mt-2">
-    <div class="row">
+    <div class="row mt-5">
       <div class="col">
         <div class="card">
           <form method="post" action="">
@@ -82,7 +81,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for leave_request in all_leave_requests %}
+                  {% for leave_request in paginated_results %}
                     <tr>
                     {% if request.user.role == "scrummaster" %}
                       <td class="text-center" id="employee_id">{{ leave_request.employee_name }}</td>
@@ -148,12 +147,57 @@
                 </tbody>
               </table>
             </div>
-            </form>        
+          </form>        
         </div>
       </div>
     </div>
+    <div class="row mt-5">
+      <div class="col">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            {% if paginated_results.has_previous  %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{paginated_results.previous_page_number}}"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+              </li>
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+              </li>
+            {% endif %}
+            {#{% for i in num_of_pages %}#}
+              <li class="page-item disabled">
+                <a href="?page={{forloop.counter}}" class="page-link">
+                  <!-- {{ forloop.counter }} -->
+                  {{ paginated_results.number }} of {{ paginated_results.paginator.num_pages }}
+                </a>
+              </li>
+            {#{% endfor %}#}
+            {% if paginated_results.has_next  %}
+              <li class="page-item">
+              <a class="page-link" href="?page={{paginated_results.next_page_number}}"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+              </li>
+              <li class="page-item">
+              <a class="page-link" href="?page={{paginated_results.paginator.num_pages}}"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+              </li>
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
   </div>
-
 </body>
 <script>
   document.querySelectorAll('.send-btn').forEach(function(button) {
@@ -328,5 +372,5 @@ function getCookie(name) {
       $('.status').val('');
     });
   });
-  </script>
+</script>
 {% endblock pageContent %}

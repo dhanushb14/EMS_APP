@@ -38,18 +38,43 @@
                 alt="Logo"
                 class="img-fluid mb-2"
               />
+              <!-- Alert div -->
+              <!-- Error alert -->
               {% if errors %}
-              <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <ul style="list-style: none;">
-                  {% for field, error_list in errors.items %}
-                    {% for error in error_list %}
-                      <li>{{ error }}</li>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <ul style="list-style: none;">
+                    {% for field, error_list in errors.items %}
+                      {% for error in error_list %}
+                        <li>{{ error }}</li>
+                      {% endfor %}
                     {% endfor %}
-                  {% endfor %}
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            {% endif %}
+                  </ul>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              <!-- end of Error alert -->
+              {% endif %}
+              {% if account_created %}
+                  <!-- Success alert -->
+                  <div
+                    class="alert alert-success alert-dismissible fade show"
+                    role="alert"
+                  >
+                  Account created successfully! Redirecting now.
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="alert"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <!-- Success alert end -->
+                <!-- End of Alert div -->
+                  <script>
+                    setTimeout(function() {
+                      window.location.href = "{% url 'User:login' %}";
+                    }, 3000);
+                  </script>
+              {% endif %}
               <form class="mx-auto col-md-10" action="{% url 'User:employee_create' %}" method="post">
                 {% csrf_token %}
                 <div class="form-floating my-4">
