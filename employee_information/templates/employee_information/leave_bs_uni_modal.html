@@ -53,12 +53,12 @@
                   {% else %}
                   <select name="data-status" id="data-status-input" class="form-select">
                     <option value="Approved" >Approved</option>
-                    <option value="Rejected" selected>Rejected</option>
-                    <option value="Pending">Pending</option>
+                    <option value="Rejected" >Rejected</option>
+                    <option value="Pending" selected>Pending</option>
                   {% endif %}
                 </td>
                 <td id="data-comments" class="text-center">
-                  <textarea name="data-comments" id="data-comments-input" cols="15" class="form-control"></textarea>
+                  <textarea name="data-comments" id="data-comments-input" cols="15" class="form-control" value={{data.comments}}>{{data.comments}}</textarea>
                 </td>
               </tr>
             </tbody>
@@ -74,9 +74,16 @@
 </div>
 <script>
   document.getElementById('submit-btn').addEventListener('click', function () {
+    event.preventDefault()
     console.log("script in ")
     // Get the data attributes from the button
+    try{
+    var comments = document.getElementById('data-comments-input').value}
+    catch {
+      var comments = document.getElementById('data-comments-input').textContent
+    }
     data = {
+        'comments' : comments,
          'id' : document.getElementById('data-employee-id').textContent,
          'employeeName' : document.getElementById('data-employee-name').textContent,
          'dateRange' : document.getElementById('data-date-range').textContent,
@@ -86,10 +93,10 @@
          'leaveType' : document.getElementById('data-leave-type').textContent,
          'description' : document.getElementById('data-description').textContent,
          'status' : document.getElementById('data-status-input').value,
-         'comments' : document.getElementById('data-comments-input').value,
+         
 
     }
-
+        console.log("data", data["comments"])
         fetch("{% url 'leave_request_manager_model' %}", {
     method: 'POST',
     headers: {
@@ -98,13 +105,14 @@
     },
     body: JSON.stringify(data)
   }).then(function(response) {
+    console.log("response", response)
     if (response.ok) {
       console.log('Data sent successfully');
       var messageBox_submit = document.createElement("div");
 
         var modal = document.querySelector('#uni_modal .modal-body');
         console.log(modal)
-        messageBox_submit.textContent = "Time Sheet Submitted";
+        messageBox_submit.textContent = "Leave request Submitted";
         messageBox_submit.classList.add("alert", "alert-success", "small-alert");
         
 

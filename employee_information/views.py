@@ -461,8 +461,8 @@ def TimeSheetCreate(request):
     # Get the next Sunday (6 days after the start_date)
     end_date = start_date + relativedelta(days=6)
     # Filter the leave objects
-    leave_date = leave.objects.filter(employee_name=request.user.employee_name, start_date__gte=start_date, end_date__lte=end_date)
-    print(leave_date)
+    #leave_date = leave.objects.filter(employee_name=request.user.employee_name, start_date__gte=start_date, end_date__lte=end_date)
+    
 
     current_user = request.user
     context = {
@@ -474,6 +474,7 @@ def TimeSheetCreate(request):
     if request.method == 'POST':
 
         data = json.loads(request.body)
+        leave_date = leave.objects.filter(employee_name=request.user.employee_name, start_date__gte=data.get('start_date'), end_date__lte=data.get('end_date'))
 
         data["username"] = request.user.employee_name
 
@@ -534,21 +535,17 @@ def TimeSheetCreate(request):
 
             # Convert start_date and end_date to datetime objects
             start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
             # import pdb
             # pdb.set_trace()
             try:
             # Filter data based on start_date and end_date
-                print("try in")
-                print("start_date",start_date)
-                print("username", username)
-                data = model.objects.filter(start_date=start_date, username=username, end_date=end_date )
-                print("try out", data)
-                print("got data",data)
-                print("worked")
-                print("monday_value",data[0].monday_value)
-                print("project:",len(data[0].project_name))
-                print("status",data[0].status)
+                print(start_date, username, end_date)
+                data = model.objects.filter(start_date=start_date, username=username )
+                print("1", data)
+                
+                
                 data = {
                     "start_date": data[0].start_date,
                     "end_date": data[0].end_date,
@@ -573,21 +570,50 @@ def TimeSheetCreate(request):
                     "status": data[0].status,
                     "tasks": data[0].tasks,
                     "th_hour": data[0].th_hour,
-                    "leave_date": leave_date,
+                    
+
 
                 }
+                if leave_date:
+                    print("in leave_date")
+                    leave_date_list = list(leave_date.values())
+                    data["leave_date"] = leave_date_list
+                    data["leave_start_date"] = leave_date[0].start_date
+                    data["leave_end_date"] = leave_date[0].end_date
+                    data["leave_status"] = leave_date[0].status
                 print("data",data)
             except Exception:
                 try:
-                    leave_date_list = list(leave_date.values())
-                    data = {
-                        "leave_start_date": leave_date[0].start_date,
-                        "leave_end_date": leave_date[0].end_date,
-                        "leave_status": leave_date[0].status,
-                        "leave_date" : leave_date_list,
-                    }
+                    from datetime import datetime, timedelta
+                    print('in')
+                    
+                    # Get the current date
+                    current_date = datetime.now()
+
+                    # Calculate the most recent past Monday
+                    start_of_week = current_date - timedelta(days=current_date.weekday())
+                    print('454', start_of_week.date(), start_date)
+                    if start_date == start_of_week.date() :
+                        print("in start_date") 
+                        
+                        leave_date_list = list(leave_date.values())
+                        data = {
+                            "leave_start_date": leave_date[0].start_date,
+                            "leave_end_date": leave_date[0].end_date,
+                            "leave_status": leave_date[0].status,
+                            "leave_date" : leave_date_list,
+                        }
+                    else:
+                        print("inside ifffffffffffffffffffffffffffffffff")
+                        if data[0]:
+                            print("daaaaaaaaaaaaaaa", data)
+                            pass
+                        else:
+                            print("eeeeeeeeeeeeeeeeeeeellllllllllse")
+                            data = None
                 except:
                     print("failed with leave date")
+                    data = None 
                 print("111111111111111111111111111111111111111111111111111")
                 # For testing
             # data =            {
@@ -932,8 +958,8 @@ def leave_request_manager(request):
         employee_id = data.get('employee_id')
         id = data.get('id')
         status = data.get('status')
-        comments = data.get('comments')
-
+        comments = data['comments']
+        print("comments", comments, employee_id, id, status)
         try:
             # Retrieve the LeaveRequest based on the associated Employee
             # leave_request = LeaveRequest.objects.get(employee__id=employee_id)
@@ -950,11 +976,13 @@ def leave_request_manager(request):
                 'comments': comments,
                 'employee_id': employee_id,
             }
+            print("all success")
             return JsonResponse(data_result, safe=False)
 
             # messages.success(request, 'Leave request updated successfully.')
         except LeaveRequest.DoesNotExist:
             data_result = 'failed'
+            print("failed")
             return JsonResponse(data_result, safe=False)
 
         # Redirect to the same page or another page after processing the form
@@ -977,32 +1005,63 @@ def leave_request_manager(request):
 
 def leave_request_manager_model(request):
     if request.method == 'GET':
-        data = request.GET
-        print("uni", data)
+        try:
+            
+            data = request.GET
+            employee_name = data["employee_name"].replace('"', "")
+            startDate = data["startDate"].replace('"', "")
+            endDate = data["endDate"].replace('"', "")
+            no_of_days = data["no_of_days"].replace('"', "")
+            leave_type = data["leave_type"].replace('"', "")
+            description = data["description"].replace('"', "")
+            status = data["status"].replace('"', "")
+            comments = data["comments"].replace('"', "")
+            id = data["id"].replace('"', "")
+            
+            data={
+                "employee_name": employee_name,
+                "startDate": startDate,
+                "endDate": endDate,
+                "no_of_days": no_of_days,
+                "leave_type": leave_type,
+                "description": description,
+                "status": status,
+                "comments": comments,
+                "id": id,
+
+            }
+            print("dataaa", data)
+            
+        except:
+            data = request.GET
+            print("uni", data)
         return render(request, 'employee_information/leave_bs_uni_modal.html', {'data': data})
     
     if request.method == 'POST':
         data = json.loads(request.body)
         print("post", data)
-        if data["dateRange"]:
-            
-            start_date = data["dateRange"].split("to")[0].strip()
-            end_date = data["dateRange"].split("to")[1].strip()
-        else:
-            start_date = [""]
-            end_date = [""]
+        
         try:
-            LeaveRequest.objects.filter(id=data.id).update(
-                employee_name=data.employeeName,
-                start_date=start_date,
-                end_date=end_date,
-                no_of_days=data.no_of_days,
-                leave_type=data.leave_type,
-                description=data.description,
-                comments=data.comments,
-                status=data.status)
-            return JsonResponse({'message': 'ok'})
-        except:
+            
+
+            try:
+                LeaveRequest.objects.filter(id=int(data["id"].replace('"', ''))).update(
+                
+                
+                comments=data["comments"],
+                status=data["status"],)
+                print("success")
+                return JsonResponse({'message': 'ok'})
+            except:
+                LeaveRequest.objects.filter(id=data["id"]).update(
+                
+                
+                comments=data["comments"],
+                status=data["status"],)
+                print("success")
+                return JsonResponse({'message': 'ok'})
+        except Exception as e:
+            print("failed ", e)
             return JsonResponse({'message': 'failed'})
         print('post', data)
 
@@ -1016,9 +1075,10 @@ def user_leave_request(request):
         employee.reset_available_leave()
         print("reset available leave function called")
         available_leave = employee.available_leave
+        work_from_home = employee.work_from_home
     except:
         pass
-    return render(request, 'employee_information/user_leave_request.html', {'leave_requests': leave_requests,'available_leave':available_leave})
+    return render(request, 'employee_information/user_leave_request.html', {'leave_requests': leave_requests,'available_leave':available_leave, 'work_from_home': work_from_home})
 
 
 def create_leave_request(request):

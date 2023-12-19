@@ -218,7 +218,7 @@
             <!-- admin's scrummasters list -->
             <div class="col-lg-3 col-6 mt-5 mt-lg-0">
               <p class="h2">Scrum Masters</p>
-              {% if not team_member and request.user.role != "employee" %}
+              {% if scrum_emp %}
                 {% for emp in scrum_emp %}
                   <p class="h6">{{ forloop.counter }}. {{emp.scrum_master}}</p>
                 {% endfor %}
