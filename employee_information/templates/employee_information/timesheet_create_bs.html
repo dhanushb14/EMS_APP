@@ -34,6 +34,7 @@ input[type="text"]:not(#project_name):not(#task) {
       <h2 class="fw-bold mb-4">Time Sheet</h2>
       <span id="role"  style="display: none;">{{request.user.id}}</span>
     </div>
+    <div id="alertdiv"></div>
   </div>
   <div class="row" style="background-color: #ecd5ef; min-height: 7%">
     
@@ -1999,13 +2000,17 @@ console.log("windows load ended")
         messageBox_submit.textContent = "Time Sheet Submitted";
         messageBox_submit.classList.add("alert", "alert-success");
         
-        document.body.appendChild(messageBox_submit);
+        var targetElement = document.getElementById("alertdiv");
+
+        // Append the message box to the selected element
+        targetElement.appendChild(messageBox_submit);
+        // document.body.appendChild(messageBox_submit);
 
         // Show the message box
         setTimeout(function() {
             messageBox_submit.remove();
             location.reload();
-        }, 2500);
+        }, 3000);
         location.reload();
         })
 });

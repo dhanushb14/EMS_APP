@@ -39,8 +39,8 @@
       </a>
     </div>
     <div class="col-auto my-2 ms-auto">
-      <button class="btn text-light mx-3" id="saveBtn" style="background-color: #978d9a">
-        Download List Data
+      <button class="btn text-light mx-3" id="saveBtn" style="background-color: #4981b2 !important">
+        Download
     </button>
     </div>
   </div>
@@ -89,7 +89,7 @@
     </table>
   </div>
   <div class="row">
-    <div class="col-auto mx-auto" id="pagination" style="text-align: right;">
+    <!-- <div class="col-auto mx-auto" id="pagination" style="text-align: right;">
       {% if data_result.has_previous %}
           <button onclick="location.href='?page={{ data_result.previous_page_number }}'"><</button>
       {% endif %}
@@ -97,8 +97,48 @@
       {% if data_result.has_next %}
           <button onclick="location.href='?page={{ data_result.next_page_number }}'">></button>
       {% endif %}
+    </div> -->
+    <div class="col">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          {% if data_result.has_previous  %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ data_result.previous_page_number }}"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+            </li>
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+            </li>
+          {% endif %}
+            <li class="page-item disabled">
+              <a href="?page={{forloop.counter}}" class="page-link">
+                {{ data_result.number }} of {{ data_result.paginator.num_pages }}
+              </a>
+            </li>
+          {% if data_result.has_next  %}
+            <li class="page-item">
+            <a class="page-link" href="?page={{data_result.next_page_number}}"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+            </li>
+            <li class="page-item">
+            <a class="page-link" href="?page={{paginated_results.paginator.num_pages}}"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+            </li>
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
     </div>
-    
 </div>
 
 </div>
