@@ -20,22 +20,22 @@
         <option value="start_date">Date</option>
       </select>
     </div>
-    <div class="col-auto my-auto">
+    <div class="col-auto my-2">
       <input type="text" id="project_name_filter" class="form-control" />
     </div>
-    <div class="col-auto my-auto ms-3">
+    <div class="col-auto my-2 ms-3">
       <button
-        class="btn btn-sm text-light px-3"
+        class="btn text-light px-3"
         style="background-color: #4981b2 !important"
         id="applyFilterBtn"
       >
         Apply Filters
       </button>
     </div>
-    <div class="col-auto my-auto ms-3 ">
+    <div class="col-auto my-2 ms-auto me-2 ">
       
       <button
-        class="btn btn-sm text-light px-3"
+        class="btn text-light px-3"
         style="background-color: #4981b2 !important"
         id="saveBtn"
       >
@@ -109,9 +109,7 @@
     </table>
   </div>
   <div class="row">
-    
-    
-    <div class="col-auto mx-auto d-flex justify-content-center align-items-center" id="pagination">
+    <!-- <div class="col-auto mx-auto d-flex justify-content-center align-items-center" id="pagination">
       {% if data.has_previous %}
           <button onclick="location.href='?page={{ data.previous_page_number }}'"><</button>
       {% endif %}
@@ -119,8 +117,48 @@
       {% if data.has_next %}
           <button onclick="location.href='?page={{ data.next_page_number }}'">></button>
       {% endif %}
+    </div> -->
+    <div class="col">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          {% if data.has_previous  %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ data.previous_page_number }}"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+            </li>
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+            </li>
+          {% endif %}
+            <li class="page-item disabled">
+              <a href="?page={{forloop.counter}}" class="page-link">
+                {{ data.number }} of {{ data.paginator.num_pages }}
+              </a>
+            </li>
+          {% if data.has_next  %}
+            <li class="page-item">
+            <a class="page-link" href="?page={{data.next_page_number}}"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+            </li>
+            <li class="page-item">
+            <a class="page-link" href="?page={{data.paginator.num_pages}}"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+            </li>
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
     </div>
-    
 </div>
 
 </div>
