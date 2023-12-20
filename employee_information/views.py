@@ -95,7 +95,14 @@ def home(request):
     model = TimeSheet
     data_result = model.objects.filter(username=current_user).order_by('-start_date')[:4]
     leave_requests = LeaveRequest.objects.filter(employee=request.user)[:4]
-    result_list = list(model.objects.filter(username=current_user).order_by('-start_date')) + list(LeaveRequest.objects.filter(employee=request.user).order_by('-start_date'))
+    # result_list = list(model.objects.filter(username=current_user).order_by('-start_date')) + list(LeaveRequest.objects.filter(employee=request.user).order_by('-start_date'))
+    # Calculate the start and end dates for the current month
+    current_date = datetime.now()
+    start_of_month = current_date.replace(day=1)
+    end_of_month = start_of_month + relativedelta(months=1, days=-1) 
+
+    # Modify the query to filter by the start_date within the current month
+    result_list = list(model.objects.filter(username=current_user, start_date__gte=start_of_month, start_date__lte=end_of_month).order_by('-start_date')) + list(LeaveRequest.objects.filter(employee=request.user, start_date__gte=start_of_month, start_date__lte=end_of_month).order_by('-start_date'))
     print(result_list)
     paginator = Paginator(data_result, 5)  # Show 10 items per page
 
