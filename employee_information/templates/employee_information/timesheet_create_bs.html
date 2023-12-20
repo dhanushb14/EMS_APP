@@ -540,11 +540,67 @@ input[type="text"]:not(#project_name):not(#task) {
         
       }
         
+      if (data?.project_name && data?.status!="uncheck") {
+                    messageBox1.style.display = "block"; // Show the message box
+                    // Removing buttons
+                    document.getElementById("submitBtn").style.display = "none";
+                    document.getElementById("discardBtn").style.display = "none";
+                    document.getElementById("saveBtn").style.display = "none";
+                    
+                    // Making inputs read-only
+                    document.getElementById("project_name").readOnly = true;
+                    document.getElementById("monday_value").readOnly = true;
+                    document.getElementById("tuesday_value").readOnly = true;
+                    document.getElementById("wednesday_value").readOnly = true;
+                    document.getElementById("thursday_value").readOnly = true;
+                    document.getElementById("friday_value").readOnly = true;
+                    document.getElementById("saturday_value").readOnly = true;
+                    document.getElementById("sunday_value").readOnly = true;
+                    document.getElementById("ovt_monday").readOnly = true;
+                    document.getElementById("ovt_tuesday").readOnly = true;
+                    document.getElementById("ovt_wednesday").readOnly = true;
+                    document.getElementById("ovt_thursday").readOnly = true;
+                    document.getElementById("ovt_friday").readOnly = true;
+                    document.getElementById("ovt_saturday").readOnly = true;
+                    document.getElementById("ovt_sunday").readOnly = true;
+                    document.getElementById("St").readOnly = true;
+                    document.getElementById("ot").readOnly = true;
+                    document.getElementById("total_hour").readOnly = true;
 
+                    
+
+                }
+    else{
+      messageBox1.style.display = "none"; // Hide the message box
+                      document.getElementById("submitBtn").style.display = "block";
+                      document.getElementById("discardBtn").style.display = "block";
+                      document.getElementById("saveBtn").style.display = "block";
+
+                      // Making inputs read-only
+                    document.getElementById("project_name").readOnly = false;
+                    document.getElementById("monday_value").readOnly = false;
+                    document.getElementById("tuesday_value").readOnly = false;
+                    document.getElementById("wednesday_value").readOnly = false;
+                    document.getElementById("thursday_value").readOnly = false;
+                    document.getElementById("friday_value").readOnly = false;
+                    document.getElementById("saturday_value").readOnly = false;
+                    document.getElementById("sunday_value").readOnly = false;
+                    document.getElementById("ovt_monday").readOnly = false;
+                    document.getElementById("ovt_tuesday").readOnly = false;
+                    document.getElementById("ovt_wednesday").readOnly = false;
+                    document.getElementById("ovt_thursday").readOnly = false;
+                    document.getElementById("ovt_friday").readOnly = false;
+                    document.getElementById("ovt_saturday").readOnly = false;
+                    document.getElementById("ovt_sunday").readOnly = false;
+                    document.getElementById("St").readOnly = false;
+                    document.getElementById("ot").readOnly = false;
+                    document.getElementById("total_hour").readOnly = false;
+    }
        
     }}
                 }
-                if (data?.status!="uncheck") {
+                if (data.status!="uncheck") {
+                  console.log("first1.2")
                     messageBox1.style.display = "block"; // Show the message box
                     
                     // Removing buttons
@@ -1478,7 +1534,30 @@ if (data && data.leave_date) {
 
                 }
     else{
-      
+      messageBox1.style.display = "none"; // Hide the message box
+                      document.getElementById("submitBtn").style.display = "block";
+                      document.getElementById("discardBtn").style.display = "block";
+                      document.getElementById("saveBtn").style.display = "block";
+
+                      // Making inputs read-only
+                    document.getElementById("project_name").readOnly = false;
+                    document.getElementById("monday_value").readOnly = false;
+                    document.getElementById("tuesday_value").readOnly = false;
+                    document.getElementById("wednesday_value").readOnly = false;
+                    document.getElementById("thursday_value").readOnly = false;
+                    document.getElementById("friday_value").readOnly = false;
+                    document.getElementById("saturday_value").readOnly = false;
+                    document.getElementById("sunday_value").readOnly = false;
+                    document.getElementById("ovt_monday").readOnly = false;
+                    document.getElementById("ovt_tuesday").readOnly = false;
+                    document.getElementById("ovt_wednesday").readOnly = false;
+                    document.getElementById("ovt_thursday").readOnly = false;
+                    document.getElementById("ovt_friday").readOnly = false;
+                    document.getElementById("ovt_saturday").readOnly = false;
+                    document.getElementById("ovt_sunday").readOnly = false;
+                    document.getElementById("St").readOnly = false;
+                    document.getElementById("ot").readOnly = false;
+                    document.getElementById("total_hour").readOnly = false;
     }}}
     
 
