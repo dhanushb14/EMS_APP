@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.utils import timezone
 from django.apps import apps
 
+
 class EmployeeManager(BaseUserManager):
     def create_user(self, employee_id, password=None, role=None, **extra_fields):
         if not employee_id:
@@ -58,13 +59,14 @@ class Employee(AbstractBaseUser, PermissionsMixin):
             
             print("1")
             print(i.start_date.month, current_month)
+            print(i.no_of_days)
             
             if i.start_date.month == current_month:
                 print("came to if condition")
                 if i.leave_type == "Work from home":
-                    self.work_from_home = self.work_from_home - 1
+                    self.work_from_home = self.work_from_home - i.no_of_days
                 else:
-                    self.available_leave = self.available_leave - 1
+                    self.available_leave = self.available_leave - i.no_of_days
         self.save()
 
     def save(self, *args, **kwargs):
