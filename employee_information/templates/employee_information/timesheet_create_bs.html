@@ -355,7 +355,8 @@ input[type="text"]:not(#project_name):not(#task) {
                 
                 
                 
-                if (data.status!="uncheck") {
+                if (data.status=="uncheck" ) {
+                  console.log('here1')
                     messageBox1.style.display = "block"; // Show the message box
                     
                     // Removing buttons
@@ -438,7 +439,7 @@ input[type="text"]:not(#project_name):not(#task) {
     
     
     
-    
+    console.log("first")
     for( var k = 0; k<=data["leave_date"].length; k++ ){
       
       
@@ -1364,7 +1365,10 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
     var ovtIds = ['ovt_monday', 'ovt_tuesday', 'ovt_wednesday', 'ovt_thursday', 'ovt_friday', 'ovt_saturday', 'ovt_sunday'];
     
     
+    console.log('here4')
     
+if (data && data.leave_date) {
+  console.log('here4.1')
     for( var k = 0; k<=data["leave_date"].length; k++ ){
       
       
@@ -1442,7 +1446,7 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
         
 
        
-    }}
+    }console.log('here5')
     if (data?.project_name && data?.status!="uncheck") {
                     messageBox1.style.display = "block"; // Show the message box
                     // Removing buttons
@@ -1475,7 +1479,8 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
                 }
     else{
       
-    }
+    }}}
+    
 
         if (!data.project_name){
           
@@ -1732,7 +1737,8 @@ if (savedTableData) {
         // Show the message box
         setTimeout(function() {
             messageBox_submit.remove();
-        }, 3000);
+            location.reload();
+        }, 2500);
         location.reload();
         })
 });
@@ -1744,6 +1750,7 @@ window.addEventListener('load', function() {
     // Define an array of IDs of the input fields
     var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
     if (leaveDate) {
+      console.log("here2")
       for (var i = 0; i < leaveDate.length; i++) {
         var startdate = leaveDate[i].start_date;
         var enddate = leaveDate[i].end_date;
@@ -1775,22 +1782,5 @@ window.addEventListener('load', function() {
     }
 });
 </script>
-<script>
-  // checking leave backend
-  window.onload = function() {
-    let days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-    for(let i = 0; i < days.length; i++) {
-        let inputElements = document.querySelectorAll(`.${days[i]}_value`);
-        inputElements.forEach(inputElement => {
-            let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
-            if (color == 'rgb(128, 128, 128)') {
-                inputElement.style.backgroundColor = 'rgb(128, 128, 128)';
-                inputElement.value = '0';
-                inputElement.readOnly = true;
-            }
-        });
-    }
-  };
-</script>
 {% endblock pageContent %}
