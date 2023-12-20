@@ -878,7 +878,7 @@ input[type="text"]:not(#project_name):not(#task) {
         var role_checking = JSON.parse(savedTableData);
         
         console.log('1')
-        if (savedTableData && role_checking.start_date != startDate){
+        if (savedTableData && role_checking.start_date != formattedStartDate){
           savedTableData = null;
           taskInputs = null;
         }
@@ -1527,8 +1527,9 @@ var taskInputs = localStorage.getItem('taskInputs')
 var role = document.getElementById('role').textContent;
 var role_checking = JSON.parse(savedTableData);
 
-        console.log('2')
-        if (savedTableData && role_checking.start_date != startDate){
+        
+        if (savedTableData && role_checking.start_date != formattedStartDate){
+          console.log('2')
           savedTableData = null;
           taskInputs = null;
         }
