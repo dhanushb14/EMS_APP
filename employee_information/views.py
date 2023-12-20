@@ -990,11 +990,11 @@ def leave_request_manager(request):
     
     # If it's not a POST request, retrieve all leave requests
     if request.user.role=='scrummaster':
-        all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).exclude(employee__role='manager').order_by('start_date')
+        all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).exclude(employee__role='manager').order_by('-start_date')
         filter_queryset = FilterForm(request.GET,queryset=all_leave_requests)
         all_leave_requests = filter_queryset.qs
     else:
-        all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).order_by('start_date')
+        all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).order_by('-start_date')
         filter_queryset = FilterForm(request.GET,queryset=all_leave_requests)
         all_leave_requests = filter_queryset.qs
     paginator = Paginator(all_leave_requests,2)
