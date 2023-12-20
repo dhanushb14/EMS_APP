@@ -355,7 +355,7 @@ input[type="text"]:not(#project_name):not(#task) {
                 
                 
                 
-                if (data.status=="uncheck" ) {
+                if (data?.status!="uncheck" ) {
                   console.log('here1')
                     messageBox1.style.display = "block"; // Show the message box
                     
@@ -389,6 +389,7 @@ input[type="text"]:not(#project_name):not(#task) {
                 }
                 else{
                       messageBox1.style.display = "none"; // Hide the message box
+                      console.log("here1.1")
                       document.getElementById("submitBtn").style.display = "block";
                       document.getElementById("discardBtn").style.display = "block";
                       document.getElementById("saveBtn").style.display = "block";
@@ -414,6 +415,7 @@ input[type="text"]:not(#project_name):not(#task) {
                     document.getElementById("total_hour").readOnly = false;
                     }
                 if (!data.leave_date){
+                  console.log("here1.2")
                   
                   id5 = ["monday_value", "tuesday_value", "wednesday_value", "thursday_value", "friday_value"]
                   id6 = ["ovt_monday", "ovt_tuesday", "ovt_wednesday", "ovt_thursday", "ovt_friday"]
@@ -434,7 +436,7 @@ input[type="text"]:not(#project_name):not(#task) {
                   
                       // Define an array of IDs of the input fields
     var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
-    
+    let days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     var ovtIds = ['ovt_monday', 'ovt_tuesday', 'ovt_wednesday', 'ovt_thursday', 'ovt_friday', 'ovt_saturday', 'ovt_sunday'];
     
     
@@ -465,13 +467,42 @@ input[type="text"]:not(#project_name):not(#task) {
         
 
         if (startDateField <= startdate && startDateField <= enddate) {
-          
+          console.log("first1.1")
           // total_days = startdate - enddate;
           var total_days = Math.round((enddate - startdate) / (1000 * 60 * 60 * 24));
           
           var starting_date = Math.round((startdate - startDateField) / (1000 * 60 * 60 * 24));
+          console.log("starting date", starting_date)
           
+          for(let i = 0; i < days.length; i++) {
+
+          let inputElements = document.querySelectorAll('.'+days[i]+'_value');
+
+          inputElements.forEach(inputElement => {
+              let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
+              if (color == 'rgb(128, 128, 128)') {
+                
+                  inputElement.style.backgroundColor = 'transparent';
+                  inputElement.ariaPlaceholder = '0';
+                  inputElement.readOnly = false;
+              }
+          });
+          let inputElements4 = document.querySelectorAll('.ovt_'+days[i]);
+          inputElements4.forEach(inputElement => {
+              let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
+              if (color == 'rgb(128, 128, 128)') {
+                
+                  inputElement.style.backgroundColor = 'transparent';
+                  inputElement.ariaPlaceholder = '0';
+                  inputElement.readOnly = false;
+              }
+          });
+          }
+
+
           if (total_days == 0){
+            console.log("first1.3")
+            
             
             var dayId = dayIds[starting_date];
             var ovtId = ovtIds[starting_date];
@@ -487,8 +518,9 @@ input[type="text"]:not(#project_name):not(#task) {
           else{
             
             let days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
+            console.log("first1.2")
             for(let i = 0; i < days.length; i++) {
+
                 let inputElements = document.querySelectorAll('.'+days[i]+'_value');
                 
                 inputElements.forEach(inputElement => {
@@ -1501,7 +1533,7 @@ if (data && data.leave_date) {
       }
         
 
-       
+    
     }console.log('here5')
     if (data?.project_name && data?.status!="uncheck") {
                     messageBox1.style.display = "block"; // Show the message box
@@ -1559,6 +1591,62 @@ if (data && data.leave_date) {
                     document.getElementById("ot").readOnly = false;
                     document.getElementById("total_hour").readOnly = false;
     }}}
+    if (data?.project_name && data?.status!="uncheck") {
+                    messageBox1.style.display = "block"; // Show the message box
+                    // Removing buttons
+                    document.getElementById("submitBtn").style.display = "none";
+                    document.getElementById("discardBtn").style.display = "none";
+                    document.getElementById("saveBtn").style.display = "none";
+                    
+                    // Making inputs read-only
+                    document.getElementById("project_name").readOnly = true;
+                    document.getElementById("monday_value").readOnly = true;
+                    document.getElementById("tuesday_value").readOnly = true;
+                    document.getElementById("wednesday_value").readOnly = true;
+                    document.getElementById("thursday_value").readOnly = true;
+                    document.getElementById("friday_value").readOnly = true;
+                    document.getElementById("saturday_value").readOnly = true;
+                    document.getElementById("sunday_value").readOnly = true;
+                    document.getElementById("ovt_monday").readOnly = true;
+                    document.getElementById("ovt_tuesday").readOnly = true;
+                    document.getElementById("ovt_wednesday").readOnly = true;
+                    document.getElementById("ovt_thursday").readOnly = true;
+                    document.getElementById("ovt_friday").readOnly = true;
+                    document.getElementById("ovt_saturday").readOnly = true;
+                    document.getElementById("ovt_sunday").readOnly = true;
+                    document.getElementById("St").readOnly = true;
+                    document.getElementById("ot").readOnly = true;
+                    document.getElementById("total_hour").readOnly = true;
+
+                    
+
+                }
+    else{
+      messageBox1.style.display = "none"; // Hide the message box
+                      document.getElementById("submitBtn").style.display = "block";
+                      document.getElementById("discardBtn").style.display = "block";
+                      document.getElementById("saveBtn").style.display = "block";
+
+                      // Making inputs read-only
+                    document.getElementById("project_name").readOnly = false;
+                    document.getElementById("monday_value").readOnly = false;
+                    document.getElementById("tuesday_value").readOnly = false;
+                    document.getElementById("wednesday_value").readOnly = false;
+                    document.getElementById("thursday_value").readOnly = false;
+                    document.getElementById("friday_value").readOnly = false;
+                    document.getElementById("saturday_value").readOnly = false;
+                    document.getElementById("sunday_value").readOnly = false;
+                    document.getElementById("ovt_monday").readOnly = false;
+                    document.getElementById("ovt_tuesday").readOnly = false;
+                    document.getElementById("ovt_wednesday").readOnly = false;
+                    document.getElementById("ovt_thursday").readOnly = false;
+                    document.getElementById("ovt_friday").readOnly = false;
+                    document.getElementById("ovt_saturday").readOnly = false;
+                    document.getElementById("ovt_sunday").readOnly = false;
+                    document.getElementById("St").readOnly = false;
+                    document.getElementById("ot").readOnly = false;
+                    document.getElementById("total_hour").readOnly = false;
+    }
     
 
         if (!data.project_name){
@@ -1822,44 +1910,6 @@ if (savedTableData) {
         })
 });
 </script>
-<script>
-  // Check for leave date on page load
-window.addEventListener('load', function() {
-    var leaveDate = "{{ leave_date }}"; // Replace with the actual leave date from the context
-    // Define an array of IDs of the input fields
-    var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
-    if (leaveDate) {
-      console.log("here2")
-      for (var i = 0; i < leaveDate.length; i++) {
-        var startdate = leaveDate[i].start_date;
-        var enddate = leaveDate[i].end_date;
 
-        // Get the start date and end date from the table fields
-        var startDateField = document.getElementById('start_date');
-        var endDateField = document.getElementById('end_date');
-
-
-        if (startDateField.value >= startdate && startDateField.value <= enddate) {
-          total_days = startdate - enddate;
-          starting_date = startdate - startDateField.value;
-
-          for (var i = starting_date; i<= total_days; i++){
-            var dayId = dayIds[i];
-            document.getElementById(dayId).setAttribute('readonly', true)
-          }
-        }
-
-
-
-        
-      }
-        
-
-        // Set the table fields as read-only
-        startDateField.setAttribute('readonly', true);
-        endDateField.setAttribute('readonly', true);
-    }
-});
-</script>
 
 {% endblock pageContent %}
