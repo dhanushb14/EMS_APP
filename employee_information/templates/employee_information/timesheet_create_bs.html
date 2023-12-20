@@ -32,6 +32,7 @@ input[type="text"]:not(#project_name):not(#task) {
   <div class="row">
     <div class="col">
       <h2 class="fw-bold mb-4">Time Sheet</h2>
+      <span id="role"  style="display: none;">{{request.user.id}}</span>
     </div>
   </div>
   <div class="row" style="background-color: #ecd5ef; min-height: 7%">
@@ -188,8 +189,10 @@ input[type="text"]:not(#project_name):not(#task) {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
+  
   function applyDynamicRowStyling() {
   $('input[type="text"]:not(#project_name):not(#task)').css('width', '100px');
+  console.log("dynamic")
 }
   // Creating the warning msg
   var messageBox1 = document.createElement("div");
@@ -220,6 +223,7 @@ input[type="text"]:not(#project_name):not(#task) {
 }
 
     $(function() {
+      console.log("inside apply dynamic script")
             var previousMonday = getPreviousMonday();
         var formattedDate = previousMonday.toISOString().split('T')[0];
         $('#start_date').val(formattedDate);
@@ -262,8 +266,11 @@ input[type="text"]:not(#project_name):not(#task) {
         })
         .then(response => response.json())
         .then(data => {
+          console.log("first script")
           if (!data) {
+            console.log("first script reload")
             location.reload();}
+            
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
                 
@@ -316,13 +323,21 @@ input[type="text"]:not(#project_name):not(#task) {
                     document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
                     
                     var totallength = (data.monday_value.length) 
-                    
+                    console.log('error here1')
                     var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
+                    var rows_remove = document.getElementsByClassName("newRow");
+                    while(rows_remove[0]) {
+                      rows_remove[0].parentNode.removeChild(rows_remove[0]);
+                    }
+                    console.log('error here41')
                     var rows = tbody.getElementsByTagName("tr");
                     var taskNameRow = rows[rows.length - 5];
+                    console.log("data new row123")
                     
-                    for (var i = 1; i < totallength-1; i++) {
+                    for (var i = 1; i <= totallength-1; i++) {
+                      console.log(i, totallength-1 )
                         var newRow = document.createElement("tr");
+                        newRow.className = "newRow";  // Assign a class to the row
                                             
                         newRow.innerHTML += `
                         <td class="text-center">
@@ -351,7 +366,7 @@ input[type="text"]:not(#project_name):not(#task) {
                         </td>       
                         `;
                         taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
-                    }}
+                    }console.log("dont")}
                 
                 
                 
@@ -837,15 +852,41 @@ input[type="text"]:not(#project_name):not(#task) {
         })
         .then(response => response.json())
         .then(data => {
-            
+            console.log('345')
+            if(data1){
+              var table_value = JSON.parse(data1);
+              var current_role = document.getElementById('role').textContent;
+              console.log('3456')
+              if (table_value.role == current_role && start_date != table_value.start_date){
+                console.log('34567')
+                data1=null;
+              }
+            }
             if (data) {
+              console.log("844")
               
             }
             else if(data1) {
-              
+              console.log('here')
               // Check if there is any saved table data in local storage
+
         var savedTableData = localStorage.getItem('tableData');
         var taskInputs = localStorage.getItem('taskInputs')
+        
+        var role = document.getElementById('role').textContent;
+        var role_checking = JSON.parse(savedTableData);
+        
+        console.log('1')
+        if (savedTableData && role_checking.start_date != startDate){
+          savedTableData = null;
+          taskInputs = null;
+        }
+
+        if (savedTableData && role_checking.role != role){
+          console.log("true")
+                  savedTableData = null;
+                  taskInputs = null;
+                }
         
         
         if (savedTableData) {
@@ -884,6 +925,7 @@ input[type="text"]:not(#project_name):not(#task) {
             var data5 = JSON.parse(localStorage.getItem('taskInputs'));
             
             if (data5.monday_value.length <= 1) {
+              console.log("data new row 2")
               
                         document.getElementById("task").value = data5?.tasks[0] || '';
                         document.getElementById("monday_value").value = data5?.monday_value[0] || '';
@@ -907,20 +949,26 @@ input[type="text"]:not(#project_name):not(#task) {
                         document.getElementById("sunday_value").value = data5?.sunday_value[0] || '';
                         var totallength = (data5.monday_value.length) 
                         
-                        var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
+                        var rows_remove = document.getElementsByClassName("newRow");
+                        while(rows_remove[0]) {
+                            rows_remove[0].parentNode.removeChild(rows_remove[0]);
+                        }
+                        console.log('error here42')
                         var rows = tbody.getElementsByTagName("tr");
+                        console.log("error here 42.1")
                         var taskNameRow = rows[rows.length - 5];
-                        
+                        console.log("data new row 1")
                         
                         for (var i = 1; i <= totallength-1; i++) {
                           
                             var newRow = document.createElement("tr");
+                            newRow.className = "newRow";
                                                   
                             newRow.innerHTML += `
                             
                             
                             <td class="text-center">
-                                  <input class="text-center task-input" type="text" id="task" name="task" placeholder="Task Name" value="${data5.tasks[i] || 0}">
+                                  <input class="text-center task-input"  type="text" id="task" name="task" placeholder="Task Name" value="${data5.tasks[i] || 0}">
                                 </td>
                                 <td class="text-center">
                                   <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;" value="${data5.monday_value[i] || 0}">
@@ -955,10 +1003,10 @@ input[type="text"]:not(#project_name):not(#task) {
             }
             
             else{
-              
+              console.log("here23")
             }
             if (data ) {
-            
+            console.log('here233')
                 
                 // data is not empty, create HTML elements to display the data
                 let table = document.getElementById('yourTableId')
@@ -1016,17 +1064,18 @@ input[type="text"]:not(#project_name):not(#task) {
                     document.getElementById("saturday_value").value = data?.saturday_value[0] || '0';
                     document.getElementById("sunday_value").value = data?.sunday_value[0] || '0';
                     var totallength = (data.monday_value.length) 
-                    
+                    console.log('error here2')
                     var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
                     var rows = tbody.getElementsByTagName("tr");
                     var taskNameRow = rows[rows.length - 5];
                     //////////////////////////////////
-                    
+                    console.log("vanten")
                     
 
                     /////////////////////////////////
                     for (var i = 1; i <= totallength-1; i++) {
                         var newRow = document.createElement("tr");
+                        newRow.className = "newRow";
                                               
                         newRow.innerHTML += `
                         <td class="text-center">
@@ -1222,12 +1271,14 @@ input[type="text"]:not(#project_name):not(#task) {
 
 </script>
 <script>
+  
   // Calculation hours
   $(function() {
 
 
 // Calculate total hours
 function calculateTotalHours() {
+  console.log("inside calculation hours script")
     var total = 0;
     var st = 0;
     var ot = 0;
@@ -1297,13 +1348,16 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
 });
 </script>
 <script>
+  
   //add row
   document.getElementById("addrow").addEventListener("click", function() {
-    
+    console.log("inside addRow script")
+    console.log('error here3')
     var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
     var rows = tbody.getElementsByTagName("tr");
     var taskNameRow = rows[rows.length - 5];
     var newRow = document.createElement("tr");
+    newRow.className = "newRow";
     
 
     var mondayInput = document.querySelector('.monday_value');
@@ -1363,9 +1417,12 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
 });
 </script>
 <script>
+  
   //save button
   document.getElementById("saveBtn").addEventListener("click", function() {
+    console.log("inside saveBtn script")
         // Get the table data
+        console.log("save in")
         var th_hour = [
                 document.getElementById('th_monday').value,
                 document.getElementById('th_tuesday').value,
@@ -1390,6 +1447,7 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
             ot: document.getElementById('ot').value,
             total_hour: document.getElementById('total_hour').value,
             th_hour: th_hour,
+            role: document.getElementById('role').textContent
             
         };
         
@@ -1408,6 +1466,7 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
         }
         
         localStorage.setItem('taskInputs', JSON.stringify(taskInputs));
+        console.log('local store has been set')
 
         var messageBox = document.createElement("div");
         messageBox.textContent = "The Values are Saved";
@@ -1417,17 +1476,23 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
         // Show the message box
         setTimeout(function() {
             messageBox.remove();
+            console.log("table data is ", tableData)
         }, 1700);
 });
 </script>
 <script>
+  
   // windows on load, check there is data for the date
   window.addEventListener('load', function() {
+    console.log("inside windows.load script")
+   
     var startDate = new Date(document.getElementById('start_date').value);
     var endDate = new Date(document.getElementById('end_date').value);
+    console.log(startDate, endDate)
     
     var formattedStartDate = startDate.toISOString().split('T')[0];
     var formattedEndDate = endDate.toISOString().split('T')[0];
+    
     fetch("{% url 'timesheets_create' %}", {
         method: 'POST',
         headers: {
@@ -1442,8 +1507,139 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
     })
     .then(response => response.json())
     .then(data => {
+      
+      if(data){
         
+        if(tableData){
+          localStorage.removeItem('savedTableData');
+          localStorage.removeItem('taskInputs');
+          console.log("removed table data")
+        }
+      }
+      if (!data){
+          console.log("inside table data")
+          
+
+// Check if there is any saved table data in local storage
+var savedTableData = localStorage.getItem('tableData');
+var taskInputs = localStorage.getItem('taskInputs')
+var role = document.getElementById('role').textContent;
+var role_checking = JSON.parse(savedTableData);
+
+        console.log('2')
+        if (savedTableData && role_checking.start_date != startDate){
+          savedTableData = null;
+          taskInputs = null;
+        }
+
+if (savedTableData && role_checking.role != role && role_checking.start_date != startDate ){
+  console.log("true")
+          savedTableData = null;
+          taskInputs = null;
+        }
+
+
+if (savedTableData) {
+  console.log("savedTableData")
+    // Parse the saved table data
+    var tableData = JSON.parse(savedTableData);
+    applyDynamicRowStyling()
+
+    // Populate the table with the saved data
+    document.getElementById('start_date').value = tableData.start_date;
+    document.getElementById('end_date').value = tableData.end_date;
+    document.getElementById('project_name').value = tableData.project_name;
+    
+    document.getElementById('ovt_monday').value = tableData.ovt_monday;
+    document.getElementById('ovt_tuesday').value = tableData.ovt_tuesday;
+    document.getElementById('ovt_wednesday').value = tableData.ovt_wednesday;
+    document.getElementById('ovt_thursday').value = tableData.ovt_thursday;
+    document.getElementById('ovt_friday').value = tableData.ovt_friday;
+    document.getElementById('ovt_saturday').value = tableData.ovt_saturday;
+    document.getElementById('ovt_sunday').value = tableData.ovt_sunday;
+    document.getElementById('St').value = tableData.St;
+    document.getElementById('ot').value = tableData.ot;
+    document.getElementById('total_hour').value = tableData.total_hour;
+
+    document.getElementById('th_monday').value = tableData.th_hour[0];
+    document.getElementById('th_tuesday').value = tableData.th_hour[1];
+    document.getElementById('th_wednesday').value = tableData.th_hour[2];
+    document.getElementById('th_thursday').value = tableData.th_hour[3];
+    document.getElementById('th_friday').value = tableData.th_hour[4];
+    document.getElementById('th_saturday').value = tableData.th_hour[5];
+    document.getElementById('th_sunday').value = tableData.th_hour[6];
+
+    var data = JSON.parse(localStorage.getItem('taskInputs'));
+    
+    if (data.monday_value.length <= 1) {
+      
+                document.getElementById("task").value = data?.tasks[0] || '';
+                document.getElementById("monday_value").value = data?.monday_value[0] || '';
+                document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
+                document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
+                document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
+                document.getElementById("friday_value").value = data?.friday_value[0] || '';
+                document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
+                document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
+
+    }
+    
+    else{
+      
+                document.getElementById("task").value = data?.tasks[0] || '';
+                document.getElementById("monday_value").value = data?.monday_value[0] || '';
+                document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
+                document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
+                document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
+                document.getElementById("friday_value").value = data?.friday_value[0] || '';
+                document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
+                document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
+                var totallength = (data.monday_value.length) 
+                console.log('error here4')
+                var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
+                
+                var rows = tbody.getElementsByTagName("tr");
+                var taskNameRow = rows[rows.length - 5];
+                
+                for (var i = 1; i <=totallength-1; i++) {
+                    var newRow = document.createElement("tr");
+                    newRow.className = "newRow";
+                    console.log()
+                    
+                                          
+                    newRow.innerHTML += `
+                    
+                    
+                    <td class="text-center">
+                          <input class="text-center task-input"  type="text" id="task" name="task" placeholder="Task Name" value="${data.tasks[i] || 0}">
+                        </td>
+                        <td class="text-center">
+                          <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;" value="${data.monday_value[i] || 0}">
+                        </td>
+                        <td class="text-center">
+                          <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;" value="${data.tuesday_value[i] || 0}">
+                        </td>
+                        <td class="text-center">
+                          <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;" value="${data.wednesday_value[i] || 0}">
+                        </td>
+                        <td class="text-center">
+                          <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;" value="${data.thursday_value[i] || 0}">
+                        </td>
+                        <td class="text-center">
+                          <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;" value="${data.friday_value[i] || 0}">
+                        </td>
+                        <td class="text-center">
+                          <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;" value="${data.saturday_value[i] || 0}">
+                        </td>
+                        <td class="text-center">
+                          <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;" value="${data.sunday_value[i] || 0}">
+                        </td>
+                    `;
+                    taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
+                }
+    }}}
         
+    
         
 
         ///////// leave backend ////////////////////
@@ -1455,7 +1651,7 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
     
     console.log('here4')
     
-if (data && data.leave_date) {
+if (data && data.leave_date && data["leave_date"][0]) {
   console.log('here4.1')
     for( var k = 0; k<=data["leave_date"].length; k++ ){
       
@@ -1535,7 +1731,7 @@ if (data && data.leave_date) {
 
     
     }console.log('here5')
-    if (data?.project_name && data?.status!="uncheck") {
+    if (data && data.project_name && data.status!="uncheck") {
                     messageBox1.style.display = "block"; // Show the message box
                     // Removing buttons
                     document.getElementById("submitBtn").style.display = "none";
@@ -1648,120 +1844,22 @@ if (data && data.leave_date) {
                     document.getElementById("total_hour").readOnly = false;
     }
     
-
-        if (!data.project_name){
-          
-
-// Check if there is any saved table data in local storage
-var savedTableData = localStorage.getItem('tableData');
-var taskInputs = localStorage.getItem('taskInputs')
-
-
-if (savedTableData) {
-  
-    // Parse the saved table data
-    var tableData = JSON.parse(savedTableData);
-    applyDynamicRowStyling()
-
-    // Populate the table with the saved data
-    document.getElementById('start_date').value = tableData.start_date;
-    document.getElementById('end_date').value = tableData.end_date;
-    document.getElementById('project_name').value = tableData.project_name;
-    
-    document.getElementById('ovt_monday').value = tableData.ovt_monday;
-    document.getElementById('ovt_tuesday').value = tableData.ovt_tuesday;
-    document.getElementById('ovt_wednesday').value = tableData.ovt_wednesday;
-    document.getElementById('ovt_thursday').value = tableData.ovt_thursday;
-    document.getElementById('ovt_friday').value = tableData.ovt_friday;
-    document.getElementById('ovt_saturday').value = tableData.ovt_saturday;
-    document.getElementById('ovt_sunday').value = tableData.ovt_sunday;
-    document.getElementById('St').value = tableData.St;
-    document.getElementById('ot').value = tableData.ot;
-    document.getElementById('total_hour').value = tableData.total_hour;
-
-    document.getElementById('th_monday').value = tableData.th_hour[0];
-    document.getElementById('th_tuesday').value = tableData.th_hour[1];
-    document.getElementById('th_wednesday').value = tableData.th_hour[2];
-    document.getElementById('th_thursday').value = tableData.th_hour[3];
-    document.getElementById('th_friday').value = tableData.th_hour[4];
-    document.getElementById('th_saturday').value = tableData.th_hour[5];
-    document.getElementById('th_sunday').value = tableData.th_hour[6];
-
-    var data = JSON.parse(localStorage.getItem('taskInputs'));
-    
-    if (data.monday_value.length <= 1) {
-      
-                document.getElementById("task").value = data?.tasks[0] || '';
-                document.getElementById("monday_value").value = data?.monday_value[0] || '';
-                document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
-                document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
-                document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
-                document.getElementById("friday_value").value = data?.friday_value[0] || '';
-                document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
-                document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
-
-    }
-    else{
-      
-                document.getElementById("task").value = data?.tasks[0] || '';
-                document.getElementById("monday_value").value = data?.monday_value[0] || '';
-                document.getElementById("tuesday_value").value = data?.tuesday_value[0] || '';
-                document.getElementById("wednesday_value").value = data?.wednesday_value[0] || '';
-                document.getElementById("thursday_value").value = data?.thursday_value[0] || '';
-                document.getElementById("friday_value").value = data?.friday_value[0] || '';
-                document.getElementById("saturday_value").value = data?.saturday_value[0] || '';
-                document.getElementById("sunday_value").value = data?.sunday_value[0] || '';
-                var totallength = (data.monday_value.length) 
-                
-                var tbody = document.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
-                var rows = tbody.getElementsByTagName("tr");
-                var taskNameRow = rows[rows.length - 5];
-                
-                for (var i = 1; i <=totallength-1; i++) {
-                    var newRow = document.createElement("tr");
-                                          
-                    newRow.innerHTML += `
-                    
-                    
-                    <td class="text-center">
-                          <input class="text-center task-input" type="text" id="monday_task" name="task" placeholder="Task Name" value="${data.tasks[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;" value="${data.monday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;" value="${data.tuesday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;" value="${data.wednesday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;" value="${data.thursday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;" value="${data.friday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;" value="${data.saturday_value[i] || 0}">
-                        </td>
-                        <td class="text-center">
-                          <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;" value="${data.sunday_value[i] || 0}">
-                        </td>
-                    `;
-                    taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
-                }
-    }
+        console.log("data", data)
+        
 
     
-}
 
-}
+
+
     });
 });
+console.log("windows load ended")
 </script>
 <script>
+  
   //discard button
   document.getElementById("discardBtn").addEventListener("click", function() {
+    console.log("inside discardBtn script")
         var confirmation = confirm("Are you sure you want to discard the values?")
     // Reset the input fields to their initial values
         if (confirmation) {
@@ -1806,8 +1904,10 @@ if (savedTableData) {
 }});
 </script>
 <script>
+  
   // submit button
   document.getElementById("submitBtn").addEventListener("click", function() {
+    console.log("inside submit script")
         event.preventDefault()
         var taskInputs = document.querySelectorAll('.task-input');
         var tasks = Array.from(taskInputs).map(input => input.value);
