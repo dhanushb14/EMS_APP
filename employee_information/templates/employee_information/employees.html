@@ -33,11 +33,21 @@
           <tr>
             <td class="px-2 py-1 text-center">{{ employee.employee_id }}</td>
             <td class="px-2 py-1 text-center">{{ employee.employee_name }}</td>
-            {% if employee.role == "" %}
-            <td class="px-2 py-1 text-center">Employee</td>
-            {% else %}
-            <td class="px-2 py-1 text-center">{{ employee.role }}</td>
-            {% endif %}
+            
+            <td class="px-2 py-1 text-center">
+              {% if employee.role == "employee" %}
+                Employee
+              {% elif employee.role == "superadmin" %}
+                Super Admin
+              {% elif employee.role == "manager" %}
+                Manager
+              {% elif employee.role == "scrummaster" %}
+                Scrum Master
+              {% else %}
+                Employee
+              {% endif %}
+            </td>
+            
             <td class="px-2 py-1 text-center my-auto">
               {% if employee.is_active == 1 %}
               <span
