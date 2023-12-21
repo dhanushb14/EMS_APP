@@ -1029,8 +1029,7 @@ def leave_request_manager(request):
     paginator = Paginator(all_leave_requests,2)
     page = request.GET.get('page')
     paginated_results = paginator.get_page(page)
-    num_of_pages = "a" * paginated_results.paginator.num_pages
-    return render(request, 'employee_information/leave_bs.html', {'num_of_pages': num_of_pages,'filter_queryset':filter_queryset,'paginated_results':paginated_results})
+    return render(request, 'employee_information/leave_bs.html', {'filter_queryset':filter_queryset,'paginated_results':paginated_results})
 
 def leave_request_manager_model(request):
     if request.method == 'GET':
@@ -1096,6 +1095,9 @@ def leave_request_manager_model(request):
 
 def user_leave_request(request):
     leave_requests = LeaveRequest.objects.filter(employee=request.user)
+    paginator = Paginator(leave_requests,1)
+    page = request.GET.get('page')
+    paginated_results = paginator.get_page(page)
     employee = Employee.objects.get(employee_name=request.user.employee_name)
     available_leave = employee.available_leave
     try:
@@ -1107,7 +1109,7 @@ def user_leave_request(request):
         work_from_home = employee.work_from_home
     except:
         pass
-    return render(request, 'employee_information/user_leave_request.html', {'leave_requests': leave_requests,'available_leave':available_leave, 'work_from_home': work_from_home})
+    return render(request, 'employee_information/user_leave_request.html', {'paginated_results': paginated_results,'available_leave':available_leave, 'work_from_home': work_from_home})
 
 
 def create_leave_request(request):
@@ -1185,3 +1187,33 @@ def send_password(request):
         return render(request, 'employee_information/forgot_password.html', {'user_exists': True})
     except Employee.DoesNotExist:
         return render(request, 'employee_information/forgot_password.html', {'user_exists': False})
+
+def download_data(request):
+    # Get the filtered queryset based on the user's role
+    print('hit download')
+    if request.user.role == 'scrummaster':
+        all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).exclude(employee__role='manager').order_by('-start_date')
+    else:
+        all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).order_by('-start_date')
+
+    # Apply additional filtering using the FilterForm
+    filter_queryset = FilterForm(request.GET, queryset=all_leave_requests)
+    all_leave_requests = filter_queryset.qs
+
+    # Create a response object with CSV content type
+    response = HttpResponse(content_type='text/csv')
+
+    # Set the Content-Disposition header for download
+    response['Content-Disposition'] = 'attachment; filename="leave_requests.csv"'
+
+    # Create a CSV writer using the response object
+    csv_writer = csv.writer(response)
+
+    # Write the header row
+    csv_writer.writerow(['Name','Start Date', 'End Date', 'Days', 'Type','Comments','Status'])
+
+    # Write the data rows
+    for leave_request in all_leave_requests:
+        csv_writer.writerow([leave_request.employee_name, leave_request.start_date, leave_request.end_date, leave_request.no_of_days, leave_request.leave_type, leave_request.comments, leave_request.status])
+
+    return response
