@@ -37,10 +37,12 @@
       :root {
         --header-height: 3rem;
         --nav-width: 68px;
-        --first-color: #4723d9;
-        --first-color-light: #afa5d9;
-        --white-color: #f7f6fb;
-        --body-font: "Nunito", sans-serif;
+        --first-color: #1F325C;
+        --first-color-light: #eceff3;
+        --white-color: rgb(75, 87, 255);
+        --header-color: #ffffff;
+        --logo-text:#F8F8F9;
+        --body-font: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
         --normal-font-size: 1rem;
         --z-fixed: 100;
       }
@@ -70,9 +72,10 @@
         align-items: center;
         justify-content: space-between;
         padding: 0 1rem;
-        background-color: var(--white-color);
+        background-color: var(--header-color);
         z-index: var(--z-fixed);
         transition: 0.5s;
+        box-shadow: 0 5px 2px -2px rgb(246, 242, 242); /* Add this line */
       }
       .header_toggle {
         color: var(--first-color);
@@ -113,7 +116,8 @@
         color: var(--white-color);
       }
       .nav_logo-name {
-        color: var(--white-color);
+        color: var(--logo-text);
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
         font-weight: 700;
       }
       .nav_link {
@@ -143,7 +147,7 @@
         left: 0;
         width: 2px;
         height: 32px;
-        background-color: var(--white-color);
+        background-color: var(#471fd9);
       }
       .sub_menu_nav_link {
         display: grid;
@@ -161,18 +165,22 @@
         color: var(--white-color);
       }
       .sub_menu_div_bg {
-        background-color: #b8b4e3;
+        background-color: #142248;
         margin-top: -10px;
         margin-left: 10px;
       }
       .sub_menu_bg:hover {
-        background-color: #f7f6fb;
+        background-color: var(--white-color);
         text-align: center;
       }
       .sub_menu_font {
-        color: #333333;
+        color: #949393;
         font-size: 16px;
       }
+      .sub_menu_bg:hover .sub_menu_font {
+            color: #ffffff;
+            font-size: 16.2px;
+        }
       .sub_menu_active_font {
         color: var(--first-color);
       }
@@ -184,7 +192,7 @@
       }
       .sub_menu_icon {
         font-size: 1.1rem;
-        color: #333333;
+        color: #ffffff;
         margin-left: 10px;
       }
       .sub_menu_active_icon {
