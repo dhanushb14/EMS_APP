@@ -1,7 +1,7 @@
 {% extends "employee_information/base.html" %} {% block pageContent %}
 
 
-</style>
+
 <div class="container" style="margin-top: 5%">
   <div class="row">
     <div class="col-12">
@@ -18,6 +18,7 @@
         <option value="project_name">Project Name</option>
         <option value="emp_name">Employee Name</option>
         <option value="start_date">Date</option>
+        <option value="status">Status</option>
       </select>
     </div>
     <div class="col-auto my-auto ">
@@ -93,10 +94,14 @@
         </td>
         <td class="text-center">
           {% if request.user.role != "scrummaster" %}
+          
+          
           {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
-            <button id="undo-btn" type="button" class="btn btn-success btn-sm undo-btn">Success</button> 
+            <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn"></button>
+            <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="display:none"></button>
           {% else %}
-          <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-danger btn-sm">Submit</button>
+          <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn"></button>
+          <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display:none"></button> 
           {% endif %}
           {% endif %}
           <button id = "visibility" class="btn btn-secondary btn-sm edit-data" type="button"  data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
@@ -165,42 +170,27 @@
 <script>
   //download button
   document.getElementById('saveBtn').addEventListener('click', function() {
-    // Get the table element
-    var table = document.querySelector('.table');
-
-    // Get the table rows
-    var rows = table.querySelectorAll('tbody tr');
-
-    // Create an array to store the table data
-    var tableData = [];
-
-    // Iterate over each row and extract the cell values
-    rows.forEach(function(row) {
-        var rowData = [];
-        var cells = row.querySelectorAll('td');
-        cells.forEach(function(cell) {
-            // Check if the cell contains a select dropdown
-        var select = cell.querySelector('select');
-        if (select) {
-            // If it does, push the selected value
-            rowData.push(select.options[select.selectedIndex].value);
-        } else {
-            // If it doesn't, push the cell text content
-            rowData.push(cell.textContent.trim());
-        }
-    });
-        tableData.push(rowData);
-    });
-
-    // Create a JSON object with the table data
-    var jsonData = {
-        'table_data': tableData
-    };
+    var value = document.getElementById('project_name_filter').value;
+    var projectDropdown = document.getElementById('filter');
+    var project_name = projectDropdown.value;
+    console.log("project_name", value)
+    if (value){
+      var filter = "1";
+    }
+    else{
+      filter = "0";
+    }
+    var data = {
+        "selected": project_name,
+        "project_name": value,
+        "filter": filter,
+        "html": "manager"
+    }
     
     // Send the table data to the server using an AJAX request
     fetch("{% url 'download_list_data' %}", {
     method: 'POST',
-    body: JSON.stringify(jsonData),
+    body: JSON.stringify(data),
     headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token if needed
@@ -257,10 +247,11 @@ document.getElementById('project_name_filter').addEventListener('input', functio
         "project_name": value
     }
 
-    var paginationElement = document.getElementById('pagination');
+    var paginationElement = document.querySelector('.pagination');
     while (paginationElement.firstChild) {
         paginationElement.removeChild(paginationElement.firstChild);
     }
+    
 
     fetch("{% url 'timesheet_manager' %}", {
         method: 'POST',
@@ -272,31 +263,54 @@ document.getElementById('project_name_filter').addEventListener('input', functio
     }).then(function(response) {
         return response.json();
     }).then(function(response_data) {
+      
         var tableBody = document.querySelector('.table tbody');
         var allData = response_data.results;
+        console.log('allData', allData)
         var itemsPerPage = 5;
         var currentPage = 1;
+        var totalPages = Math.ceil(allData.length / itemsPerPage);
 
-        var prevButton = document.createElement('button');
-        prevButton.textContent = '<';
-        paginationElement.appendChild(prevButton);
+        // Previous page buttons
+    var prevPageItem = document.createElement('li');
+    prevPageItem.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+    var prevPageLink = document.createElement('a');
+    prevPageLink.className = 'page-link';
+    prevPageLink.href = '?page=' + (currentPage - 1);
+    prevPageLink.innerHTML = '<i class="fa-solid fa-chevron-left fa-xs"></i>';
+    prevPageItem.appendChild(prevPageLink);
+    paginationElement.appendChild(prevPageItem);
 
-        var pageDisplay = document.createElement('span');
-        pageDisplay.id = 'pageDisplay';
-        paginationElement.appendChild(pageDisplay);
+    // Current page text
+    var currentPageItem = document.createElement('li');
+    currentPageItem.className = 'page-item disabled';
+    var currentPageLink = document.createElement('a');
+    currentPageLink.className = 'page-link';
+    currentPageLink.href = '?page=' + currentPage;
+    currentPageLink.textContent = currentPage + ' of ' + totalPages;
+    currentPageItem.appendChild(currentPageLink);
+    paginationElement.appendChild(currentPageItem);
 
-        var nextButton = document.createElement('button');
-        nextButton.textContent = '>';
-        paginationElement.appendChild(nextButton);
+    // Next page buttons
+    var nextPageItem = document.createElement('li');
+    nextPageItem.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+    var nextPageLink = document.createElement('a');
+    nextPageLink.className = 'page-link';
+    nextPageLink.href = '?page=' + (currentPage + 1);
+    nextPageLink.innerHTML = '<i class="fa-solid fa-chevron-right fa-xs"></i>';
+    nextPageItem.appendChild(nextPageLink);
+    paginationElement.appendChild(nextPageItem);
 
         function updatePage() {
-            var start = (currentPage - 1) * itemsPerPage;
-            var end = start + itemsPerPage;
-            var pageData = allData.slice(start, end);
+          console.log('inside updatePage')
+          var start = (currentPage - 1) * itemsPerPage;
+          var end = start + itemsPerPage;
+          var pageData = allData.slice(start, end);
+          console.log('pageData', pageData)
 
-            while (tableBody.firstChild) {
-                tableBody.removeChild(tableBody.firstChild);
-            }
+          while (tableBody.firstChild) {
+              tableBody.removeChild(tableBody.firstChild);
+          }
 
             pageData.forEach(function(item) {
                 var row = document.createElement('tr');
@@ -323,8 +337,10 @@ document.getElementById('project_name_filter').addEventListener('input', functio
                      </td>
                      <td class="text-center">
                         ${item.status == "Approved" || item.status == "Rejected" || item.status == "uncheck" ?
-                          `<button id="undo-btn" type="button" class="btn btn-success btn-sm undo-btn">Success</button>` :
-                          `<button class="send-btn btn btn-danger btn-sm" onclick="submitForm(event)" type="button">Submit</button>`}
+                          `<button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn"></button>
+                          <button class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" onclick="submitForm(event)" type="button" style="display: none"></button>` :
+                          `<button class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" onclick="submitForm(event)" type="button"></button>
+                          <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display: none"></button>`}
                         <button id="visibility" class="btn btn-secondary btn-sm edit-data" type="button" data-id="${item.comments}" title="Edit">
                           <i class="fa-solid fa-pen"></i>
                         </button>
@@ -333,24 +349,63 @@ document.getElementById('project_name_filter').addEventListener('input', functio
                 tableBody.appendChild(row);
             });
 
-            pageDisplay.textContent = 'Page ' + currentPage + ' of ' + Math.ceil(allData.length / itemsPerPage);
+            // Update pagination
+            // var paginationElement = document.querySelector('.pagination');
+            while (paginationElement.firstChild) {
+                paginationElement.removeChild(paginationElement.firstChild);
+            }
 
-            prevButton.disabled = currentPage === 1;
-            nextButton.disabled = currentPage >= Math.ceil(allData.length / itemsPerPage);
+            var prevPageItem = document.createElement('li');
+            prevPageItem.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+            var prevPageLink = document.createElement('a');
+            prevPageLink.className = 'page-link';
+            prevPageLink.href = '?page=' + (currentPage - 1);
+            prevPageLink.innerHTML = '<i class="fa-solid fa-chevron-left fa-xs"></i>';
+            prevPageItem.appendChild(prevPageLink);
+            paginationElement.appendChild(prevPageItem);
+
+            // Current page text
+            var currentPageItem = document.createElement('li');
+            currentPageItem.className = 'page-item disabled';
+            var currentPageLink = document.createElement('a');
+            currentPageLink.className = 'page-link';
+            currentPageLink.href = '?page=' + currentPage;
+            currentPageLink.textContent = currentPage + ' of ' + totalPages;
+            currentPageItem.appendChild(currentPageLink);
+            paginationElement.appendChild(currentPageItem);
+
+            // Next page buttons
+            var nextPageItem = document.createElement('li');
+            nextPageItem.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+            var nextPageLink = document.createElement('a');
+            nextPageLink.className = 'page-link';
+            nextPageLink.href = '?page=' + (currentPage + 1);
+            nextPageLink.innerHTML = '<i class="fa-solid fa-chevron-right fa-xs"></i>';
+            nextPageItem.appendChild(nextPageLink);
+            paginationElement.appendChild(nextPageItem);
+
+            // Previous button click event
+            prevPageLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+                }
+            });
+            // Next button click event
+            nextPageLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+                }
+              });
         }
-
-        prevButton.onclick = function() {
-            currentPage--;
-            updatePage();
-        };
-
-        nextButton.onclick = function() {
-            currentPage++;
-            updatePage();
-        };
-
-        updatePage();
+// Call updatePage to refresh the table and pagination for the first time
+          updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+        
     });
+  
 });
 
     function submitForm(event) {
@@ -382,10 +437,15 @@ document.getElementById('project_name_filter').addEventListener('input', functio
         return response.json();
         }).then(function(data) {
             if (data.message === "Update successful") {
-                button.style.backgroundColor = "green";
-                button.style.border = "none";
-                button.textContent = "Success";
-                button.classList.add('undo-btn');
+              var undobtn = row.querySelector('.undo-btn');
+              var submitbtn = row.querySelector('.send-btn');
+              submitbtn.style.display = 'none';
+              undobtn.style.display = 'block';
+              
+              
+                
+                
+                
                 
 
                 // Find the status field and update it
@@ -402,10 +462,10 @@ document.getElementById('project_name_filter').addEventListener('input', functio
                                 <option class="text-center" value="uncheck">Uncheck</option>
                             </select>
                             `;
-                            var sendButton = row.querySelector('#send-btn');
-                            sendButton.addEventListener('click', submitForm);
-                            button.style.backgroundColor = "red";
-                            button.textContent = "Submit";
+                            var undobtn = row.querySelector('.undo-btn');
+                            var submitbtn = row.querySelector('.send-btn');
+                            submitbtn.style.display = 'block';
+                            undobtn.style.display = 'none';
                 }
                 
                 
@@ -418,7 +478,7 @@ document.getElementById('project_name_filter').addEventListener('input', functio
     document.addEventListener('click', function(event) {
         var button = event.target;
         console.log("button", button.textContent )
-        if (button.classList.contains("undo-btn") && button.textContent === "Success") {
+        if (button.classList.contains("undo-btn")) {
           if (window.confirm("Do you want to revert?")) {
               console.log("got in")
               var row = button.closest('tr'); 
@@ -440,10 +500,10 @@ document.getElementById('project_name_filter').addEventListener('input', functio
                       return response.json();
                   }).then(function(data) {
                       if (data.message === "Update successful") {
-                          button.textContent = "Submit";
-                          button.style.backgroundColor = "red";
-                          button.style.border = "none";
-                          button.addEventListener('click', submitForm);
+                        var undobtn = row.querySelector('.undo-btn');
+                        var submitbtn = row.querySelector('.send-btn');
+                        submitbtn.style.display = 'block';
+                        undobtn.style.display = 'none';
 
                           // Find the status field and replace it with a select field
                           var statusField = row.querySelector('td:nth-child(7)');

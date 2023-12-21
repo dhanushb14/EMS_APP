@@ -412,48 +412,21 @@ def time_sheet_status(request):
                     "status": data.status,
                 }
                 data_result.append(data_dict)
+                paginator = Paginator(data_result, 5)
+                page_number = request.GET.get('page')
+                data = paginator.get_page(page_number)
+                response_data = {
+                        'paginator': {
+                            'num_pages': data.paginator.num_pages,
+                            'number': data.number,  # Include the current page number
+                            'has_next': data.has_next(),  # Include this
+                            'has_previous': data.has_previous(),  # Include this
+                            'count': data.paginator.count,
+                        },
+                        'results': data_result,  # The list of results
+                    }
 
-        # data={n
-
-        # place your data here
-        # }
-
-        # data = [
-        #     {
-        #         "project_name": "Medtronic",
-        #         "start_date": "2023-1-09",
-        #         "end_date": "2023-1-16",
-        #         "ST": "40",
-        #         "OT": "15",
-        #         "Status": "Approved",
-        #         "Approved_By": "Supervisor",
-
-        #     },
-
-        #     {
-        #         "project_name": "Scotia bank",
-        #         "start_date": "2023-1-09",
-        #         "end_date": "2023-1-16",
-        #         "ST": "35",
-        #         "OT": "0",
-        #         "Status": "Pending",
-        #         "Approved_By": "",
-
-        #     },
-
-        #     {
-        #         "project_name": "DHL",
-        #         "start_date": "2023-9-5",
-        #         "end_date": "2023-9-12",
-        #         "ST": "30",
-        #         "OT": "7",
-        #         "Status": "Pending",
-        #         "Approved_By": "",
-
-        #     }
-
-        # ]
-        return JsonResponse(data_result, safe=False)
+        return JsonResponse(response_data, safe=False)
     return render(request, 'employee_information/timesheet_status_bs.html', {'data_result': page_obj})
 
 
@@ -707,6 +680,8 @@ def timesheet_manager( request ):
                             data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(project_name=data.get('project_name')).order_by('-start_date')
                         elif data.get('selected') == "emp_name":
                             data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(username=data.get('project_name')).order_by('-start_date')
+                        elif data.get('selected') == "status":
+                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(status=data.get('project_name')).order_by('-start_date')
                         else:
                             data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(start_date=data.get('project_name')).order_by('-start_date')
                     else :
@@ -714,6 +689,8 @@ def timesheet_manager( request ):
                             data_result = model.objects.filter(project_name=data.get('project_name')).order_by('-start_date')
                         elif data.get('selected') == "emp_name":
                             data_result = model.objects.filter(username=data.get('project_name')).order_by('-start_date')
+                        elif data.get('selected') == "status":
+                            data_result = model.objects.filter(status=data.get('project_name')).order_by('-start_date')
                         else:
                             data_result = model.objects.filter(start_date=data.get('project_name')).order_by('-start_date')
 
@@ -788,26 +765,71 @@ def timesheet_update_view(request, timesheet_id):
 @login_required
 def download_list_data(request):
     if request.method == 'POST':
+        print('download123')
         # Get the JSON data from the request body
-        table_data = json.loads(request.body)['table_data']
-        print("table_data: ", table_data)
+        table_data = json.loads(request.body)
+        print('table_data', table_data)
+        model = TimeSheet
+        if table_data["html"] == "manager":
+            print("timesheet manager 1") 
+            if table_data["filter"] == "0": 
+                print('inside filter')
+                data1 = model.objects.all().order_by('-start_date')
+                print('manager data', data1)
+            else:
+                model_user= Employee
+                if table_data["selected"] == "project_name":
+                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(project_name=table_data["project_name"]).order_by('-start_date')
+                elif table_data["selected"] == "emp_name":
+                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(username=table_data["project_name"]).order_by('-start_date')
+                elif table_data["selected"] == "status":
+                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(status=table_data["project_name"]).order_by('-start_date')
+                else:
+                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(start_date=table_data["project_name"]).order_by('-start_date')
+
+                print("data1", data1)   
+        else:
+            print("timesheet status 1")
+            current_user = request.user.employee_name
+            if table_data["filter"]=="0":
+                data1 = model.objects.filter(username=current_user).order_by('-start_date')
+                print('data1', data1)
+            else:
+                start_date = table_data["start_date"]
+                end_date = table_data["end_date"]
+                data1 = model.objects.filter(start_date__range=(start_date, end_date), end_date__range=(start_date, end_date), username=current_user) 
+                print('data1', data1)
+
+
+                
+                
+
+        
 
         # Create a HttpResponse object with the appropriate CSV header.
+        headers = ['Project Name', 'Employee Name', 'Start Date',
+                   'End Date', 'ST', 'OT', 'Status']
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="list_data.csv"'
+        response['Content-Disposition'] = 'attachment; filename="Timesheet.csv"'
 
         # Create a CSV writer.
         writer = csv.writer(response)
-
-        # Write your headers
-        headers = ['Project Name', 'Employee Name', 'Start Date',
-                   'End Date', 'ST', 'OT', 'Status', 'Approved_by']
         writer.writerow(headers)
 
         # Write your data to the CSV writer.
-        for row in table_data:
+        
+        for timesheet in data1:
+            row = [
+            timesheet.project_name,
+            timesheet.username,
+            timesheet.start_date,
+            timesheet.end_date,
+            timesheet.St,
+            timesheet.ot,
+            timesheet.status]
+            
             # Ensure each row is a list of individual values
-            writer.writerow(list(row))
+            writer.writerow(row) 
 
         return response
 

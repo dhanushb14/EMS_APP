@@ -7,14 +7,18 @@ input[type="text"]:not(#project_name):not(#task) {
 </style>
 <style>
   .alert {
-      padding: 20px;
-      margin-bottom: 15px;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      
-      left:30%;
-      width: 50%;
-  }
+  padding: 20px;
+  margin-bottom: 15px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  position: fixed;
+  text-align: center;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  z-index: 1;
+}
   
   .alert-success {
       color: #3c763d;
@@ -1472,7 +1476,11 @@ $(document).on('input[class$="_value"], input[id^="ovt_"]').on('input', calculat
         var messageBox = document.createElement("div");
         messageBox.textContent = "The Values are Saved";
         messageBox.classList.add("alert", "alert-success");
-        document.body.appendChild(messageBox);
+        var targetElement = document.getElementById("alertdiv");
+
+        // Append the message box to the selected element
+        targetElement.appendChild(messageBox);
+        
 
         // Show the message box
         setTimeout(function() {
@@ -2012,7 +2020,7 @@ console.log("windows load ended")
             messageBox_submit.remove();
             location.reload();
         }, 3000);
-        location.reload();
+        
         })
 });
 </script>

@@ -146,33 +146,28 @@
   //download button
   document.getElementById('saveBtn').addEventListener('click', function() {
     // Get the table element
-    var table = document.querySelector('.table');
-
-    // Get the table rows
-    var rows = table.querySelectorAll('tbody tr');
-
-    // Create an array to store the table data
-    var tableData = [];
-
-    // Iterate over each row and extract the cell values
-    rows.forEach(function(row) {
-        var rowData = [];
-        var cells = row.querySelectorAll('td');
-        cells.forEach(function(cell) {
-            rowData.push(cell.textContent.trim());
-        });
-        tableData.push(rowData);
-    });
+    var startDate = document.getElementById('start_date').value;
+    var endDate = document.getElementById('end_date').value;
+    console.log(startDate, endDate)
+    if (startDate){
+      filter="1";
+    }
+    else{
+      filter="0";
+    }
 
     // Create a JSON object with the table data
-    var jsonData = {
-        'table_data': tableData
+    var data = {
+        'start_date': startDate,
+        'end_date': endDate,
+        'filter': filter,
+        "html": "status"
     };
     
     // Send the table data to the server using an AJAX request
     fetch("{% url 'download_list_data' %}", {
     method: 'POST',
-    body: JSON.stringify(jsonData),
+    body: JSON.stringify(data),
     headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token if needed
@@ -200,7 +195,10 @@
   document.getElementById('applyFilterBtn').addEventListener('click', function() {
     var startDate = document.getElementById('start_date').value;
     var endDate = document.getElementById('end_date').value;
-
+    var paginationElement = document.querySelector('.pagination');
+    while (paginationElement.firstChild) {
+        paginationElement.removeChild(paginationElement.firstChild);
+    }
     fetch("{% url 'time_sheet_status' %}", {
         method: 'POST',
         headers: {
@@ -213,16 +211,57 @@
         })
     }).then(function(response) {
         return response.json();
-    }).then(function(data_result) {
+    }).then(function(response_data) {
         var tableBody = document.querySelector('.table tbody');
+        var allData = response_data.results;
+        console.log('allData', allData)
+        var itemsPerPage = 5;
+        var currentPage = 1;
+        var totalPages = Math.ceil(allData.length / itemsPerPage);
+      
+        // Previous page buttons
+        var prevPageItem = document.createElement('li');
+        prevPageItem.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+        var prevPageLink = document.createElement('a');
+        prevPageLink.className = 'page-link';
+        prevPageLink.href = '?page=' + (currentPage - 1);
+        prevPageLink.innerHTML = '<i class="fa-solid fa-chevron-left fa-xs"></i>';
+        prevPageItem.appendChild(prevPageLink);
+        paginationElement.appendChild(prevPageItem);
 
-        // Clear the table body
-        while (tableBody.firstChild) {
-            tableBody.removeChild(tableBody.firstChild);
-        }
+        // Current page text
+        var currentPageItem = document.createElement('li');
+        currentPageItem.className = 'page-item disabled';
+        var currentPageLink = document.createElement('a');
+        currentPageLink.className = 'page-link';
+        currentPageLink.href = '?page=' + currentPage;
+        currentPageLink.textContent = currentPage + ' of ' + totalPages;
+        currentPageItem.appendChild(currentPageLink);
+        paginationElement.appendChild(currentPageItem);
+
+        // Next page buttons
+        var nextPageItem = document.createElement('li');
+        nextPageItem.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+        var nextPageLink = document.createElement('a');
+        nextPageLink.className = 'page-link';
+        nextPageLink.href = '?page=' + (currentPage + 1);
+        nextPageLink.innerHTML = '<i class="fa-solid fa-chevron-right fa-xs"></i>';
+        nextPageItem.appendChild(nextPageLink);
+        paginationElement.appendChild(nextPageItem);
+
+        function updatePage() {
+          console.log('inside updatePage')
+          var start = (currentPage - 1) * itemsPerPage;
+          var end = start + itemsPerPage;
+          var pageData = allData.slice(start, end);
+          console.log('pageData', pageData)
+
+          while (tableBody.firstChild) {
+              tableBody.removeChild(tableBody.firstChild);
+          }
 
         // Populate the table with the filtered data
-        data_result.forEach(function(item) {
+        pageData.forEach(function(item) {
             var row = document.createElement('tr');
             row.classList.add('highlight-row')
             row.innerHTML = `
@@ -249,6 +288,60 @@
             `;
             tableBody.appendChild(row);
         });
+
+        // Update pagination
+            // var paginationElement = document.querySelector('.pagination');
+            while (paginationElement.firstChild) {
+                paginationElement.removeChild(paginationElement.firstChild);
+            }
+            var prevPageItem = document.createElement('li');
+            prevPageItem.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+            var prevPageLink = document.createElement('a');
+            prevPageLink.className = 'page-link';
+            prevPageLink.href = '?page=' + (currentPage - 1);
+            prevPageLink.innerHTML = '<i class="fa-solid fa-chevron-left fa-xs"></i>';
+            prevPageItem.appendChild(prevPageLink);
+            paginationElement.appendChild(prevPageItem);
+
+            // Current page text
+            var currentPageItem = document.createElement('li');
+            currentPageItem.className = 'page-item disabled';
+            var currentPageLink = document.createElement('a');
+            currentPageLink.className = 'page-link';
+            currentPageLink.href = '?page=' + currentPage;
+            currentPageLink.textContent = currentPage + ' of ' + totalPages;
+            currentPageItem.appendChild(currentPageLink);
+            paginationElement.appendChild(currentPageItem);
+
+            // Next page buttons
+            var nextPageItem = document.createElement('li');
+            nextPageItem.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+            var nextPageLink = document.createElement('a');
+            nextPageLink.className = 'page-link';
+            nextPageLink.href = '?page=' + (currentPage + 1);
+            nextPageLink.innerHTML = '<i class="fa-solid fa-chevron-right fa-xs"></i>';
+            nextPageItem.appendChild(nextPageLink);
+            paginationElement.appendChild(nextPageItem);
+
+            // Previous button click event
+            prevPageLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+                }
+            });
+            // Next button click event
+            nextPageLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+                }
+              });
+        }
+// Call updatePage to refresh the table and pagination for the first time
+          updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
     });
 });
 </script>

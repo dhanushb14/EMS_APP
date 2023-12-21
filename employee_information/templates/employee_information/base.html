@@ -39,7 +39,7 @@
         --nav-width: 68px;
         --first-color: #1F325C;
         --first-color-light: #eceff3;
-        --white-color: rgb(75, 87, 255);
+        --white-color: #bfdbf7;
         --header-color: #ffffff;
         --logo-text:#F8F8F9;
         --body-font: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -77,6 +77,7 @@
         transition: 0.5s;
         box-shadow: 0 5px 2px -2px rgb(246, 242, 242); /* Add this line */
       }
+      /* two dash */
       .header_toggle {
         color: var(--first-color);
         font-size: 1.5rem;
@@ -92,6 +93,7 @@
         padding: 0.5rem 1rem 0 0;
         transition: 0.5s;
         z-index: var(--z-fixed);
+        
       }
       .nav {
         height: 100%;
@@ -158,6 +160,7 @@
       }
       .sub_menu_nav_link {
         position: relative;
+        
         color: var(--first-color-light);
         /* margin-bottom: 0.5rem; */
       }
@@ -167,7 +170,7 @@
       .sub_menu_div_bg {
         background-color: #142248;
         margin-top: -10px;
-        margin-left: 10px;
+        
       }
       .sub_menu_bg:hover {
         background-color: var(--white-color);
@@ -178,7 +181,7 @@
         font-size: 16px;
       }
       .sub_menu_bg:hover .sub_menu_font {
-            color: #ffffff;
+            color: black;
             font-size: 16.2px;
         }
       .sub_menu_active_font {
@@ -214,7 +217,7 @@
         }
         .l-navbar {
           left: 0;
-          padding: 1rem 1rem 0 0;
+          padding: 1rem 1.2rem 0 0;
         }
         .show {
           width: calc(var(--nav-width) + 156px);
@@ -244,14 +247,14 @@
       <div class="header_toggle">
         <i
           class="fa-solid fa-bars"
-          style="color: #471fd9"
+          style="color: var(--first-color)"
           id="header-toggle"
         ></i>
       </div>
       <!-- end of toggle icon -->
       <!-- icon with logged in user name -->
       <div class="h4">
-        <i class="fa-solid fa-user me-2 my-5" style="color: #4723d9"></i>
+        <i class="fa-solid fa-user me-2 my-5" style="color: var(--first-color)"></i>
         {{ request.user.employee_name }}
       </div>
       <!-- end of user icon -->
