@@ -48,5 +48,6 @@ urlpatterns = [
          name='timesheet_create_bs'),
     path('signup/', views.signup_bs, name='signup'),
     path('forgot_password/', views.forgot_password, name='forgot_password'),
-    path('send_password',views.send_password,name='send_password')
+    path('send_password',views.send_password,name='send_password'),
+    path('download',views.download_data,name='download')
 ]

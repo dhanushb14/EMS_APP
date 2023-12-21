@@ -63,21 +63,29 @@
               {{filter_queryset.form.status|add_class:"form-control status"}} 
             </div>
           </div>
-          <div class="col-auto ms-auto ms-xs-1 me-1 my-2">                
+          <div class="col-auto my-2">
             <button
-            class="btn text-light me-2"
+            class="btn text-light me-1"
             style="background-color: #4981b2 !important"
             type="submit"
           >
-            Apply Filters
+            Filter
             </button>
             <button
-              class="btn text-light"
+              class="btn text-light ms-1"
               style="background-color: #b24949 !important"
               id="clear"
             >
             Clear
             </button>
+          </div>
+          <div class="col-auto ms-auto ms-xs-1 me-1 my-2">
+            <a class="btn text-light"
+            style="background-color: #4981b2 !important"
+            href="{% url 'download' %}"
+            >
+              <i class="fa-solid fa-download"></i>
+            </a>
           </div>
         </div>
       </form>
@@ -163,9 +171,10 @@
                         <span id="data-comments1" style="display: none;">"{{leave_request.comments}}"</span>
 
 
-                        <button id = "submit" type="submit" class="btn btn-primary send-btn mt-2" data-id="{{ leave_request.id }}"><i class="fa-solid fa-paper-plane p-1"></i></button>
+                        <button id = "submit" type="submit" class="btn text-light send-btn mt-2" data-id="{{ leave_request.id }}" 
+                        style="background-color: #4981b2 !important"><i class="fa-solid fa-paper-plane p-1"></i></button>
                         {% else %}
-                        <button id="success" type="submit-empty" class="btn btn-success btn-sm  my-auto" data-id="{{ leave_request.id }}" ><i class="fa-solid fa-check"></i></button>
+                        <button class="btn btn-success btn-sm my-auto" ><i class="fa-solid fa-check"></i></button>
                         <button id= "visibility" class="btn btn-secondary btn-sm edit-data my-auto visibility-btn"
                         type="button"
                         data-toggle="modal"
@@ -215,14 +224,11 @@
                 <a class="page-link" href="#"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
               </li>
             {% endif %}
-            {#{% for i in num_of_pages %}#}
               <li class="page-item disabled">
                 <a href="?page={{forloop.counter}}" class="page-link">
-                  <!-- {{ forloop.counter }} -->
                   {{ paginated_results.number }} of {{ paginated_results.paginator.num_pages }}
                 </a>
               </li>
-            {#{% endfor %}#}
             {% if paginated_results.has_next  %}
               <li class="page-item">
               <a class="page-link" href="?page={{paginated_results.next_page_number}}"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
@@ -357,9 +363,7 @@ function sendData(data) {
       var comments = document.getElementById('data-comments1').textContent;
       console.log(comments)
 
-    actionField.innerHTML = '<button id="success" type="submit-empty" class="btn btn-success btn-sm my-auto" data-id="{{ leave_request.id }}"><i class="fa-solid fa-check"></i></button>' +
-                            '<br>' +
-                            '<button id= "visibility" onclick="view_modal()" class="btn btn-secondary btn-sm edit-data my-auto visibility-btn" type="button" data-toggle="modal" data-target="#myModal" title="View Details"><i class="fa-solid fa-pen"></i></button>';
+    actionField.innerHTML = '<button class="btn btn-success btn-sm my-auto"><i class="fa-solid fa-check"></i></button> <button id= "visibility" onclick="view_modal()" class="btn btn-secondary btn-sm edit-data my-auto visibility-btn" type="button" data-toggle="modal" data-target="#myModal" title="View Details"><i class="fa-solid fa-pen"></i></button>';
 
                        
 
