@@ -36,7 +36,7 @@ urlpatterns = [
     path('download-list-data/', views.download_list_data,
          name='download_list_data'),
     path('view_timesheet/', views.view_timesheet, name='view_timesheet'),
-    path('timesheet_scrum', views.timesheet_scrum, name='timesheet_scrum'),
+#     path('timesheet_scrum', views.timesheet_scrum, name='timesheet_scrum'),
 
     path('leave_manager/', views.leave_request_manager, name='leave_manager'),
     path('leave_request_manager_model/', views.leave_request_manager_model, name='leave_request_manager_model'),
