@@ -1,0 +1,86 @@
+{% extends "employee_information/base.html" %} {% block pageContent %}
+
+<body class="body_bg">
+  <div class="container  mg-t">
+    <h2 class="fw-bold mb-4 ">Leave Management</h2>
+    <div id="alertdiv" class="text-center">
+    </div>
+  </div>
+  
+  <div class="container mt-5" >
+  <div class="card">
+    <div class="card-body" style="background-color: #e9eaef;">
+      <form method="POST" autocomplete="off">
+        <div class="row">
+          <div class="col-md-6 mt-4 mx-auto">
+            <label class="h5">Request type:</label>
+            {{ form.leave_type }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mt-4 mx-auto">
+            <label class="h5">Description:</label>
+            {{ form.description }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3 mt-4 mx-auto me-1">
+            <label class="h5">From:</label>
+            {{ form.start_date }}
+          </div>
+          <div class="col-md-3 mt-4 mx-auto ms-1">
+            <label class="h5">To:</label>
+            {{ form.end_date }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="text-center my-4">
+            {% csrf_token %}
+            <input class="btn btn-primary me-5" 
+            style="background-color: #4981b2" type="submit" value="Submit" onclick="message()" />
+            <a
+              href="{% url 'leave_detail'%}"
+              class="btn btn-danger ms-5"
+              style="background-color: #b24949;"
+              role="button"
+              >Cancel</a
+            >
+          </div>
+        </div>
+      </form>
+    
+    </div>
+  </div>
+  </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+      $("#id_start_date").on("change", function () {
+          var startDate = $(this).val();
+          $("#id_end_date").attr("min", startDate);
+      });
+  });
+</script>
+<script>
+  function message() {
+    var messageBox_submit = document.createElement("div");
+    messageBox_submit.textContent = "Request created successfully! Redirecting now.";
+    messageBox_submit.classList.add("alert", "alert-success");
+
+    // Select the element by its ID
+    var targetElement = document.getElementById("alertdiv");
+
+    // Append the message box to the selected element
+    targetElement.appendChild(messageBox_submit);
+
+    // Show the message box
+    setTimeout(function () {
+      // Redirect to another URL after 2500 milliseconds (2.5 seconds)
+      window.location.href = "{% url 'leave_detail' %}";
+    }, 2500);
+  }
+</script>
+{% endblock pageContent %}

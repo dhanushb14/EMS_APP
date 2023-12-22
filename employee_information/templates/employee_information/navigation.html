@@ -1,117 +1,207 @@
 {% load static %}
 <style>
-    .selected-option {
-        background-color: transparent !important ;
-        color: #000000;
-        border-radius: 5px;
-        padding: 5px;
-    }
-    #dropdown option {
-        color: #000000; /* Change this to the color you want */
-    }
+  .selected-option {
+    background-color: transparent !important ;
+    color: #000000;
+    border-radius: 5px;
+    padding: 5px;
+  }
+  option {
+    color: #000000; /* Change this to the color you want */
+  }
+  .mdc-drawer-item.active {
+    background-color: #e0e0e0; /* Add your desired highlight color */
+  }
 </style>
 <aside class="mdc-drawer mdc-drawer--dismissible mdc-drawer--open">
-    <div class="mdc-drawer__header border-bottom border-light">
-        <a class="brand-logo">
-            <h3 class="text-center text-light">IGS TimeSheet</h3>
-        </a>
-    </div>
-    <div class="mdc-drawer__content">
-        <div class="mdc-list-group">
-            <nav class="mdc-list mdc-drawer-menu">
-                {% if request.user.role == "superadmin" %}
-                <div class="mdc-list-item mdc-drawer-item ">
-                    <a class="mdc-drawer-link" href="{% url 'home-page' %}">
-                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">home</i> Home
-                    </a>
-                </div>
-                {% endif %}
-                {% if request.user.role != "superadmin" and request.user.role != "scrummaster" %}
-                <div class="mdc-list-item mdc-drawer-item ">
-                    <a class="mdc-drawer-link" href="{% url 'home_employee' %}">
-                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">home</i> Home
-                    </a>
-                </div>
-                {% endif %}
-                {% if request.user.role == "superadmin" %}
-                <div class="mdc-list-item mdc-drawer-item">
-                    <a class="mdc-drawer-link" href="{% url 'employee-page' %}">
-                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">group</i> Employee List
-                    </a>
-                </div>
-                {% endif %}
-                {% if request.user.role != "superadmin" and request.user.role != "scrummaster" %}
-                <div class="mdc-list-item mdc-drawer-item">
-                    <span class="mdc-drawer-link">
-                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true" style="color:white">group</i> 
-                        <select id="dropdown" onchange="redirectToPage()"; style="background-color: transparent; color: white; border: none; margin-left: -3px; font-weight: bold;">
-                            <option value="time_sh" style="display: none;">Time Sheet </option>
-                            <option value="time_sheet">Time Sheet </option>
-                            <option value="time_sheet_status">Time Sheet Status</option>
-                        </select>
-                    </span>
-                </div>
-                {% endif %}
-                {% if request.user.role == "superadmin"%}
-                <div class="mdc-list-item mdc-drawer-item">
-                    <a class="mdc-drawer-link" href="{% url 'timesheet_manager' %}">
-                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">group</i> TimeSheet_manager
-                    </a>
-                </div>
-                {% endif %}
-                {% if request.user.role == "scrummaster"%}
-                <div class="mdc-list-item mdc-drawer-item">
-                    <a class="mdc-drawer-link" href="{% url 'timesheet_scrum' %}">
-                        <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon" aria-hidden="true">group</i> Task Tracker
-                    </a>
-                </div>
-                {% endif %}
-                <script>
-                    /// JavaScript function to handle the redirection
-
-                    function redirectToPage() {
-                        // Get the selected value from the dropdown
-                        var selectedValue = document.getElementById("dropdown").value;
-
-                        // Define the URLs for redirection based on the selected value
-                        var redirectionURLs = {
-                            "time_sheet": "{% url 'timesheets_create' %}",     // Replace with the actual URLs
-                            "time_sheet_status": "{% url 'time_sheet_status' %}",
-                        };
-
-                        var options = document.getElementById("dropdown").options;
-                        for (var i = 0; i < options.length; i++) {
-                            if (options[i].value === selectedValue) {
-                                options[i].classList.add("selected-option");
-                            } else {
-                                options[i].classList.remove("selected-option");
-                            }
-                        }
-
-                        // Redirect to the selected page
-                        window.location.href = redirectionURLs[selectedValue];
-                    }
-
-                    // Update the selected option based on the current URL
-                    window.onload = function() {
-                        var currentURL = window.location.href;
-                        var dropdown = document.getElementById("dropdown");
-                        var mdcDrawerLink = document.querySelector(".mdc-drawer-link");
-                        for (var i = 0; i < dropdown.options.length; i++) {
-                            if (currentURL.includes(dropdown.options[i].value)) {
-                                dropdown.value = dropdown.options[i].value;
-                                dropdown.options[i].classList.add("selected-option");
-                                
-                            } else {
-                                dropdown.options[i].classList.remove("selected-option");
-                            }
-                        }
-                    };
-
-                </script>
-                
-            </nav>
+  <div class="mdc-drawer__header border-bottom border-light">
+    <a class="brand-logo">
+      <h3 class="text-center text-light">IGS TimeSheet</h3>
+    </a>
+  </div>
+  <div class="mdc-drawer__content">
+    <div class="mdc-list-group">
+      <nav class="mdc-list mdc-drawer-menu">
+        {% if request.user.role == "superadmin" %}
+        <div class="mdc-list-item mdc-drawer-item">
+          <a class="mdc-drawer-link" href="{% url 'home-page' %}">
+            <i
+              class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon"
+              aria-hidden="true"
+              >home</i
+            >
+            Home
+          </a>
         </div>
+        {% endif %} {% if request.user.role != "superadmin" %}
+        <div class="mdc-list-item mdc-drawer-item">
+          <a class="mdc-drawer-link" href="{% url 'home_employee' %}">
+            <i
+              class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon"
+              aria-hidden="true"
+              >home</i
+            >
+            Home
+          </a>
+        </div>
+        {% endif %}     
+        <div class="mdc-list-item mdc-drawer-item">
+          <a class="mdc-drawer-link" href="{% url 'employee-page' %}">
+            <i
+              class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon"
+              aria-hidden="true"
+              >group</i
+            >
+            Employee List
+          </a>
+        </div>
+{% if request.user.role != "superadmin" %}
+        <div class="mdc-list-item mdc-drawer-item">
+          <span class="mdc-drawer-link">
+            <i
+              class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon"
+              aria-hidden="true"
+              style="color: white"
+              >group</i
+            >
+            <select
+              id="dropdown"
+              onchange="redirectToPage()"
+              ;
+              style="
+                background-color: transparent;
+                color: white;
+                border: none;
+                margin-left: -3px;
+                font-weight: bold;
+              "
+            >
+              <option value="time_sh" style="display: none">Time Sheet</option>
+              <option value="time_sheet">Time Sheet</option>
+              <option value="time_sheet_status">Time Sheet Status</option>
+            </select>
+          </span>
+        </div>
+        {% endif %} {% if request.user.role == "superadmin" %}
+        <div class="mdc-list-item mdc-drawer-item">
+          <a class="mdc-drawer-link" href="{% url 'timesheet_manager' %}">
+            <i
+              class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon"
+              aria-hidden="true"
+              >group</i
+            >
+            TimeSheet_manager
+          </a>
+        </div>
+        {% endif %} {% if request.user.role == "superadmin" %}
+        <div class="mdc-list-item mdc-drawer-item">
+          <a class="mdc-drawer-link" href="{% url 'leave_manager' %}">
+            <i
+              class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon"
+              aria-hidden="true"
+              >event_available</i
+            >
+            Leave Management
+          </a>
+        </div>
+        {% else %}
+        <div class="mdc-list-item mdc-drawer-item" id="leaveManagerItem">
+          <a class="mdc-drawer-link" href="#">
+            <i
+              class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon"
+              aria-hidden="true"
+              >event_available</i
+            >
+            Leave Management &#11206;
+          </a>
+          <div class="mdc-drawer-submenu">
+            <div
+              class="mdc-list-item mdc-drawer-item active"
+              id="applyLeaveItem"
+            >
+              <a class="mdc-drawer-link" href="#"> Apply Leave </a>
+            </div>
+            <div class="mdc-list-item mdc-drawer-item" id="leaveDetailItem">
+              <a class="mdc-drawer-link" href="#"> Leave Detail </a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        <script>
+          $(document).ready(function () {
+            // Hide submenus initially
+            $(".mdc-drawer-submenu").hide();
+
+            // Get the current page URL
+            var currentPageUrl = window.location.href;
+
+            // Highlight and show the active submenu based on the current page URL
+            $(".mdc-drawer-submenu .mdc-drawer-item").each(function () {
+              var menuItemUrl = $(this).find("a").attr("href");
+              if (currentPageUrl.includes(menuItemUrl)) {
+                $(this).addClass("active");
+                $(this).closest(".mdc-drawer-submenu").show();
+              }
+            });
+
+            // Handle click event on the "Leave Management" item
+            $("#leaveManagerItem").click(function (e) {
+              e.preventDefault(); // Prevent the default link behavior
+              $(".mdc-drawer-submenu").toggle();
+            });
+
+            // Handle click event on the "Apply Leave" item
+            $("#applyLeaveItem").click(function (e) {
+              e.preventDefault(); // Prevent the default link behavior
+              window.location.href = "{% url 'leave_request' %}";
+            });
+
+            // Handle click event on the "Leave Detail" item
+            $("#leaveDetailItem").click(function (e) {
+              e.preventDefault(); // Prevent the default link behavior
+              window.location.href = "{% url 'leave_detail' %}";
+            });
+          });
+          function redirectToPage() {
+            // Get the selected value from the dropdown
+            var selectedValue = document.getElementById("dropdown").value;
+
+            // Define the URLs for redirection based on the selected value
+            var redirectionURLs = {
+              time_sheet: "{% url 'timesheets_create' %}", // Replace with the actual URLs
+              time_sheet_status: "{% url 'time_sheet_status' %}",
+            };
+
+            var options = document.getElementById("dropdown").options;
+            for (var i = 0; i < options.length; i++) {
+              if (options[i].value === selectedValue) {
+                options[i].classList.add("selected-option");
+              } else {
+                options[i].classList.remove("selected-option");
+              }
+            }
+
+            // Redirect to the selected page
+            window.location.href = redirectionURLs[selectedValue];
+          }
+
+          // Update the selected option based on the current URL
+          window.onload = function () {
+            var currentURL = window.location.href;
+            var dropdown = document.getElementById("dropdown");
+            var mdcDrawerLink = document.querySelector(".mdc-drawer-link");
+            for (var i = 0; i < dropdown.options.length; i++) {
+              if (currentURL.includes(dropdown.options[i].value)) {
+                dropdown.value = dropdown.options[i].value;
+                dropdown.options[i].classList.add("selected-option");
+              } else {
+                dropdown.options[i].classList.remove("selected-option");
+              }
+            }
+          };
+        </script>
+      </nav>
     </div>
+  </div>
 </aside>
 <!-- partial -->

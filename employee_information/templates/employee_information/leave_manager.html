@@ -1,0 +1,77 @@
+{#{% extends "employee_information/base.html" %}#} 
+{#{% block pageContent %}#}
+<style>
+    .custom-table-header {
+    color: black !important;
+    font-size: medium !important;
+    font-weight: bold !important;
+  }
+</style>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+  <div class="mdc-card py-2">
+    <div class="d-flex justify-content-between align-items-center">
+      <h4 class="card-title mb-0">Leave Management</h4>
+    </div>
+  </div>
+</div>
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+  <div class="mdc-card">
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <colgroup>
+          <col width="11%" />
+          <col width="10%" />
+          <col width="10%" />
+          <col width="15%" />
+          <col width="11%" />
+          <col width="30%" />
+          <col width="5%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="text-center custom-table-header">Employee Id</th>
+            <th class="text-center custom-table-header">Date</th>
+            <th class="text-center custom-table-header">Leave Type</th>
+            <th class="text-center custom-table-header">Employee Comments</th>
+            <th class="text-center custom-table-header">Status</th>
+            <th class="text-center custom-table-header">Comments</th>
+            <th class="text-center custom-table-header">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for leave_request in all_leave_requests %}
+          <tr>
+            <form method="post">
+            {% csrf_token %}
+            <td class="px-2 py-1 text-center">{{ leave_request.employee }}</td>
+            <td class="px-2 py-1 text-center">{{ leave_request.start_date | date:"j/n/Y"}} <br> to <br> {{ leave_request.end_date | date:"j/n/Y" }}</td>
+            <td class="px-2 py-1 text-center">{{ leave_request.leave_type }}</td>
+            <td class="px-2 py-1 text-center">{{ leave_request.comments }}</td>
+            <td class="text-center">
+                  <div class="form-group">
+                    <select name="status" class="form-select">
+                      <option value="Approve" {% if leave_request.status == 'Approve' %}selected{% endif %}>Approve</option>
+                      <option value="Reject" {% if leave_request.status == 'Reject' %}selected{% endif %}>Reject</option>
+                      <option value="Pending" {% if leave_request.status == 'Pending' %}selected{% endif %}>Pending</option>
+                    </select>
+                  </div>
+              </td>
+              <td>
+                <div class="form-group">
+                  <textarea name="review_comments" rows="4" cols="15" class="form-control">{{ leave_request.review_comments }}</textarea>
+                </div>
+              </td>
+              <td>
+                  <button type="submit" class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" title="Send">
+                    Send <i class="material-icons mdc-button__icon">send</i>
+                  </button>
+                </td>              
+            </form>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{#{% endblock pageContent %}#}

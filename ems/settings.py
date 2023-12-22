@@ -32,16 +32,20 @@ ALLOWED_HOSTS = ['ems-bwyn.onrender.com', '3.226.14.5', '*']
 # Application definition
 
 INSTALLED_APPS = [
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'employee_information.apps.EmployeeInformationConfig',
+    'employee_information',
     'django.contrib.humanize',
+    
     'User',
-    'whitenoise'
+    'whitenoise',
+    'django_filters',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -55,12 +59,15 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
+SESSION_COOKIE_AGE = 900
+SESSION_SAVE_EVERY_REQUEST = True
+
 ROOT_URLCONF = 'ems.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'employee_information/templates/employee_information'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,10 +91,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'ems1',
         'USER': 'postgres',
-        'PASSWORD': 'igs-dev',
-        'HOST': '3.226.14.5'
-        # 'PASSWORD': '12345',
-        # 'HOST': 'localhost'
+        # 'PASSWORD': 'igs-dev',
+        # 'HOST': '3.226.14.5'
+        'PASSWORD': 'admin',
+        'HOST': 'localhost'
     }
 }
 # DATABASES = {
@@ -151,5 +158,5 @@ STATICFILES_DIRS = (
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/login'
+LOGIN_URL = 'user/login'
 AUTH_USER_MODEL = "User.Employee"

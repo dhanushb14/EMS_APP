@@ -1,0 +1,463 @@
+{% extends "employee_information/base.html" %}
+{% block pageContent %}
+{% load widget_tweaks %}
+<style>
+  .alert {
+      position: fixed;  /* Position the alert absolutely within its parent */
+      left: 50%; 
+      top: 50%;
+      bottom: 50%;
+      left: 50%; /* Move the alert to the right by 50% of the parent's width */
+      transform: translateX(-50%);  /* Move the alert to the left by 50% of its own width */
+      
+      
+      
+      
+      width: 30%;
+      text-align: center;
+  }
+  
+  .alert-success {
+      color: #3c763d;
+      background-color: #dff0d8;
+      border-color: #d6e9c6;
+      height: fit-content;
+      
+  }
+  
+  .alert-danger {
+      color: #a94442;
+      background-color: #f2dede;
+      border-color: #ebccd1;
+  }
+</style>
+
+<body class="body_bg">
+  <div class="container mg-t  ">
+    <div class="row">
+      <div class="col">
+        <h2 class="fw-bold mb-4">Leave Management</h2>
+      </div>
+    </div>
+    <div class="row mx-auto mt-2" style="background-color: #ecd5ef; min-height: 7%">
+      <form method="get">
+        <div class="row">
+          <div class="col-auto my-2">
+            {% render_field filter_queryset.form.employee_name|attr:"class:form-control name"|attr:"placeholder:Name"%}
+          </div>
+          <div class="col-auto my-2">
+            <div class="input-group">
+              <span class="input-group-text">Start Date</span>
+              {% render_field filter_queryset.form.start_date|add_class:"form-control start_date"|attr:"type:date"%}
+            </div>
+          </div>
+          <div class="col-auto my-2">
+            <div class="input-group">
+              <span class="input-group-text">End Date</span>
+              {% render_field filter_queryset.form.end_date|add_class:"form-control end_date"|attr:"type:date"%}
+            </div>
+          </div>
+          <div class="col-auto my-2">
+            <div class="input-group">
+              <span class="input-group-text" id="basic-addon1">Status</span>
+              {{filter_queryset.form.status|add_class:"form-control status"}} 
+            </div>
+          </div>
+          <div class="col-auto my-2">
+            <button
+            class="btn text-light me-1"
+            style="background-color: #4981b2 !important"
+            type="submit"
+          >
+            Filter
+            </button>
+            <button
+              class="btn text-light ms-1"
+              style="background-color: #b24949 !important"
+              id="clear"
+            >
+            Clear
+            </button>
+          </div>
+          <div class="col-auto ms-auto ms-xs-1 me-1 my-2">
+            <a class="btn text-light"
+              style="background-color: #4981b2 !important"
+              href="{% url 'download' %}?{{ request.GET.urlencode }}">
+              <i class="fa-solid fa-download"></i>
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row mt-5">
+      <div class="col">
+        <div class="card">
+          <form method="post" action="">
+            {% csrf_token %}
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr class="table-secondary">
+                    {% if request.user.role == "scrummaster" %}
+                    <th class="text-center col">Name</th>
+                    <th class="text-center col">Start Date</th>
+                    <th class="text-center col">End Date</th>
+                    <th class="text-center col">Days</th>
+                    <th class="text-center col">Type</th>
+                    <th class="text-center col">Status</th>
+                    {% else %}
+                    <th class="text-center col">Name</th>
+                    <th class="text-center col">Start Date</th>
+                    <th class="text-center col">End Date</th>
+                    <th class="text-center col">Days</th>
+                    <th class="text-center col">Type</th>
+                    <th class="text-center col">Description</th>
+                    <th class="text-center col">Status</th>
+                    <th class="text-center col">Comments</th>
+                    <th class="text-center col">Action</th>
+                    {% endif %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for leave_request in paginated_results %}
+                    <tr>
+                    {% if request.user.role == "scrummaster" %}
+                      <td class="text-center" id="employee_id">{{ leave_request.employee_name }}</td>
+                      <td class="text-center">{{ leave_request.start_date | date:"j/n/Y"}}</td>
+                      <td class="text-center">{{ leave_request.end_date | date:"j/n/Y" }}</td>
+                      <td class="text-center">{{ leave_request.no_of_days }}</td>
+                      <td class="text-center">{{ leave_request.leave_type }}</td>
+                      <td class="text-center">
+                        <button
+                        class="btn btn-sm btn-{% if leave_request.status == 'Approved' %}success{% elif leave_request.status == 'Rejected' %}danger{% elif leave_request.status == 'Pending' %}warning{% endif %}"
+                      >
+                        {{ leave_request.status }}
+                      </button></td>
+                    {% else %}
+                      <td class="text-center" id="employee_id">{{ leave_request.employee_name }}</td>
+                      <td class="text-center">{{ leave_request.start_date | date:"j/n/Y"}}</td>
+                      <td class="text-center">{{ leave_request.end_date | date:"j/n/Y" }}</td>
+                      <td class="text-center">{{ leave_request.no_of_days }}</td>
+                      <td class="text-center">{{ leave_request.leave_type }}</td>
+                      <td class="text-center" id="description">{{ leave_request.description }}</td>
+                      {% if leave_request.status == 'Pending' %}
+                      <td class="text-center">
+                          <select name="status" id="status" class="form-select">
+                            <option value="Approved" {% if leave_request.status == 'Approved' %}selected{% endif %}>Approved</option>
+                            <option value="Rejected" {% if leave_request.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                            <option value="Pending" {% if leave_request.status == 'Pending' %}selected{% endif %}>Pending</option>
+                          </select>
+                      </td>
+                      <td class="text-center">
+                        <textarea name="comments" id="comments"  cols="15" class="form-control">{{ leave_request.comments }}</textarea>
+                      </td>
+                      {% else %}
+                      <td class="text-center">{{ leave_request.status }}</td>
+                      <td class="text-center">{{ leave_request.comments }}</td>
+                      {% endif %}
+                      <td class="text-center">
+                        {% if leave_request.status == 'Pending' %}
+
+                        <span id="data-id1" style="display: none;">"{{leave_request.id}}"</span>
+                        <span id="data-employee1" style="display: none;">"{{leave_request.employee}}"</span>
+                        <span id="data-employee-name1" style="display: none;">"{{leave_request.employee_name}}"</span>
+                        <span id="data-start-date1" style="display: none;">"{{leave_request.start_date}}"</span>
+                        <span id="data-end-date1" style="display: none;">"{{leave_request.end_date}}"</span>
+                        <span id="data-no-of-days1" style="display: none;">"{{leave_request.no_of_days}}"</span>
+                        <span id="data-leave-type1" style="display: none;">"{{leave_request.leave_type}}"</span>
+                        <span id="data-description1" style="display: none;">"{{leave_request.description}}"</span>
+                        <span id="data-status1" style="display: none;">"{{leave_request.status}}"</span>
+                        <span id="data-comments1" style="display: none;">"{{leave_request.comments}}"</span>
+
+
+                        <button id = "submit" type="submit" class="btn text-light send-btn mt-2" data-id="{{ leave_request.id }}" 
+                        style="background-color: #4981b2 !important"><i class="fa-solid fa-paper-plane p-1"></i></button>
+                        {% else %}
+                        <button class="btn btn-success btn-sm my-auto" style="pointer-events: none;" ><i class="fa-solid fa-check"></i></button>
+                        <button id= "visibility" class="btn btn-secondary btn-sm edit-data my-auto visibility-btn"
+                        type="button"
+                        data-toggle="modal"
+                        data-target="#myModal"
+                        data-id="{{ leave_request.id }}"
+                        data-employee="{{ leave_request.employee }}"
+                        data-employee-name="{{ leave_request.employee_name }}"
+                        data-start-date="{{ leave_request.start_date | date:"j/n/Y" }}"
+                        data-end-date="{{ leave_request.end_date | date:"j/n/Y" }}"
+                        data-no-of-days="{{ leave_request.no_of_days }}"
+                        data-leave-type="{{ leave_request.leave_type }}"
+                        data-description="{{ leave_request.description }}"
+                        data-status="{{ leave_request.status }}"
+                        data-comments="{{ leave_request.comments }}"
+                        title="View Details">
+                        <i class="fa-solid fa-pen"></i>
+                        </button>
+                        
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </form>        
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            {% if paginated_results.has_previous  %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{paginated_results.previous_page_number}}"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+              </li>
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+              </li>
+            {% endif %}
+              <li class="page-item disabled">
+                <a href="?page={{forloop.counter}}" class="page-link">
+                  {{ paginated_results.number }} of {{ paginated_results.paginator.num_pages }}
+                </a>
+              </li>
+            {% if paginated_results.has_next  %}
+              <li class="page-item">
+              <a class="page-link" href="?page={{paginated_results.next_page_number}}"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+              </li>
+              <li class="page-item">
+              <a class="page-link" href="?page={{paginated_results.paginator.num_pages}}"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+              </li>
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  console.log("view_modal function called")
+                        var id = document.getElementById('data-id1').textContent;
+                        console.log(id)
+                        var employeeName = document.getElementById('data-employee-name1').textContent;
+                        console.log(employeeName)
+                        var startDate = document.getElementById('data-start-date1').textContent;
+                        console.log(startDate)
+                        var endDate = document.getElementById('data-end-date1').textContent;
+                        console.log(endDate)
+                        var noOfDays = document.getElementById('data-no-of-days1').textContent;
+                        console.log(noOfDays)
+                        var leaveType = document.getElementById('data-leave-type1').textContent;
+                        console.log(leaveType)
+                        var description = document.getElementById('data-description1').textContent;
+                        console.log(description)
+                        var status = document.getElementById('data-status1').textContent;
+                        console.log(status)
+                        var comments = document.getElementById('data-comments1').textContent;
+                        console.log(comments)
+  function view_modal(){
+                        
+
+                        uni_modal("Edit Leave Request", "{% url 'leave_request_manager_model' %}?id=" + id + "&employee_name=" + employeeName + "&startDate=" + startDate + "&endDate=" + endDate
+                              + "&no_of_days=" + noOfDays + "&leave_type=" + leaveType + "&description=" + description 
+                              + "&status=" + status+ "&comments=" + comments, 'modal-xl');
+                            
+                       }
+</script>
+<script>
+  document.querySelectorAll('.send-btn').forEach(function(button) {
+  var onClick = function() {
+    event.preventDefault();
+    var row = button.closest('tr');
+    var data = {
+      id: this.dataset.id,
+      employee_id: row.querySelector('#employee_id').textContent,
+      description: row.querySelector('#description').textContent,
+      status: row.querySelector('#status').value,
+      comments: row.querySelector('#comments').value
+    };
+    if (data["status"] == 'Approved' || data["status"] == 'Rejected'){
+    sendData(data);
+    }
+  };
+  button.removeEventListener('click', onClick);
+  button.addEventListener('click', onClick);
+});
+
+        var messageBox = document.createElement("div");
+        
+function sendData(data) {
+  event.preventDefault();
+  var button = event.target;
+  var row = button.closest('tr');
+  console.log(row)
+  fetch("{% url 'leave_manager' %}", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken')  // Django requires CSRF token for POST requests
+    },
+    body: JSON.stringify(data)
+  }).then(function(response) {
+    if (response.ok) {
+      messageBox.textContent = "The Values are Saved";
+      messageBox.classList.add("alert", "alert-success");
+      document.body.appendChild(messageBox);
+      setTimeout(function() {
+            messageBox.remove();
+            // location.reload()
+        }, 1700);
+    } else {
+      alert('Error: ' + response.statusText);
+    }
+    return response.json();
+  }).then(function(data_result) {
+    console.log("data_result",data_result)
+    // Status
+    var statusField = row.querySelector('td:nth-child(7)');
+    statusField.innerHTML = data_result.status;
+    statusField.setAttribute('readonly', true);
+
+    // comments
+    var commentField = row.querySelector('td:nth-child(8)');
+    console.log("commentField", commentField)
+    commentField.innerHTML = data_result.comments;
+    commentField.setAttribute('readonly', true);
+
+    // Action button
+    var actionField = row.querySelector('td:nth-child(9)');
+    console.log("actionField", actionField)
+
+     // Replace with your actual button ID
+     var id = document.getElementById('data-id1').textContent;
+     console.log("id", id)
+      var employeeName = document.getElementById('data-employee-name1').textContent;
+      console.log(employeeName)
+      var startDate = document.getElementById('data-start-date1').textContent;
+      console.log(startDate)
+      var endDate = document.getElementById('data-end-date1').textContent;
+      console.log(endDate)
+      var noOfDays = document.getElementById('data-no-of-days1').textContent;
+      console.log(noOfDays)
+      var leaveType = document.getElementById('data-leave-type1').textContent;
+      console.log(leaveType)
+      var description = document.getElementById('data-description1').textContent;
+      console.log(description)
+      var status = document.getElementById('data-status1').textContent;
+      console.log(status)
+      var comments = document.getElementById('data-comments1').textContent;
+      console.log(comments)
+
+    actionField.innerHTML = '<button class="btn btn-success btn-sm my-auto"><i class="fa-solid fa-check"></i></button> <button id= "visibility" onclick="view_modal()" class="btn btn-secondary btn-sm edit-data my-auto visibility-btn" type="button" data-toggle="modal" data-target="#myModal" title="View Details"><i class="fa-solid fa-pen"></i></button>';
+
+                       
+
+  /// Get the select element and textarea
+  
+
+  });
+}
+
+// Function to get CSRF token
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+<script>
+  // Wait for the document to be ready
+  document.addEventListener("DOMContentLoaded", function () {
+    // Select all elements with the class 'visibility-btn'
+    var visibilityButtons = document.querySelectorAll('.visibility-btn');
+
+    // Loop through each button and attach a click event
+    visibilityButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        // Get the data attributes from the button
+        var id = button.getAttribute('data-id');
+        var employeeName = button.getAttribute('data-employee-name');
+        var startDate = button.getAttribute('data-start-date');
+        var endDate = button.getAttribute('data-end-date');
+        var noOfDays = button.getAttribute('data-no-of-days');
+        var leaveType = button.getAttribute('data-leave-type');
+        var description = button.getAttribute('data-description');
+        var status = button.getAttribute('data-status');
+        var comments = button.getAttribute('data-comments');
+
+        // Populate the modal with the data
+        document.getElementById('modal-employee-name').innerText = employeeName;
+        document.getElementById('modal-start-date').innerText = startDate;
+        document.getElementById('modal-end-date').innerText = endDate;
+        document.getElementById('modal-no-of-days').innerText =noOfDays;
+        document.getElementById('modal-leave-type').innerText = leaveType;
+        document.getElementById('modal-description').innerText = description;
+        document.getElementById('modal-status-input').value = status;
+        document.getElementById('modal-comments-input').value = comments;
+
+        // Add more lines to populate additional fields as needed
+
+        // Show the modal
+        $('#myModal').modal('show');
+      });
+    });
+  });
+</script>
+<script>
+  $(function() {
+        
+        $('.edit-data').click(function() {
+          var id = $(this).attr('data-id');
+          var employee_name = $(this).attr('data-employee');
+          var startDate = $(this).attr('data-start-date');
+          var endDate = $(this).attr('data-end-date');
+
+          var no_of_days = $(this).attr('data-no-of-days');
+          var leave_type = $(this).attr('data-leave-type');
+          var description = $(this).attr('data-description');
+          var status = $(this).attr('data-status');
+          var comments = $(this).attr('data-comments');
+         
+          console.log("123")
+          console.log(id, employee_name, startDate, endDate, no_of_days, leave_type, description, status, comments)
+          uni_modal("Edit Leave Request", "{% url 'leave_request_manager_model' %}?id=" + id + "&employee_name=" + employee_name + "&startDate=" + startDate + "&endDate=" + endDate
+          + "&no_of_days=" + no_of_days + "&leave_type=" + leave_type + "&description=" + description 
+          + "&status=" + status+ "&comments=" + comments, 'modal-xl');
+        })
+        
+    })   
+</script>
+<script>
+  $(document).ready(function() {
+    $('#clear').on('click', function() {
+      $('.name').val('');
+      $('.start_date').val('');
+      $('.end_date').val('');
+      $('.status').val('');
+    });
+  });
+</script>
+{% endblock pageContent %}

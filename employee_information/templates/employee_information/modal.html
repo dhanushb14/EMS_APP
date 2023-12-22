@@ -1,0 +1,67 @@
+
+<div class="modal fade" id="exampleModal"  style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered">
+ 
+      <div class="modal-content">
+        <!-- Modal header -->
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Create New Team</h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <!-- end of modal header  -->
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Name:</label
+              >
+              <input type="text" class="form-control" id="recipient-name" />
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label"
+                >Scrum master:</label
+              >
+              <input class="form-control" id="message-text"></input>
+            </div>
+            <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary">
+            Create
+          </button>
+          </form>
+          <div class="table-responsive mt-5">
+            <div class="h2">Teams List</div>
+            <table class="table">
+                <thead>
+                    <th>Name</th>
+                    <th>Scrum Master</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Next-Gen-Tech (NGT)</td>
+                        <td>Dhanush Anand</td>
+                    </tr>
+                    <tr>
+                        <td>Innovators</td>
+                        <td>Vignesh S</td>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- end of modal body -->
+      </div>
+    </div>
+  </div>
+  <!-- Modal end -->

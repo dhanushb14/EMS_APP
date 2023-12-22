@@ -1,5 +1,6 @@
 .pyc
-.vscode
+env
 __pycache__
 migrations
-env
+.vscode
+.env

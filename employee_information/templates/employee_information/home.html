@@ -1,43 +1,251 @@
-{% extends "employee_information/base.html" %} {% load humanize %} {% block pageContent %}
+{% extends "employee_information/base.html" %} {% block pageContent %}
 <style>
-.center {
-display: flex;
-justify-content: center;
-}
+  .approved-row {
+    border-left: 5px solid #8effa8;
+  }
+  .rejected-row {
+    border-left: 5px solid #ff8491;
+  }
+  .table-responsive {
+    overflow-y: auto;
+    max-height: 138.5px; /* Adjust the max-height as per your requirement */
+  }
 </style>
-<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-    <div class="mdc-card">
-        <div class="d-flex justify-content-between">
-            <h4 class="card-title mb-0">Home Page</h4>
-        </div>
+<body class="body_bg">
+  <div class="container mg-t">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="fw-bold mb-4">Dashboard</h2>
+      </div>
     </div>
-</div>
-<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-    <hr class="w-100">
-</div>
-
-
-    <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-4-desktop mdc-layout-grid__cell--span-4-tablet mdc-layout-grid__cell--offset-4-desktop mdc-layout-grid__cell--offset-4-tablet">
-    <div class="mdc-card info-card info-card--info">
-        <div class="card-inner">
-            <h5 class="card-title">Employees</h5>
-            <h5 class="font-weight-light pb-2 mb-1 border-bottom">{{ total_employee|intcomma }}</h5>
-            <p class="tx-12 text-muted">Over All Count of Employees</p>
-            <div class="card-icon-wrapper">
-                <i class="material-icons">group</i>
+  </div>
+  <div class="row">
+    <div class="col-lg-5 col-md-12 mb-5 mb-lg-0">
+      <div class="card" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-2 text-center my-auto">
+              <i
+                class="fa-solid fa-user my-auto ms-2"
+                style="color: rgb(28, 35, 119); font-size: 60px"
+              ></i>
             </div>
-        </div>
-    </div>
-</div>
+            <div class="col ms-5 ms-lg-4">
+              <p class="h2">{{ request.user.employee_name }} ( {{ request.user.employee_id }} )</p>
+              <p>
+                <i
+                  class="fa-solid fa-briefcase me-2"
+                  style="color: #3855b4;"
+                ></i>
 
-<!-- <table style="width:100%">
-    {% for employee in employees %}
-    <tr>
-        <td width="20%">{{ employee.code }}</td>
-        <td width="30%">{{ employee.name }}</td>
-        <td width="20%">{{ employee.contact }}</td>
-        <td width="30%">{{ employee.address }}</td>
-    </tr>
-    {% endfor %}
-</table> -->
+                {% if request.user.role == "superadmin" %}Super Admin
+                {% elif request.user.role == "scrummaster" %}Srum Master
+                {% elif request.user.role == "manager" %}Manager
+                {% else %}Employee{% endif %}
+              </p>
+              <p>
+                <i class="fa-solid fa-envelope me-2" style="color: #3855b4;"></i
+                >{{ request.user.email_id}}
+              </p>
+              <p>
+                <i class="fa-solid fa-building me-2 mb-4" style="color: #3855b4;"></i
+                >Intello Global Services
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card mb-3" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
+        <div class="card-body">
+          <p class="h2 text-center">
+            <i class="fa-solid fa-bell me-4" style="color: rgb(28, 35, 119);"></i>Notice
+            Board
+          </p>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Comments</th>
+              </thead>
+              <tbody>
+                {% if data_result %}
+                  {% for position in data_result %}
+                    {% if position.status == "Rejected" %}
+                      <tr class="rejected-row">
+                        <td>{{position.start_date}}</td>
+                        {% if position.leave_type %}
+                          <td>LeaveRequest</td>
+                        {% else %}
+                          <td>TimeSheet</td>
+                        {% endif %}
+                        <td>Rejected</td>
+                        <td>{{position.comments}}</td>
+                      </tr>
+                    {% endif %}
+                    {% if position.status == "uncheck" %}
+                      <tr class="rejected-row">
+                        <td>{{position.start_date}}</td>
+                        {% if position.leave_type %}
+                          <td>LeaveRequest</td>
+                        {% else %}
+                          <td>TimeSheet</td>
+                        {% endif %}
+                        <td>Uncheck</td>
+                        <td>{{position.comments}}</td>
+                      </tr>
+                    {% endif %}
+                    {% if position.status == "Approved" %}
+                      <tr class="approved-row">
+                        <td>{{position.start_date}}</td>
+                        {% if position.leave_type %}
+                          <td>LeaveRequest</td>
+                        {% else %}
+                          <td>TimeSheet</td>
+                        {% endif %}
+                        <td>Approved</td>
+                        <td>{{position.comments}}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  <tr class="rejected-row">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                {% endif %}
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card mt-5" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-2 text-center my-auto">
+          <i
+            class="fa-solid fa-sitemap my-auto ms-2"
+            style="color: rgb(28, 35, 119); font-size: 60px"
+          ></i>
+        </div>
+        {% if request.user.role != "manager" %}
+          {% if request.user.role != "superadmin" %}
+            <!-- employee and scrummaster manager -->
+            <div class="col-lg-3 col-8 ms-5 ms-lg-2">
+              <p class="h2">Manager</p>
+              <p class="h5">{{manager.employee_name}}</p>
+              <p>
+                <i class="fa-solid fa-envelope me-2" style="color: #3855b4;"></i
+                >{{manager.email_id}}
+              </p>
+              <p>
+                <i class="fa-solid fa-phone me-2" style="color: #3855b4;"></i
+                >{{manager.phonenumber}}
+              </p>
+            </div>
+            <!-- end of employee and scrummaster manager -->
+          {% else %}
+            <!-- admin's managers list  -->
+            <div class="col-lg-3 col-8 ms-5 ms-lg-2">
+              <p class="h2">Managers</p>
+              {% for name in allManagers %}
+                <p class="h6">{{ forloop.counter }}. {{name}}</p>
+                {% endfor %}
+            </div>
+            <!-- end of admin's managers list  -->
+          {% endif %}              
+        {% else %}
+          <!-- Manager's admin details -->
+          <div class="col-lg-3 col-8 ms-5 ms-lg-2">
+            <p class="h2">Admin</p>
+            <p class="h5">{{admin.employee_name}}</p>
+            <p>
+              <i class="fa-solid fa-envelope me-2" style="color: #3855b4;"></i
+              >{{admin.email_id}}
+            </p>
+            <p>
+              <i class="fa-solid fa-phone me-2" style="color: #3855b4;"></i
+              >{{admin.phonenumber}}
+            </p>
+          </div>
+          <!-- end of Manager's admin details -->
+        {% endif %}
+        {% if scrum_master %}
+          <!-- Employee's scrummaster -->
+          <div class="col mt-5 mt-lg-0">
+            <p class="h2">Scrum Master</p>
+            <p class="h5">{{scrum_master.employee_name}}</p>
+            <p>
+              <i class="fa-solid fa-envelope me-2" style="color: #3855b4;"></i
+              >{{scrum_master.email_id}}
+            </p>
+            <p>
+              <i class="fa-solid fa-phone me-2" style="color: #3855b4;"></i
+              >{{scrum_master.phonenumber}}
+            </p>
+          </div>
+          <!-- end of Employee's scrummaster -->
+          <!-- Employee's team -->
+          <div class="col mt-5 mt-lg-0">
+            <p class="h2">Team</p>
+            <p class="h5 my-auto">{{scrum_team}}</p>
+          </div>
+          <!-- end of Employee's team -->
+        {% else %}
+          {% if request.user.role == 'scrummaster' %}
+            <!-- Scrummaster's team members -->
+            <div class="col mt-5 mt-lg-0">
+              <p class="h2">Team Members</p>
+              {% for i in team_member %}
+                <p class="h6">{{forloop.counter}}. {{i}}</p>
+              {% endfor %}
+            </div>
+            <!-- End of Scrummaster's team members -->
+            <!-- Scrummaster's teamname -->
+            <div class="col mt-5 mt-lg-0">
+              <p class="h2">Team</p>
+              <p class="h5 my-auto">{{member_team_name}}</p>
+            </div>
+            <!-- End of Scrummaster's teamname -->
+          {% else %}
+            <!-- admin's scrummasters list -->
+            <div class="col-lg-3 col-6 mt-5 mt-lg-0">
+              {% if not team_member and request.user.role != "employee" %}
+              <p class="h2">Scrum Masters</p>
+              {% for emp in scrum_emp %}
+              
+                  <p class="h6">{{ forloop.counter }}. {{emp.scrum_master}}</p>
+                {% endfor %}
+              {% else %}
+              <p class="h2">Scrum Master</p>
+                <p class="h6">Nil</p>
+              {% endif %}
+            </div>
+            <!-- End of admin's scrummasters list -->
+            <!-- admin's teams list -->
+            <div class="col-lg-3 col-6 mt-5 mt-lg-0">
+              {% if not team_member and request.user.role != "employee" %}
+              <p class="h2">Teams</p>
+              {% for team in scrum_emp %}
+              
+                  <p class="h6 my-auto">{{ forloop.counter }}. {{team.team_name}}</p>
+                {% endfor %}
+              {% else %}
+              <p class="h2">Team</p>
+                <p class="h6">Nil</p>
+              {% endif %}
+            </div>
+            <!-- end of  admin's teams list -->
+          {% endif %}
+        {% endif %}     
+      </div>
+    </div>
+  </div>
 {% endblock pageContent %}

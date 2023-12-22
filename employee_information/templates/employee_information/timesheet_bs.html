@@ -1,0 +1,100 @@
+{% extends "employee_information/base.html" %} {% block pageContent %}
+
+<div class="container mg-t">
+  <div class="row">
+    <div class="col">
+      <h2 class="fw-bold mb-4">Time Sheets</h2>
+    </div>
+  </div>
+  <div class="row mx-auto" style="background-color: #ecd5ef; min-height: 7%">
+    <div class="col-auto my-auto">
+      <label for="start_date" class="col-form-label">Start Date</label>
+    </div>
+    <div class="col-auto my-auto">
+      <input type="date" id="start_date" class="form-control" />
+    </div>
+    <div class="col-auto my-auto">
+      <label for="end_date" class="col-form-label">End Date</label>
+    </div>
+    <div class="col-auto my-auto">
+      <input type="date" id="end_date" class="form-control" />
+    </div>
+    <div class="col-auto my-auto ms-3">
+      <button
+        class="btn btn-sm text-light px-3"
+        style="background-color: #4981b2 !important"
+      >
+        Apply Filters
+      </button>
+    </div>
+  </div>
+  <div class="row mt-5 mx-auto">
+    <table class="table table-responsive table-bordered">
+      <tr class="table-secondary fw-light">
+        <th class="fw-medium">Project Name</th>
+        <th class="fw-medium">Start Date</th>
+        <th class="fw-medium">End Date</th>
+        <th class="fw-medium">ST</th>
+        <th class="fw-medium">OT</th>
+        <th class="fw-medium">Status</th>
+        <th class="fw-medium">Approved By</th>
+      </tr>
+      <tr>
+        {% for position in data_result %}
+        <td class="text-center">{{ position.project_name }}</td>
+        <td class="text-center">{{ position.username }}</td>
+        <td class="text-center">{{ position.start_date }}</td>
+        <td class="text-center">{{ position.end_date }}</td>
+        <td class="text-center">{{ position.St }}</td>
+        <td class="text-center">{{ position.ot }}</td>
+        {% if position.status and position.status != " " %}
+        <td class="text-center">{{ position.status }}</td>
+        {% else %}
+        <td class="text-center">Pending</td>
+        {% endif %} {% if position.status == "Approved" or position.status == "Rejected" %}
+        <td class="text-center">Manager</td>
+        {% else %}
+        <td class="text-center"></td>
+        {% endif %} {% endfor %}
+      </tr>
+      <tr>
+        <td>Fannimae</td>
+        <td>20/11/2023</td>
+        <td>24/11/2023</td>
+        <td>0</td>
+        <td>0</td>
+        <td>Pending</td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <div class="row">
+    <div class="col-auto me-auto">
+        <button class="btn btn-md text-light" style="background-color: #978d9a">
+            Download List Data
+        </button>
+    </div>
+    <div class="col-auto ms-auto">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+</div>
+
+{% endblock pageContent %}

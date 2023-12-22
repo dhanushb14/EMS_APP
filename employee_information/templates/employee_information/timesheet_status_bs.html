@@ -1,0 +1,348 @@
+{% extends "employee_information/base.html" %} {% block pageContent %}
+
+<div class="container" style="margin-top: 5%">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="fw-bold mb-4">Time Sheets</h2>
+    </div>
+  </div>
+  
+  <div class="row mx-auto" style="background-color: #ecd5ef; min-height: 7%">
+    <div class="col-auto my-2">
+      <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">Start Date</span>
+        <input type="date" id="start_date" class="form-control" /> 
+      </div>
+    </div>
+    <div class="col-auto my-2">
+      <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">End Date</span>
+        <input type="date" id="end_date" class="form-control" />
+      </div>
+    </div>
+    <div class="col-auto my-2 mx-2">
+      <button
+        class="btn text-light px-3"
+        style="background-color: #4981b2"
+        id="applyFilterBtn"
+      >
+        Filter
+      </button>
+      <a href="{% url 'time_sheet_status' %}">
+        <button
+            class="btn text-light ms-3"
+            style="background-color: #b24949"
+            id="clear"
+          >
+          Clear
+      </button>
+      </a>
+    </div>
+    <div class="col-auto my-2 ms-auto">
+      <button class="btn text-light mx-3" id="saveBtn" style="background-color: #4981b2">
+        <i class="fa-solid fa-download"></i>
+    </button>
+    </div>
+  </div>
+  <div class="row mt-5 mx-auto">
+    <table class="table table-responsive table-bordered">
+      <thead>
+        <tr class="table-secondary fw-light">
+          <th class="fw-medium text-center">Project Name</th>
+          <th class="fw-medium text-center">Employee Name</th>
+          <th class="fw-medium text-center">Start Date</th>
+          <th class="fw-medium text-center">End Date</th>
+          <th class="fw-medium text-center">ST</th>
+          <th class="fw-medium text-center">OT</th>
+          <th class="fw-medium text-center">Status</th>
+          <th class="fw-medium text-center">Comment</th>
+          <th class="fw-medium text-center">Approved By</th>
+        </tr>
+      </thead>
+      {% for position in data_result|slice:":5" %}
+      <tr>
+        <td class="text-center">{{ position.project_name }}</td>
+        <td class="text-center">{{ position.username }}</td>
+        <td class="text-center">{{ position.start_date }}</td>
+        <td class="text-center">{{ position.end_date }}</td>
+        <td class="text-center">{{ position.St }}</td>
+        <td class="text-center">{{ position.ot }}</td>
+        {% if position.status and position.status != " " %}
+        <td class="text-center">{{ position.status }}</td>
+        {% else %}
+        <td class="text-center">Pending</td>
+        {% endif %} 
+        <td class="text-center">
+          <!-- <div class="form-group"> -->
+            <!-- <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea> -->
+          <!-- </div> -->
+          {{ position.comments }}
+        </td>
+        {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
+        <td class="text-center">Manager</td>
+        {% else %}
+        <td class="text-center"></td>
+        {% endif %} 
+      </tr>
+      {% endfor %}
+      
+    </table>
+  </div>
+  <div class="row">
+    <!-- <div class="col-auto mx-auto" id="pagination" style="text-align: right;">
+      {% if data_result.has_previous %}
+          <button onclick="location.href='?page={{ data_result.previous_page_number }}'"><</button>
+      {% endif %}
+      <span id="pageDisplay">Page {{ data_result.number }} of {{ data_result.paginator.num_pages }}</span>
+      {% if data_result.has_next %}
+          <button onclick="location.href='?page={{ data_result.next_page_number }}'">></button>
+      {% endif %}
+    </div> -->
+    <div class="col">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          {% if data_result.has_previous  %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ data_result.previous_page_number }}"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+            </li>
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+            </li>
+          {% endif %}
+            <li class="page-item disabled">
+              <a href="?page={{forloop.counter}}" class="page-link">
+                {{ data_result.number }} of {{ data_result.paginator.num_pages }}
+              </a>
+            </li>
+          {% if data_result.has_next  %}
+            <li class="page-item">
+            <a class="page-link" href="?page={{data_result.next_page_number}}"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+            </li>
+            <li class="page-item">
+            <a class="page-link" href="?page={{paginated_results.paginator.num_pages}}"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+            </li>
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+</div>
+
+</div>
+<script>
+  //download button
+  document.getElementById('saveBtn').addEventListener('click', function() {
+    // Get the table element
+    var startDate = document.getElementById('start_date').value;
+    var endDate = document.getElementById('end_date').value;
+    console.log(startDate, endDate)
+    if (startDate){
+      filter="1";
+    }
+    else{
+      filter="0";
+    }
+
+    // Create a JSON object with the table data
+    var data = {
+        'start_date': startDate,
+        'end_date': endDate,
+        'filter': filter,
+        "html": "status"
+    };
+    
+    // Send the table data to the server using an AJAX request
+    fetch("{% url 'download_list_data' %}", {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token if needed
+
+    }
+})
+.then(response => response.blob())
+.then(blob => {
+    // Create a new object URL for the blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a link and click it to start the download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'list_data.csv';
+    link.click();
+
+    // Release the reference to the object URL
+    window.URL.revokeObjectURL(url);
+});
+});
+</script>
+<script>
+  //filter button
+  document.getElementById('applyFilterBtn').addEventListener('click', function() {
+    var startDate = document.getElementById('start_date').value;
+    var endDate = document.getElementById('end_date').value;
+    var paginationElement = document.querySelector('.pagination');
+    while (paginationElement.firstChild) {
+        paginationElement.removeChild(paginationElement.firstChild);
+    }
+    fetch("{% url 'time_sheet_status' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            'start_date': startDate,
+            'end_date': endDate
+        })
+    }).then(function(response) {
+        return response.json();
+    }).then(function(response_data) {
+        var tableBody = document.querySelector('.table tbody');
+        var allData = response_data.results;
+        console.log('allData', allData)
+        var itemsPerPage = 5;
+        var currentPage = 1;
+        var totalPages = Math.ceil(allData.length / itemsPerPage);
+      
+        // Previous page buttons
+        var prevPageItem = document.createElement('li');
+        prevPageItem.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+        var prevPageLink = document.createElement('a');
+        prevPageLink.className = 'page-link';
+        prevPageLink.href = '?page=' + (currentPage - 1);
+        prevPageLink.innerHTML = '<i class="fa-solid fa-chevron-left fa-xs"></i>';
+        prevPageItem.appendChild(prevPageLink);
+        paginationElement.appendChild(prevPageItem);
+
+        // Current page text
+        var currentPageItem = document.createElement('li');
+        currentPageItem.className = 'page-item disabled';
+        var currentPageLink = document.createElement('a');
+        currentPageLink.className = 'page-link';
+        currentPageLink.href = '?page=' + currentPage;
+        currentPageLink.textContent = currentPage + ' of ' + totalPages;
+        currentPageItem.appendChild(currentPageLink);
+        paginationElement.appendChild(currentPageItem);
+
+        // Next page buttons
+        var nextPageItem = document.createElement('li');
+        nextPageItem.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+        var nextPageLink = document.createElement('a');
+        nextPageLink.className = 'page-link';
+        nextPageLink.href = '?page=' + (currentPage + 1);
+        nextPageLink.innerHTML = '<i class="fa-solid fa-chevron-right fa-xs"></i>';
+        nextPageItem.appendChild(nextPageLink);
+        paginationElement.appendChild(nextPageItem);
+
+        function updatePage() {
+          console.log('inside updatePage')
+          var start = (currentPage - 1) * itemsPerPage;
+          var end = start + itemsPerPage;
+          var pageData = allData.slice(start, end);
+          console.log('pageData', pageData)
+
+          while (tableBody.firstChild) {
+              tableBody.removeChild(tableBody.firstChild);
+          }
+
+        // Populate the table with the filtered data
+        pageData.forEach(function(item) {
+            var row = document.createElement('tr');
+            row.classList.add('highlight-row')
+            row.innerHTML = `
+                <td class="text-center">${item.project_name}</td>
+                <td class="text-center">${item.username}</td>
+                <td class="text-center">${item.start_date}</td>
+                <td class="text-center">${item.end_date}</td>
+                <td class="text-center">${item.St}</td>
+                <td class="text-center">${item.ot}</td>
+                <td class="text-center">
+                    ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? item.status : 
+                        "Pending"
+                    }
+                </td>
+                <td class="text-center">
+                  ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? item.comments : 
+                        ""
+                    }
+                </td>
+                <td class="text-center">
+                  ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? "Manager" : 
+                        "" }
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Update pagination
+            // var paginationElement = document.querySelector('.pagination');
+            while (paginationElement.firstChild) {
+                paginationElement.removeChild(paginationElement.firstChild);
+            }
+            var prevPageItem = document.createElement('li');
+            prevPageItem.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+            var prevPageLink = document.createElement('a');
+            prevPageLink.className = 'page-link';
+            prevPageLink.href = '?page=' + (currentPage - 1);
+            prevPageLink.innerHTML = '<i class="fa-solid fa-chevron-left fa-xs"></i>';
+            prevPageItem.appendChild(prevPageLink);
+            paginationElement.appendChild(prevPageItem);
+
+            // Current page text
+            var currentPageItem = document.createElement('li');
+            currentPageItem.className = 'page-item disabled';
+            var currentPageLink = document.createElement('a');
+            currentPageLink.className = 'page-link';
+            currentPageLink.href = '?page=' + currentPage;
+            currentPageLink.textContent = currentPage + ' of ' + totalPages;
+            currentPageItem.appendChild(currentPageLink);
+            paginationElement.appendChild(currentPageItem);
+
+            // Next page buttons
+            var nextPageItem = document.createElement('li');
+            nextPageItem.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+            var nextPageLink = document.createElement('a');
+            nextPageLink.className = 'page-link';
+            nextPageLink.href = '?page=' + (currentPage + 1);
+            nextPageLink.innerHTML = '<i class="fa-solid fa-chevron-right fa-xs"></i>';
+            nextPageItem.appendChild(nextPageLink);
+            paginationElement.appendChild(nextPageItem);
+
+            // Previous button click event
+            prevPageLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+                }
+            });
+            // Next button click event
+            nextPageLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+                }
+              });
+        }
+// Call updatePage to refresh the table and pagination for the first time
+          updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+    });
+});
+</script>
+{% endblock pageContent %}

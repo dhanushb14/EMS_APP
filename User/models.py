@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.utils import timezone
+from django.apps import apps
+
 
 class EmployeeManager(BaseUserManager):
     def create_user(self, employee_id, password=None, role=None, **extra_fields):
@@ -30,7 +33,9 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     phonenumber = models.CharField(max_length=20, unique=True)
     employee_id = models.CharField(unique=True, max_length=10)
     password = models.CharField(max_length=100)
-    role = models.CharField(max_length=100)
+    role = models.CharField(max_length=100, default='employee')
+    available_leave = models.IntegerField(default=2)
+    work_from_home  = models.IntegerField(default=3)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -38,6 +43,32 @@ class Employee(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'employee_id'
     REQUIRED_FIELDS = ['employee_name', 'phonenumber', 'role', 'email_id']
+
+    def reset_available_leave(self):
+        print("came to reset_available_leave function in models")
+        current_month = timezone.now().month
+        print(current_month)
+        print(self.employee_name)
+        LeaveRequest = apps.get_model('employee_information', 'LeaveRequest')
+        data = LeaveRequest.objects.filter(employee_name = self.employee_name, status='Approved')
+        print(data)
+        
+        self.available_leave = 2
+        self.work_from_home = 3
+        for i in data:
+            
+            print("1")
+            print(i.start_date.month, current_month)
+            print(i.no_of_days)
+            
+            if i.start_date.month == current_month:
+                print("came to if condition")
+                if i.leave_type == "Work from home":
+                    self.work_from_home = self.work_from_home - i.no_of_days
+                else:
+                    self.available_leave = self.available_leave - i.no_of_days
+        self.save()
+
     def save(self, *args, **kwargs):
         try:
             if not self.id:
@@ -48,5 +79,5 @@ class Employee(AbstractBaseUser, PermissionsMixin):
         except Exception:
             # Handle the error here
             pass
-    def _str_(self):
-        return self.employee_id
+    def __str__(self):
+        return self.employee_name

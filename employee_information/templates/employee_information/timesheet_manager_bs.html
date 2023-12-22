@@ -1,0 +1,565 @@
+{% extends "employee_information/base.html" %} {% block pageContent %}
+
+
+
+<div class="container" style="margin-top: 5%">
+  <div class="row">
+    <div class="col-12">
+      <h1></h1>
+      <h2 class="fw-bold mb-4">Pending Approvals</h2>
+    </div>
+  </div>
+  <div class="row">
+    <h1></h1>
+  </div>
+  <div class="row mx-auto" style="background-color: #ecd5ef; height: 51%">
+    <div class="col-auto my-auto">
+      <select id="filter" name="status" class="form-select fw-medium text-center" style="background-color: #e9ecef;">
+        <option value="project_name">Project Name</option>
+        <option value="emp_name">Employee Name</option>
+        <option value="start_date">Date</option>
+        <option value="status">Status</option>
+      </select>
+    </div>
+    <div class="col-auto my-auto ms-0">
+      <input type="text" id="project_name_filter" class="form-control" />
+    </div>
+    <div class="col-auto my-2 ms-3">
+      <button
+        class="btn text-light px-3"
+        style="background-color: #4981b2"
+        id="applyFilterBtn"
+      >
+        Filter
+      </button>
+      <button
+      class="btn text-light ms-1"
+      style="background-color: #b24949 !important"
+      onclick="location.reload()"
+    >
+      Clear
+    </button>
+    </div>
+    <div class="col-auto my-2 ms-auto me-2 ">
+      
+      <button
+        class="btn text-light px-3"
+        style="background-color: #4981b2"
+        id="saveBtn"
+      >
+        <i class="fa-solid fa-download"></i> 
+      </button>
+    </div>
+  </div>
+  <div class="row mt-5 mx-auto">
+    <table class="table table-responsive table-bordered">
+      <thead>
+        <tr class="table-secondary fw-light">
+          <th class="fw-medium text-center">Project Name</th>
+          <th class="fw-medium text-center">Employee Name</th>
+          <th class="fw-medium text-center">Start Date</th>
+          <th class="fw-medium text-center">End Date</th>
+          <th class="fw-medium text-center">ST</th>
+          <th class="fw-medium text-center">OT</th>
+          <th class="fw-medium text-center">Status</th>
+          <th class="fw-medium text-center">Comment</th>
+          <th class="fw-medium text-center"></th>
+        </tr>
+      </thead>
+      {% for position in data|slice:":5" %}
+      <tr>
+        <td id="project_name" class="text-center">{{ position.project_name }}</td>
+        <td id="username" class="text-center">{{ position.username }}</td>
+        <td id='start_date' class="text-center">{{ position.start_date }}</td>
+        <td id='end_date' class="text-center">{{ position.end_date }}</td>
+        <td id='St' class="text-center">{{ position.St }}</td>
+        <td id='ot' class="text-center">{{ position.ot }}</td>
+        {% if request.user.role != "scrummaster" %}
+          {% if position.status == "Approved" %}
+            <td id="status" class="text-center">Approved</td>
+          {% elif position.status == "Rejected" %}
+            <td id="status" class="text-center">Rejected</td>
+          {% elif position.status == "uncheck" %}
+            <td id="status" class="text-center">uncheck</td>
+          {% else %}
+            <td id="status" class="text-center">
+              <select name="status" style="background-color: transparent; border: none;">
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="uncheck">Uncheck</option>
+              </select>
+            </td>
+          {% endif %}
+        {% else %}
+          <td id="status" class="text-center">{% if position.status%}{{ position.status }} {% else %}Pending{% endif %}</td>
+          
+        {% endif %} 
+        <td>
+          <div class="form-group">
+            <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea>
+          </div>
+        </td>
+        <td class="text-center">
+          {% if request.user.role != "scrummaster" %}
+          
+          
+          {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
+            <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn"></button>
+            <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="display:none; background-color: #4981b2;" ></button>
+          {% else %}
+          <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="background-color: #4981b2;"></button>
+          <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display:none;"></button> 
+          {% endif %}
+          {% endif %}
+          <button id = "visibility" class="btn btn-secondary btn-sm edit-data" type="button"  data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+      
+    </table>
+  </div>
+  <div class="row">
+    <!-- <div class="col-auto mx-auto d-flex justify-content-center align-items-center" id="pagination">
+      {% if data.has_previous %}
+          <button onclick="location.href='?page={{ data.previous_page_number }}'"><</button>
+      {% endif %}
+      <span id="pageDisplay">Page {{ data.number }} of {{ data.paginator.num_pages }}</span>
+      {% if data.has_next %}
+          <button onclick="location.href='?page={{ data.next_page_number }}'">></button>
+      {% endif %}
+    </div> -->
+    <div class="col">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          {% if data.has_previous  %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ data.previous_page_number }}"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+            </li>
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+            </li>
+          {% endif %}
+            <li class="page-item disabled">
+              <a href="?page={{forloop.counter}}" class="page-link">
+                {{ data.number }} of {{ data.paginator.num_pages }}
+              </a>
+            </li>
+          {% if data.has_next  %}
+            <li class="page-item">
+            <a class="page-link" href="?page={{data.next_page_number}}"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+            </li>
+            <li class="page-item">
+            <a class="page-link" href="?page={{data.paginator.num_pages}}"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+            </li>
+            <li class="page-item disabled">
+              <a class="page-link" href="#"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+</div>
+
+</div>
+<script>
+  //download button
+  document.getElementById('saveBtn').addEventListener('click', function() {
+    var value = document.getElementById('project_name_filter').value;
+    var projectDropdown = document.getElementById('filter');
+    var project_name = projectDropdown.value;
+    console.log("project_name", value)
+    if (value){
+      var filter = "1";
+    }
+    else{
+      filter = "0";
+    }
+    var data = {
+        "selected": project_name,
+        "project_name": value,
+        "filter": filter,
+        "html": "manager"
+    }
+    
+    // Send the table data to the server using an AJAX request
+    fetch("{% url 'download_list_data' %}", {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token if needed
+
+    }
+})
+.then(response => response.blob())
+.then(blob => {
+    // Create a new object URL for the blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a link and click it to start the download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'list_data.csv';
+    link.click();
+
+    // Release the reference to the object URL
+    window.URL.revokeObjectURL(url);
+});
+});
+</script>
+<script>
+  // Filter start date change, disabling filter button
+  document.getElementById('filter').addEventListener('change', function() {
+    var selectedOption = this.value;
+    var nextInputField = document.getElementById('project_name_filter');
+    if (selectedOption === 'start_date') {
+        nextInputField.type = 'date';
+    } else {
+        nextInputField.type = 'text';
+    }
+});
+
+document.getElementById('project_name_filter').addEventListener('input', function() {
+    var projectName = this.value;
+    var applyFilterBtn = document.getElementById('applyFilterBtn');
+    if (projectName.trim() !== '') {
+        applyFilterBtn.disabled = false;
+    } else {
+        applyFilterBtn.disabled = true;
+    }
+});
+  
+</script>
+<script>
+  //filter button, submit button
+  document.getElementById('applyFilterBtn').addEventListener('click', function() {
+    var value = document.getElementById('project_name_filter').value;
+    var projectDropdown = document.getElementById('filter');
+    var project_name = projectDropdown.value;
+    var data = {
+        "selected": project_name,
+        "project_name": value
+    }
+
+    var paginationElement = document.querySelector('.pagination');
+    while (paginationElement.firstChild) {
+        paginationElement.removeChild(paginationElement.firstChild);
+    }
+    
+
+    fetch("{% url 'timesheet_manager' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(data)
+    }).then(function(response) {
+        return response.json();
+    }).then(function(response_data) {
+      
+        var tableBody = document.querySelector('.table tbody');
+        var allData = response_data.results;
+        console.log('allData', allData)
+        var itemsPerPage = 5;
+        var currentPage = 1;
+        var totalPages = Math.ceil(allData.length / itemsPerPage);
+
+        // Previous page buttons
+    var prevPageItem = document.createElement('li');
+    prevPageItem.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+    var prevPageLink = document.createElement('a');
+    prevPageLink.className = 'page-link';
+    prevPageLink.href = '?page=' + (currentPage - 1);
+    prevPageLink.innerHTML = '<i class="fa-solid fa-chevron-left fa-xs"></i>';
+    prevPageItem.appendChild(prevPageLink);
+    paginationElement.appendChild(prevPageItem);
+
+    // Current page text
+    var currentPageItem = document.createElement('li');
+    currentPageItem.className = 'page-item disabled';
+    var currentPageLink = document.createElement('a');
+    currentPageLink.className = 'page-link';
+    currentPageLink.href = '?page=' + currentPage;
+    currentPageLink.textContent = currentPage + ' of ' + totalPages;
+    currentPageItem.appendChild(currentPageLink);
+    paginationElement.appendChild(currentPageItem);
+
+    // Next page buttons
+    var nextPageItem = document.createElement('li');
+    nextPageItem.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+    var nextPageLink = document.createElement('a');
+    nextPageLink.className = 'page-link';
+    nextPageLink.href = '?page=' + (currentPage + 1);
+    nextPageLink.innerHTML = '<i class="fa-solid fa-chevron-right fa-xs"></i>';
+    nextPageItem.appendChild(nextPageLink);
+    paginationElement.appendChild(nextPageItem);
+
+        function updatePage() {
+          console.log('inside updatePage')
+          var start = (currentPage - 1) * itemsPerPage;
+          var end = start + itemsPerPage;
+          var pageData = allData.slice(start, end);
+          console.log('pageData', pageData)
+
+          while (tableBody.firstChild) {
+              tableBody.removeChild(tableBody.firstChild);
+          }
+
+            pageData.forEach(function(item) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td id="project_name" class="text-center">${item.project_name}</td>
+                    <td id="username" class="text-center">${item.username}</td>
+                    <td id='start_date' class="text-center">${item.start_date}</td>
+                    <td id='end_date' class="text-center">${item.end_date}</td>
+                    <td id='St' class="text-center">${item.St}</td>
+                    <td id='ot' class="text-center">${item.ot}</td>
+                    <td class="text-center">
+                        ${item.status == "Approved" || item.status == "Rejected" || item.status == "uncheck" ? item.status : `
+                        <select name="status" style="background-color: transparent; border: none;">
+                          <option value="Approved">Approved</option>
+                          <option value="Rejected">Rejected</option>
+                          <option value="uncheck">Uncheck</option>
+                        </select>
+                        `}
+                    </td>
+                    <td> 
+                      <div class="form-group">
+                        <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">${item.comments}</textarea>
+                      </div>  
+                     </td>
+                     <td class="text-center">
+                        ${item.status == "Approved" || item.status == "Rejected" || item.status == "uncheck" ?
+                          `<button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn"></button> <button class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" onclick="submitForm(event)" type="button" style="display: none"></button>` :
+                          `<button class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" onclick="submitForm(event)" type="button"></button> <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display: none"></button>`}
+                        <button id="visibility" class="btn btn-secondary btn-sm edit-data" type="button" data-id="${item.comments}" title="Edit">
+                          <i class="fa-solid fa-pen"></i>
+                        </button>
+                      </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Update pagination
+            // var paginationElement = document.querySelector('.pagination');
+            while (paginationElement.firstChild) {
+                paginationElement.removeChild(paginationElement.firstChild);
+            }
+
+            var prevPageItem = document.createElement('li');
+            prevPageItem.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+            var prevPageLink = document.createElement('a');
+            prevPageLink.className = 'page-link';
+            prevPageLink.href = '?page=' + (currentPage - 1);
+            prevPageLink.innerHTML = '<i class="fa-solid fa-chevron-left fa-xs"></i>';
+            prevPageItem.appendChild(prevPageLink);
+            paginationElement.appendChild(prevPageItem);
+
+            // Current page text
+            var currentPageItem = document.createElement('li');
+            currentPageItem.className = 'page-item disabled';
+            var currentPageLink = document.createElement('a');
+            currentPageLink.className = 'page-link';
+            currentPageLink.href = '?page=' + currentPage;
+            currentPageLink.textContent = currentPage + ' of ' + totalPages;
+            currentPageItem.appendChild(currentPageLink);
+            paginationElement.appendChild(currentPageItem);
+
+            // Next page buttons
+            var nextPageItem = document.createElement('li');
+            nextPageItem.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+            var nextPageLink = document.createElement('a');
+            nextPageLink.className = 'page-link';
+            nextPageLink.href = '?page=' + (currentPage + 1);
+            nextPageLink.innerHTML = '<i class="fa-solid fa-chevron-right fa-xs"></i>';
+            nextPageItem.appendChild(nextPageLink);
+            paginationElement.appendChild(nextPageItem);
+
+            // Previous button click event
+            prevPageLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+                }
+            });
+            // Next button click event
+            nextPageLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+                }
+              });
+        }
+// Call updatePage to refresh the table and pagination for the first time
+          updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+        
+    });
+  
+});
+
+    function submitForm(event) {
+        event.preventDefault(); // Prevent form submission and page refresh
+
+        var button = event.target;
+        var row = button.parentNode.parentNode;
+        var data = {
+        'project_name': row.querySelector('td:nth-child(1)')?.innerText || '',
+        'username': row.querySelector('td:nth-child(2)')?.innerText || '',
+        'start_date': row.querySelector('td:nth-child(3)')?.innerText || '',
+        'end_date': row.querySelector('td:nth-child(4)')?.innerText || '',
+        'ST': row.querySelector('td:nth-child(5)')?.innerText || '',
+        'OT': row.querySelector('td:nth-child(6)')?.innerText || '',
+        'status': row.querySelector('td:nth-child(7) select')?.value || '',
+        'comment': row.querySelector('td:nth-child(8) textarea')?.value || '',
+        
+    };
+        console.log(data)
+
+        fetch("{% url 'timesheet_manager' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        }).then(function(response) {
+        return response.json();
+        }).then(function(data) {
+            if (data.message === "Update successful") {
+              var undobtn = row.querySelector('.undo-btn');
+              var submitbtn = row.querySelector('.send-btn');
+              submitbtn.style.display = 'none';
+              undobtn.style.display = 'inline-block';
+              
+              
+                
+                
+                
+                
+
+                // Find the status field and update it
+                var statusField = row.querySelector('td:nth-child(7)');
+                if (data.status){
+                statusField.innerHTML = data.status;} // Assuming the server returns the new status
+                else if (data.data){
+                    statusField.innerHTML = data.data;}
+                else {
+                    statusField.innerHTML = `
+                            <select name="status" id="status" style="background-color: transparent; border: none;">
+                                <option class="text-center" value="Approved">Approved</option>
+                                <option class="text-center" value="Rejected">Rejected</option>
+                                <option class="text-center" value="uncheck">Uncheck</option>
+                            </select>
+                            `;
+                            var undobtn = row.querySelector('.undo-btn');
+                            var submitbtn = row.querySelector('.send-btn');
+                            submitbtn.style.display = 'inline-block';
+                            undobtn.style.display = 'none';
+                            
+                }
+                
+                
+             }
+            
+        }).then(function(data) {
+            console.log(data);
+        });
+    }; 
+    document.addEventListener('click', function(event) {
+        var button = event.target;
+        console.log("button", button.textContent )
+        if (button.classList.contains("undo-btn")) {
+          if (window.confirm("Do you want to revert?")) {
+              console.log("got in")
+              var row = button.closest('tr'); 
+                  var data = {
+                      'project_name': row.querySelector('td:nth-child(1)').innerText,
+                      'username': row.querySelector('td:nth-child(2)').innerText,
+                      'start_date': row.querySelector('td:nth-child(3)').innerText,
+                      
+                  };
+                  console.log("data", data)
+                  fetch("{% url 'timesheet_manager' %}", {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'X-CSRFToken': '{{ csrf_token }}'
+                      },
+                      body: JSON.stringify(data)
+                  }).then(function(response) {
+                      return response.json();
+                  }).then(function(data) {
+                      if (data.message === "Update successful") {
+                        var undobtn = row.querySelector('.undo-btn');
+                        var submitbtn = row.querySelector('.send-btn');
+                        submitbtn.style.display = 'inline-block';
+                        undobtn.style.display = 'none';
+
+                          // Find the status field and replace it with a select field
+                          var statusField = row.querySelector('td:nth-child(7)');
+                          statusField.innerHTML = `
+                            <select name="status" id="status" style="background-color: transparent; border: none;">
+                                  <option class="text-center" value="Approved">Approved</option>
+                                  <option class="text-center" value="Rejected">Rejected</option>
+                                  <option class="text-center" value="uncheck">Uncheck</option>
+                              </select>
+                              `;
+
+                          // Set up event listener for the new "Send" button
+                          var sendButton = row.querySelector('#send-btn');
+                          sendButton.addEventListener('click', submitForm);
+
+                          document.addEventListener('click', function(event) {
+                          var button = event.target;
+                          if (button.id === 'send-btn') {
+                              submitForm(event);
+                          }
+                      });
+                      }
+                  });
+                }
+            }
+        });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var sendButton = document.getElementById("send-btn");
+        if (sendButton) {
+        sendButton.addEventListener('click', submitForm);
+    } else {
+        console.log("Send button not found");
+    }
+});
+</script>
+
+<script>
+  $(function() {
+        
+        $('.edit-data').click(function() {
+          var id = $(this).attr('data-id');
+          var project = $(this).attr('data-project');
+          var startDate = $(this).attr('data-start_date');
+          var endDate = $(this).attr('data-end_date');
+          console.log("123")
+          uni_modal("Edit TimeSheet", "{% url 'view_timesheet' %}?id=" + id + "&data-project=" + project + "&data-start_date=" + startDate + "&data-end_date=" + endDate, 'modal-xl');
+        })
+        
+    })
+</script>
+
+{% endblock pageContent %}

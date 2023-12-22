@@ -1,0 +1,123 @@
+{% extends "employee_information/base.html" %} {% block pageContent %}
+<body class="body_bg">
+
+  <div class="container mg-t">
+    <div class="row">
+      <div class="col">
+        <h2 class="fw-bold mb-4">Leave Management</h2>
+      </div>
+      <div class="col d-flex flex-column align-items-end">
+        <a
+          href="{% url 'leave_request' %}"
+          style="background-color: #4981b2"
+          class="btn btn-primary"
+          role="button"
+          >Apply for leave</a
+        >
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="card text-center h-100">
+          <div class="card-body">
+            <h2 class="fw-bold">Available Leave</h2>
+            <p class="display-1">{{available_leave}}</p>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-md-6 mb-4">
+        <div class="card text-center h-100">
+          <div class="card-body">
+            <h2 class="fw-bold">Work From Home</h2>
+            <p class="display-1">{{work_from_home}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr class="table-secondary">
+                  <th scope="col" class="text-center">Date</th>
+                  <th scope="col" class="text-center">Leave Type</th>
+                  <th scope="col" class="text-center">Comments</th>
+                  <th scope="col" class="text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for leave_request in paginated_results %}
+                <tr class="table-">
+                  <td class="text-center">
+                    {{ leave_request.start_date | date:"j/n/Y" }} to {{ leave_request.end_date | date:"j/n/Y"}}
+                  </td>
+                  <td class="text-center">{{ leave_request.leave_type }}</td>
+                  <td class="text-center">{{ leave_request.comments }}</td>
+                  <td class="text-center">
+                    <button
+                      class="btn btn-sm text btn-{% if leave_request.status == 'Approved' %}success{% elif leave_request.status == 'Rejected' %}danger{% elif leave_request.status == 'Pending' %}warning{% endif %}"
+                    >
+                      {{ leave_request.status }}
+                    </button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            {% if paginated_results.has_previous  %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{paginated_results.previous_page_number}}"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+              </li>
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+              </li>
+            {% endif %}
+              <li class="page-item disabled">
+                <a href="?page={{forloop.counter}}" class="page-link">
+                  {{ paginated_results.number }} of {{ paginated_results.paginator.num_pages }}
+                </a>
+              </li>
+            {% if paginated_results.has_next  %}
+              <li class="page-item">
+              <a class="page-link" href="?page={{paginated_results.next_page_number}}"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+              </li>
+              <li class="page-item">
+              <a class="page-link" href="?page={{paginated_results.paginator.num_pages}}"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+              </li>
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+  
+
+</body>
+{% endblock pageContent %}
