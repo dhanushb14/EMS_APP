@@ -14,33 +14,40 @@
   </div>
   <div class="row mx-auto" style="background-color: #ecd5ef; height: 51%">
     <div class="col-auto my-auto">
-      <select id="filter" name="status" class="form-select fw-medium text-center" style="background-color: transparent; border: none;">
+      <select id="filter" name="status" class="form-select fw-medium text-center" style="background-color: #e9ecef;">
         <option value="project_name">Project Name</option>
         <option value="emp_name">Employee Name</option>
         <option value="start_date">Date</option>
         <option value="status">Status</option>
       </select>
     </div>
-    <div class="col-auto my-auto ">
+    <div class="col-auto my-auto ms-0">
       <input type="text" id="project_name_filter" class="form-control" />
     </div>
     <div class="col-auto my-2 ms-3">
       <button
         class="btn text-light px-3"
-        style="background-color: #4981b2 !important"
+        style="background-color: #4981b2"
         id="applyFilterBtn"
       >
-        Apply Filters
+        Filter
       </button>
+      <button
+      class="btn text-light ms-1"
+      style="background-color: #b24949 !important"
+      onclick="location.reload()"
+    >
+      Clear
+    </button>
     </div>
     <div class="col-auto my-2 ms-auto me-2 ">
       
       <button
         class="btn text-light px-3"
-        style="background-color: #4981b2 !important"
+        style="background-color: #4981b2"
         id="saveBtn"
       >
-        Dowload 
+        <i class="fa-solid fa-download"></i> 
       </button>
     </div>
   </div>
@@ -98,10 +105,10 @@
           
           {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
             <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn"></button>
-            <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="display:none"></button>
+            <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="display:none; background-color: #4981b2;" ></button>
           {% else %}
-          <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn"></button>
-          <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display:none"></button> 
+          <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="background-color: #4981b2;"></button>
+          <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display:none;"></button> 
           {% endif %}
           {% endif %}
           <button id = "visibility" class="btn btn-secondary btn-sm edit-data" type="button"  data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
@@ -337,10 +344,8 @@ document.getElementById('project_name_filter').addEventListener('input', functio
                      </td>
                      <td class="text-center">
                         ${item.status == "Approved" || item.status == "Rejected" || item.status == "uncheck" ?
-                          `<button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn"></button>
-                          <button class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" onclick="submitForm(event)" type="button" style="display: none"></button>` :
-                          `<button class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" onclick="submitForm(event)" type="button"></button>
-                          <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display: none"></button>`}
+                          `<button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn"></button> <button class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" onclick="submitForm(event)" type="button" style="display: none"></button>` :
+                          `<button class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" onclick="submitForm(event)" type="button"></button> <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display: none"></button>`}
                         <button id="visibility" class="btn btn-secondary btn-sm edit-data" type="button" data-id="${item.comments}" title="Edit">
                           <i class="fa-solid fa-pen"></i>
                         </button>

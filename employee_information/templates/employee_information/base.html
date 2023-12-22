@@ -180,7 +180,11 @@
         color: #949393;
         font-size: 16px;
       }
-      .sub_menu_bg:hover .sub_menu_font {
+      .sub_menu_bg:hover .sub_menu_font  {
+            color: black;
+            font-size: 16.2px;
+        }
+      .sub_menu_bg:hover .sub_menu_icon  {
             color: black;
             font-size: 16.2px;
         }
@@ -188,10 +192,8 @@
         color: var(--first-color);
       }
       .sub_menu_active {
-        margin-left: 2px;
         background-color: #f7f6fb;
         color: var(--first-color);
-        border-left: #471fd9 5px solid;
       }
       .sub_menu_icon {
         font-size: 1.1rem;
@@ -201,7 +203,6 @@
       .sub_menu_active_icon {
         font-size: 1.1rem;
         color: var(--first-color);
-        margin-left: 2px;
       }
       .height-100 {
         height: 100vh;
@@ -302,11 +303,11 @@
               data-bs-toggle="collapse"
               href="#TMSSubmenu"
               role="button"
-              class="nav_link {% if request.path == '/timesheet_manager' %}active{% endif %}"
+              class="nav_link dropdown-trigger {% if request.path == '/timesheet_manager' %}active{% endif %}"
               title="Time Sheet Management"
             >
               <i class="fa-solid fa-clock nav_icon"></i>
-              <span class="nav_name dropdown-toggle">TMS</span>
+              <span class="nav_name">TMS <i class="fas fa-caret-down"></i></span>
             </a>
             <!-- Time sheet Management collapsible sub menu-->
             <div class="collapse sub_menu_div_bg" id="TMSSubmenu">
@@ -372,11 +373,11 @@
               data-bs-toggle="collapse"
               href="#LMSSubmenu"
               role="button"
-              class="nav_link {% if request.path == '/leave_manager/' %}active{% endif %}"
+              class="nav_link dropdown-trigger {% if request.path == '/leave_manager/' %}active{% endif %}"
               title="Leave Management"
             >
               <i class="fa-regular fa-calendar nav_icon"></i>
-              <span class="nav_name dropdown-toggle">LMS</span>
+              <span class="nav_name">LMS <i class="fas fa-caret-down"></i></span>
             </a>
             <!-- Leave Management collapsible sub menu-->
             <div class="collapse sub_menu_div_bg" id="LMSSubmenu">
@@ -476,6 +477,7 @@
             <button
               type="button"
               class="btn btn-flat btn-primary rounded-0"
+              style="background-color: #4981b2"
               id="submit"
               onclick="$('#uni_modal form').submit()"
             >
@@ -511,6 +513,7 @@
               class="btn btn-sm btn-flat btn-primary rounded-0"
               id="confirm"
               onclick=""
+              style="background-color: #4981b2"
             >
               Continue
             </button>
@@ -641,4 +644,16 @@
       };
       $(function () {});
     </script>
+    <script>
+      $(document).ready(function () {
+        // Add click event handler for dropdown triggers
+        $('.dropdown-trigger').on('click', function () {
+          // Get the ID of the corresponding sub-menu
+          var submenuId = $(this).attr('href');
+          
+          // Hide all other sub-menus
+          $('.sub_menu_div_bg').not(submenuId).collapse('hide');
+        });
+      });
+      </script>
 </html>

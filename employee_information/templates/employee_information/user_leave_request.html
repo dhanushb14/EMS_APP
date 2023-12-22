@@ -9,6 +9,7 @@
       <div class="col d-flex flex-column align-items-end">
         <a
           href="{% url 'leave_request' %}"
+          style="background-color: #4981b2"
           class="btn btn-primary"
           role="button"
           >Apply for leave</a
@@ -59,7 +60,7 @@
                   <td class="text-center">{{ leave_request.comments }}</td>
                   <td class="text-center">
                     <button
-                      class="btn btn-sm btn-{% if leave_request.status == 'Approved' %}success{% elif leave_request.status == 'Rejected' %}danger{% elif leave_request.status == 'Pending' %}warning{% endif %}"
+                      class="btn btn-sm text btn-{% if leave_request.status == 'Approved' %}success{% elif leave_request.status == 'Rejected' %}danger{% elif leave_request.status == 'Pending' %}warning{% endif %}"
                     >
                       {{ leave_request.status }}
                     </button>
