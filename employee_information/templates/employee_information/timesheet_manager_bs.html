@@ -445,7 +445,7 @@ document.getElementById('project_name_filter').addEventListener('input', functio
               var undobtn = row.querySelector('.undo-btn');
               var submitbtn = row.querySelector('.send-btn');
               submitbtn.style.display = 'none';
-              undobtn.style.display = 'block';
+              undobtn.style.display = 'inline-block';
               
               
                 
@@ -469,8 +469,9 @@ document.getElementById('project_name_filter').addEventListener('input', functio
                             `;
                             var undobtn = row.querySelector('.undo-btn');
                             var submitbtn = row.querySelector('.send-btn');
-                            submitbtn.style.display = 'block';
+                            submitbtn.style.display = 'inline-block';
                             undobtn.style.display = 'none';
+                            
                 }
                 
                 
@@ -507,7 +508,7 @@ document.getElementById('project_name_filter').addEventListener('input', functio
                       if (data.message === "Update successful") {
                         var undobtn = row.querySelector('.undo-btn');
                         var submitbtn = row.querySelector('.send-btn');
-                        submitbtn.style.display = 'block';
+                        submitbtn.style.display = 'inline-block';
                         undobtn.style.display = 'none';
 
                           // Find the status field and replace it with a select field
