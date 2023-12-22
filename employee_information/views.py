@@ -1155,8 +1155,8 @@ load_dotenv()
 
 
 def send_email(employee_email, employee_name, decrypted_password, employee_id):
-    sender_email = os.getenv("SENDER_EMAIL")
-    sender_password = os.getenv("SENDER_PASSWORD")
+    sender_email = 'intellectoglobal@gmail.com'
+    sender_password = 'yawx mjxr mxqv lswr'
     subject = 'Password Recovery'
 
     message = MIMEMultipart()
