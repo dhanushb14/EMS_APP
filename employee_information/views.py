@@ -1198,7 +1198,7 @@ def download_data(request):
 
     # Apply additional filtering using the FilterForm
     filter_queryset = FilterForm(request.GET, queryset=all_leave_requests)
-    all_leave_requests = filter_queryset.qs
+    filtered_queryset = filter_queryset.qs
 
     # Create a response object with CSV content type
     response = HttpResponse(content_type='text/csv')
@@ -1213,7 +1213,7 @@ def download_data(request):
     csv_writer.writerow(['Name','Start Date', 'End Date', 'Days', 'Type','Comments','Status'])
 
     # Write the data rows
-    for leave_request in all_leave_requests:
+    for leave_request in filtered_queryset:
         csv_writer.writerow([leave_request.employee_name, leave_request.start_date, leave_request.end_date, leave_request.no_of_days, leave_request.leave_type, leave_request.comments, leave_request.status])
 
     return response

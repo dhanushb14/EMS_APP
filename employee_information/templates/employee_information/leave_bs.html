@@ -81,9 +81,8 @@
           </div>
           <div class="col-auto ms-auto ms-xs-1 me-1 my-2">
             <a class="btn text-light"
-            style="background-color: #4981b2 !important"
-            href="{% url 'download' %}"
-            >
+              style="background-color: #4981b2 !important"
+              href="{% url 'download' %}?{{ request.GET.urlencode }}">
               <i class="fa-solid fa-download"></i>
             </a>
           </div>
@@ -427,57 +426,6 @@ function getCookie(name) {
     });
   });
 </script>
-<!-- <script>
-  document.querySelectorAll('.submit-btn').forEach(function(button) {
-  var onClick = function() {
-    event.preventDefault();
-    var row = this.closest('tr');
-    var data = {
-      id: this.dataset.id,
-      employee_id: row.querySelector('#modal-employee-id').textContent,
-      description: row.querySelector('#modal-description').textContent,
-      status: row.querySelector('#modal-status').value,
-      comments: row.querySelector('#modal-comments').value
-    };
-    submitData(data);
-  };
-  button.removeEventListener('click', onClick);
-  button.addEventListener('click', onClick);
-});
-
-function submitData(data) {
-  fetch("{% url 'leave_manager' %}", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': getCookie('csrftoken')
-    },
-    body: JSON.stringify(data)
-  }).then(function(response) {
-    if (response.ok) {
-      alert('Data sent successfully');
-    } else {
-      alert('Error: ' + response.statusText);
-    }
-  });
-}
-
-// Function to get CSRF token
-function getCookie(name) {
-  var cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
-</script> -->
 <script>
   $(function() {
         
