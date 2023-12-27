@@ -633,7 +633,7 @@ def timesheet_manager( request ):
         data = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).order_by('-start_date')
         
      elif request.user.role == "employee":
-        data = model_user.objects.filter(employee_id=request.user.employee_id).order_by('-start_date')
+        data = model_user.objects.filter(employee_id=request.user.employee_id)
      else:
         data = model.objects.all().order_by('-start_date')
      paginator = Paginator(data, 5)  # Show 10 items per page
@@ -724,9 +724,9 @@ def timesheet_manager( request ):
                     }
                 except Exception as e:
                     # Handle the exception here
-                    print(f"An error occurred: {str(e)}")
+                    
                     response_data = {'error': str(e)}
-                print("data_list", data_list)
+                
                 
                 return JsonResponse(response_data, safe=False)
             else:
