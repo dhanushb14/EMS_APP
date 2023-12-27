@@ -42,22 +42,22 @@
     <div class="row mx-auto mt-2" style="background-color: #ecd5ef; min-height: 7%">
       <form method="get">
         <div class="row">
-          <div class="col-auto my-2">
+          <div class="col-lg-auto col-md-6 my-2">
             {% render_field filter_queryset.form.employee_name|attr:"class:form-control name"|attr:"placeholder:Name"%}
           </div>
-          <div class="col-auto my-2">
+          <div class="col-lg-auto col-md-6 my-2">
             <div class="input-group">
               <span class="input-group-text">Start Date</span>
               {% render_field filter_queryset.form.start_date|add_class:"form-control start_date"|attr:"type:date"%}
             </div>
           </div>
-          <div class="col-auto my-2">
+          <div class="col-lg-auto col-md-6 my-2">
             <div class="input-group">
               <span class="input-group-text">End Date</span>
               {% render_field filter_queryset.form.end_date|add_class:"form-control end_date"|attr:"type:date"%}
             </div>
           </div>
-          <div class="col-auto my-2">
+          <div class="col-lg-auto col-md-6 my-2">
             <div class="input-group">
               <span class="input-group-text" id="basic-addon1">Status</span>
               {{filter_queryset.form.status|add_class:"form-control status"}} 
