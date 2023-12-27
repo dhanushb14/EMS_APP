@@ -52,73 +52,75 @@
     </div>
   </div>
   <div class="row mt-5 mx-auto">
-    <table class="table table-responsive table-bordered">
-      <thead>
-        <tr class="table-secondary fw-light">
-          <th class="fw-medium text-center">Project Name</th>
-          <th class="fw-medium text-center">Employee Name</th>
-          <th class="fw-medium text-center">Start Date</th>
-          <th class="fw-medium text-center">End Date</th>
-          <th class="fw-medium text-center">ST</th>
-          <th class="fw-medium text-center">OT</th>
-          <th class="fw-medium text-center">Status</th>
-          <th class="fw-medium text-center">Comment</th>
-          <th class="fw-medium text-center"></th>
-        </tr>
-      </thead>
-      {% for position in data|slice:":5" %}
-      <tr>
-        <td id="project_name" class="text-center">{{ position.project_name }}</td>
-        <td id="username" class="text-center">{{ position.username }}</td>
-        <td id='start_date' class="text-center">{{ position.start_date }}</td>
-        <td id='end_date' class="text-center">{{ position.end_date }}</td>
-        <td id='St' class="text-center">{{ position.St }}</td>
-        <td id='ot' class="text-center">{{ position.ot }}</td>
-        {% if request.user.role != "scrummaster" %}
-          {% if position.status == "Approved" %}
-            <td id="status" class="text-center">Approved</td>
-          {% elif position.status == "Rejected" %}
-            <td id="status" class="text-center">Rejected</td>
-          {% elif position.status == "uncheck" %}
-            <td id="status" class="text-center">uncheck</td>
-          {% else %}
-            <td id="status" class="text-center">
-              <select name="status" style="background-color: transparent; border: none;">
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-                <option value="uncheck">Uncheck</option>
-              </select>
-            </td>
-          {% endif %}
-        {% else %}
-          <td id="status" class="text-center">{% if position.status%}{{ position.status }} {% else %}Pending{% endif %}</td>
-          
-        {% endif %} 
-        <td>
-          <div class="form-group">
-            <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea>
-          </div>
-        </td>
-        <td class="text-center">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr class="table-secondary fw-light">
+            <th class="fw-medium text-center">Project Name</th>
+            <th class="fw-medium text-center">Employee Name</th>
+            <th class="fw-medium text-center">Start Date</th>
+            <th class="fw-medium text-center">End Date</th>
+            <th class="fw-medium text-center">ST</th>
+            <th class="fw-medium text-center">OT</th>
+            <th class="fw-medium text-center">Status</th>
+            <th class="fw-medium text-center">Comment</th>
+            <th class="fw-medium text-center"></th>
+          </tr>
+        </thead>
+        {% for position in data|slice:":5" %}
+        <tr>
+          <td id="project_name" class="text-center">{{ position.project_name }}</td>
+          <td id="username" class="text-center">{{ position.username }}</td>
+          <td id='start_date' class="text-center">{{ position.start_date }}</td>
+          <td id='end_date' class="text-center">{{ position.end_date }}</td>
+          <td id='St' class="text-center">{{ position.St }}</td>
+          <td id='ot' class="text-center">{{ position.ot }}</td>
           {% if request.user.role != "scrummaster" %}
-          
-          
-          {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
-            <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn"></button>
-            <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="display:none; background-color: #4981b2;" ></button>
+            {% if position.status == "Approved" %}
+              <td id="status" class="text-center">Approved</td>
+            {% elif position.status == "Rejected" %}
+              <td id="status" class="text-center">Rejected</td>
+            {% elif position.status == "uncheck" %}
+              <td id="status" class="text-center">uncheck</td>
+            {% else %}
+              <td id="status" class="text-center">
+                <select name="status" style="background-color: transparent; border: none;">
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                  <option value="uncheck">Uncheck</option>
+                </select>
+              </td>
+            {% endif %}
           {% else %}
-          <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="background-color: #4981b2;"></button>
-          <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display:none;"></button> 
-          {% endif %}
-          {% endif %}
-          <button id = "visibility" class="btn btn-secondary btn-sm edit-data" type="button"  data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-        </td>
-      </tr>
-      {% endfor %}
-      
-    </table>
+            <td id="status" class="text-center">{% if position.status%}{{ position.status }} {% else %}Pending{% endif %}</td>
+            
+          {% endif %} 
+          <td>
+            <div class="form-group">
+              <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea>
+            </div>
+          </td>
+          <td class="text-center">
+            {% if request.user.role != "scrummaster" %}
+            
+            
+            {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
+              <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn"></button>
+              <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="display:none; background-color: #4981b2;" ></button>
+            {% else %}
+            <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="background-color: #4981b2;"></button>
+            <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display:none;"></button> 
+            {% endif %}
+            {% endif %}
+            <button id = "visibility" class="btn btn-secondary btn-sm edit-data mt-lg-0 mt-2" type="button"  data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+        
+      </table>
+    </div>
   </div>
   <div class="row">
     <!-- <div class="col-auto mx-auto d-flex justify-content-center align-items-center" id="pagination">
