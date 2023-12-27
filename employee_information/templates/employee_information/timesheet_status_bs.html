@@ -45,48 +45,50 @@
     </div>
   </div>
   <div class="row mt-5 mx-auto">
-    <table class="table table-responsive table-bordered">
-      <thead>
-        <tr class="table-secondary fw-light">
-          <th class="fw-medium text-center">Project Name</th>
-          <th class="fw-medium text-center">Employee Name</th>
-          <th class="fw-medium text-center">Start Date</th>
-          <th class="fw-medium text-center">End Date</th>
-          <th class="fw-medium text-center">ST</th>
-          <th class="fw-medium text-center">OT</th>
-          <th class="fw-medium text-center">Status</th>
-          <th class="fw-medium text-center">Comment</th>
-          <th class="fw-medium text-center">Approved By</th>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr class="table-secondary fw-light">
+            <th class="fw-medium text-center">Project Name</th>
+            <th class="fw-medium text-center">Employee Name</th>
+            <th class="fw-medium text-center">Start Date</th>
+            <th class="fw-medium text-center">End Date</th>
+            <th class="fw-medium text-center">ST</th>
+            <th class="fw-medium text-center">OT</th>
+            <th class="fw-medium text-center">Status</th>
+            <th class="fw-medium text-center">Comment</th>
+            <th class="fw-medium text-center">Approved By</th>
+          </tr>
+        </thead>
+        {% for position in data_result|slice:":5" %}
+        <tr>
+          <td class="text-center">{{ position.project_name }}</td>
+          <td class="text-center">{{ position.username }}</td>
+          <td class="text-center">{{ position.start_date }}</td>
+          <td class="text-center">{{ position.end_date }}</td>
+          <td class="text-center">{{ position.St }}</td>
+          <td class="text-center">{{ position.ot }}</td>
+          {% if position.status and position.status != " " %}
+          <td class="text-center">{{ position.status }}</td>
+          {% else %}
+          <td class="text-center">Pending</td>
+          {% endif %} 
+          <td class="text-center">
+            <!-- <div class="form-group"> -->
+              <!-- <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea> -->
+            <!-- </div> -->
+            {{ position.comments }}
+          </td>
+          {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
+          <td class="text-center">Manager</td>
+          {% else %}
+          <td class="text-center"></td>
+          {% endif %} 
         </tr>
-      </thead>
-      {% for position in data_result|slice:":5" %}
-      <tr>
-        <td class="text-center">{{ position.project_name }}</td>
-        <td class="text-center">{{ position.username }}</td>
-        <td class="text-center">{{ position.start_date }}</td>
-        <td class="text-center">{{ position.end_date }}</td>
-        <td class="text-center">{{ position.St }}</td>
-        <td class="text-center">{{ position.ot }}</td>
-        {% if position.status and position.status != " " %}
-        <td class="text-center">{{ position.status }}</td>
-        {% else %}
-        <td class="text-center">Pending</td>
-        {% endif %} 
-        <td class="text-center">
-          <!-- <div class="form-group"> -->
-            <!-- <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea> -->
-          <!-- </div> -->
-          {{ position.comments }}
-        </td>
-        {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
-        <td class="text-center">Manager</td>
-        {% else %}
-        <td class="text-center"></td>
-        {% endif %} 
-      </tr>
-      {% endfor %}
-      
-    </table>
+        {% endfor %}
+        
+      </table>
+    </div>
   </div>
   <div class="row">
     <!-- <div class="col-auto mx-auto" id="pagination" style="text-align: right;">

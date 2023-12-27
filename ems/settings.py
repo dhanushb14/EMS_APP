@@ -51,6 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -59,8 +60,9 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
-SESSION_COOKIE_AGE = 900
-SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_SECONDS = 1800 
+
+SESSION_TIMEOUT_REDIRECT = 'User:login'
 
 ROOT_URLCONF = 'ems.urls'
 

@@ -37,7 +37,7 @@
           <div class="text-center my-4">
             {% csrf_token %}
             <input class="btn btn-primary me-5" 
-            style="background-color: #4981b2" type="submit" value="Submit" onclick="message()" />
+            style="background-color: #4981b2" type="submit" value="Submit" onsubmit="message()" />
             <a
               href="{% url 'leave_detail'%}"
               class="btn btn-danger ms-5"

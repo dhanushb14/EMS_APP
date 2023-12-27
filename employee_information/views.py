@@ -1027,7 +1027,7 @@ def leave_request_manager(request):
         all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).order_by('-start_date')
         filter_queryset = FilterForm(request.GET,queryset=all_leave_requests)
         all_leave_requests = filter_queryset.qs
-    paginator = Paginator(all_leave_requests,2)
+    paginator = Paginator(all_leave_requests,5)
     page = request.GET.get('page')
     paginated_results = paginator.get_page(page)
     return render(request, 'employee_information/leave_bs.html', {'filter_queryset':filter_queryset,'paginated_results':paginated_results})
@@ -1096,7 +1096,7 @@ def leave_request_manager_model(request):
 
 def user_leave_request(request):
     leave_requests = LeaveRequest.objects.filter(employee=request.user)
-    paginator = Paginator(leave_requests,1)
+    paginator = Paginator(leave_requests,4)
     page = request.GET.get('page')
     paginated_results = paginator.get_page(page)
     employee = Employee.objects.get(employee_name=request.user.employee_name)
