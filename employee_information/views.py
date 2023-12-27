@@ -7,6 +7,7 @@ import datetime
 from dotenv import load_dotenv
 import smtplib
 import os
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from User.models import Employee
@@ -454,14 +455,54 @@ def TimeSheetCreate(request):
     if request.method == 'POST':
 
         data = json.loads(request.body)
-        leave_date = leave.objects.filter(employee_name=request.user.employee_name, start_date__gte=data.get('start_date'), end_date__lte=data.get('end_date'))
+        leave_date = leave.objects.filter(
+            Q(employee_name=request.user.employee_name) & 
+            (Q(start_date__lte=data.get('end_date')) & Q(end_date__gte=data.get('start_date')))
+        )
+        
+
+        leave_date_in = leave.objects.filter(
+            Q(employee_name=request.user.employee_name, status = 'Approved') &
+            (Q(start_date__lte=data.get('end_date')) & Q(end_date__gte=data.get('start_date')))
+        )
+
+        print('here')
+        from datetime import datetime, timedelta 
+        current_date9 = datetime.now()
+        current_date9 = current_date9.date()
+        start_of_week9 = current_date9 - timedelta(days=current_date9.weekday())
+        end_of_week9 = start_of_week9 + timedelta(days=6)
+        leave_dates_this_week = []
+        
+        
+        for leave_request in leave_date_in:
+            leave_dates_this_week.append({
+                "start_date": max(leave_request.start_date, start_of_week9),
+                "end_date": min(leave_request.end_date, end_of_week9)
+            })
+        leave_days_of_week = []
+
+        # Iterate through the leave_dates_this_week list and add the corresponding day of the week to the list
+        for leave_date9 in leave_dates_this_week:
+            current_date9 = leave_date9['start_date']
+            while current_date9 <= leave_date9['end_date']:
+                day_of_week9 = current_date9.strftime('%A')
+                if day_of_week9 not in leave_days_of_week:
+                    leave_days_of_week.append(day_of_week9)
+                current_date9 += timedelta(days=1)
+        leave_days_of_week = [day.lower() for day in leave_days_of_week]
+        # Now leave_days_of_week contains the unique days of the week for which leave has been taken
+        print('leave_dates_this_week_list', leave_dates_this_week)
+        print('day', leave_days_of_week)
+        
+        
 
         data["username"] = request.user.employee_name
 
        # if data["method_1"] != "first_fetch":  # Loading the date into db
         print("storing undo", data)
         if len(data)>7:
-            print("first if")
+            
             from datetime import datetime
             start_date = data.get('start_date')
             end_date = data.get('end_date')
@@ -508,9 +549,9 @@ def TimeSheetCreate(request):
         else:    # Fetching the data with start and end date
             start_date = data.get('start_date')
             end_date = data.get('end_date')
-            print("asdf44refa", start_date, end_date)
+            
             username = request.user.employee_name
-            print("date change")
+            
             from datetime import datetime
 
             # Convert start_date and end_date to datetime objects
@@ -521,9 +562,9 @@ def TimeSheetCreate(request):
             # pdb.set_trace()
             try:
             # Filter data based on start_date and end_date
-                print(start_date, username, end_date)
+                
                 data = model.objects.filter(start_date=start_date, username=username )
-                print("1", data)
+                
                 
                 
                 data = {
@@ -555,13 +596,16 @@ def TimeSheetCreate(request):
 
                 }
                 if leave_date:
-                    print("in leave_date")
+                    
                     leave_date_list = list(leave_date.values())
                     data["leave_date"] = leave_date_list
                     data["leave_start_date"] = leave_date[0].start_date
                     data["leave_end_date"] = leave_date[0].end_date
                     data["leave_status"] = leave_date[0].status
-                print("data",data)
+                    data["leave_date_days"] = leave_days_of_week
+                
+
+                
             except Exception:
                 try:
                     from datetime import datetime, timedelta
@@ -572,29 +616,41 @@ def TimeSheetCreate(request):
 
                     # Calculate the most recent past Monday
                     start_of_week = current_date - timedelta(days=current_date.weekday())
-                    print('454', start_of_week.date(), start_date)
+                    
                     if start_date == start_of_week.date() :
-                        print("in start_date") 
+                         
                         
                         leave_date_list = list(leave_date.values())
+                        
+                        print('here1', data)
+                        
+
+                        ###############
+                       
+                            ####################
+
                         data = {
+                            #  "leave_start_date": leave_start_date,
                             "leave_start_date": leave_date[0].start_date,
                             "leave_end_date": leave_date[0].end_date,
+                            # "leave_end_date": leave_end_date,
                             "leave_status": leave_date[0].status,
                             "leave_date" : leave_date_list,
+                            "leave_date_days": leave_days_of_week,
                         }
+                        print('leave data', data)
                     else:
-                        print("inside ifffffffffffffffffffffffffffffffff")
+                        
                         if data[0]:
-                            print("daaaaaaaaaaaaaaa", data)
+                            
                             pass
                         else:
-                            print("eeeeeeeeeeeeeeeeeeeellllllllllse")
+                            
                             data = None
                 except:
-                    print("failed with leave date")
+                    
                     data = None 
-                print("111111111111111111111111111111111111111111111111111")
+                
                 # For testing
             # data =            {
             #     "project_name": "DHL",
@@ -604,16 +660,15 @@ def TimeSheetCreate(request):
             #     "Approved_By": "",
 
             # }
-            print("in")
-            print(data)
+            print('data', data)
             return JsonResponse(data, safe=False)
     if request.method == 'GET':
         #print('IN')
         return render(request, 'employee_information/timesheet_create_bs.html', context)
     if leave_date:
         context["leave_date"] = leave_date
-        print("leave_date", leave_date)
-    print("final context", context)
+        
+    
     return render(request, 'employee_information/timesheet_create_bs.html', context)
 
 
