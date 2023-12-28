@@ -1562,11 +1562,76 @@ if (data && data.leave_date && data["leave_date"][0]) {
                 }
     else{
       console.log('here5else')
+      function calculateTotalHour() {
+  console.log("inside calculation hours script")
+    var total = 0;
+    var st = 0;
+    var ot = 0;
+    var th_mon = 0;
+    var th_tue = 0;
+    var th_wed = 0;
+    var th_thurs = 0;
+    var th_fri = 0;
+    var th_sat = 0;
+    var th_sun = 0;
+    
+    $('input[class$="_value"], input[class^="ovt_"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        total += value;
+    });
+    $('input[class$="_value"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        st += value;
+    });
+    $('input[id^="ovt_"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        ot += value;
+    });
+    $('input[class$="monday_value"], input[class^="ovt_monday"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        th_mon += value;
+    });
+    $('input[class$="tuesday_value"], input[class^="ovt_tuesday"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        th_tue += value;
+    });
+    $('input[class$="wednesday_value"], input[class^="ovt_wednesday"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        th_wed += value;
+    });
+    $('input[class$="thursday_value"], input[class^="ovt_thursday"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        th_thurs += value;
+    });
+    $('input[class$="friday_value"], input[class^="ovt_friday"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        th_fri += value;
+    });
+    $('input[class$="saturday_value"], input[class^="ovt_saturday"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        th_sat += value;
+    });
+    $('input[class$="sunday_value"], input[class^="ovt_sunday"]').each(function() {
+        var value = parseFloat($(this).val()) || 0;
+        th_sun += value;
+    });
+
+    $('#St').val(st);
+    $('#ot').val(ot);
+    $('#total_hour').val(total);
+    $('#th_monday').val(th_mon);
+    $('#th_tuesday').val(th_tue);
+    $('#th_wednesday').val(th_wed);
+    $('#th_thursday').val(th_thurs);
+    $('#th_friday').val(th_fri);
+    $('#th_saturday').val(th_sat);
+    $('#th_sunday').val(th_sun);
+}
       messageBox1.style.display = "none"; // Hide the message box
                       document.getElementById("submitBtn").style.display = "block";
                       document.getElementById("discardBtn").style.display = "block";
                       document.getElementById("saveBtn").style.display = "block";
-
+                      calculateTotalHour();
                      // Get the input fields
 var inputFields = document.querySelectorAll('input[type="text"]');
 
