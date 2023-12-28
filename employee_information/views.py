@@ -978,18 +978,18 @@ def view_timesheet(request):
 
 def leave_request_manager(request):
     if request.method == 'POST':
-        print('in')
+        # print('in')
         # status = request.POST.get('status')
         # review_comments = request.POST.get('comments')
         # employee_id = request.POST.get('employee')  # Assuming 'employee_id' is the correct name
 
         data = json.loads(request.body)
-        print('data', data)
+        # print('data', data)
         employee_id = data.get('employee_id')
         id = data.get('id')
         status = data.get('status')
         comments = data['comments']
-        print("comments", comments, employee_id, id, status)
+        # print("comments", comments, employee_id, id, status)
         try:
             # Retrieve the LeaveRequest based on the associated Employee
             # leave_request = LeaveRequest.objects.get(employee__id=employee_id)
@@ -999,20 +999,20 @@ def leave_request_manager(request):
             # print(request.POST)
             LeaveRequest.objects.filter(id=id).update(
                 status=status, comments=comments)
-            print("success")
+            # print("success")
             data_result = {
                 'message': 'success',
                 'status': status,
                 'comments': comments,
                 'employee_id': employee_id,
             }
-            print("all success")
+            # print("all success")
             return JsonResponse(data_result, safe=False)
 
             # messages.success(request, 'Leave request updated successfully.')
         except LeaveRequest.DoesNotExist:
             data_result = 'failed'
-            print("failed")
+            # print("failed")
             return JsonResponse(data_result, safe=False)
 
         # Redirect to the same page or another page after processing the form
@@ -1121,7 +1121,7 @@ def create_leave_request(request):
             leave_request.employee = request.user
             leave_request.save()
             form.save()
-            print("Form submitted successfully")
+            # print("Form submitted successfully")
             return redirect('leave_detail')
         else:
             print("Form is invalid:", form.errors)
@@ -1181,7 +1181,7 @@ def send_password(request):
         employee_id = employee.employee_id
         employee_name = employee.employee_name
         password = employee.password
-        print(employee,employee_id,employee_name,password)
+        # print(employee,employee_id,employee_name,password)
         # decrypted_password =  decrypt_password(password)
         # print(decrypted_password)
         send_email(employee_email, employee_name, password, employee_id)

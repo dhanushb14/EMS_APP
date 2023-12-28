@@ -57,12 +57,12 @@ def user_login(request):
     if request.method == 'POST':
         employee_id = request.POST.get('employee_id')
         employee_password = request.POST.get('password')
-        print('Credentials entered by user:', employee_id, employee_password)
+        # print('Credentials entered by user:', employee_id, employee_password)
 
         try:
             get_user = Employee.objects.get(employee_id=employee_id)
             stored_password = get_user.password
-            print('Password stored in DB:', stored_password)
+            # print('Password stored in DB:', stored_password)
 
             # decrypted_password = decrypt_password(
             #     stored_password)
@@ -74,17 +74,17 @@ def user_login(request):
                 wrong_credentials = False
                 return redirect('/')
             else:
-                print('Incorrect password')
+                # print('Incorrect password')
                 wrong_credentials = True
         except Employee.DoesNotExist:
             wrong_credentials = True
-            print('User not found')
+            # print('User not found')
         except Exception as e:
             print(f'Error during login: {e}')
     else:
         print('Not a POST request')
 
-    print('Redirecting to the login template')
+    # print('Redirecting to the login template')
     return render(request, 'employee_information/login.html',{'wrong_credentials': wrong_credentials})
 
 
