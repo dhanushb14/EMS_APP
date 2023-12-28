@@ -389,14 +389,26 @@ def time_sheet_status(request):
     page_obj = paginator.get_page(page_number)
     if request.method == 'POST':
         data = json.loads(request.body)
-        start_date = data.get('start_date')
-        end_date = data.get('end_date')
+        print('2', data)
+        if data["start_date"]:
+            start_date = data.get('start_date')
+        else:
+            start_date = None
+        if data['end_date']:
+            end_date = data.get('end_date')
+        else:
+            end_date = None
         current_user = request.user.employee_name
 
         # Convert start_date and end_date to datetime objects
-
-        data = model.objects.filter(start_date__range=(
-            start_date, end_date), end_date__range=(start_date, end_date))
+        
+        if start_date and end_date:
+            data = model.objects.filter(start_date__range=(
+                start_date, end_date), end_date__range=(start_date, end_date))
+        elif start_date:
+            data = model.objects.filter(start_date__gte=start_date)
+        else:
+            data = model.objects.filter( end_date__lte=end_date)
 
         data_result = []
         # print(data.status)
@@ -411,7 +423,9 @@ def time_sheet_status(request):
                     "St": data.St,
                     "ot": data.ot,
                     "status": data.status,
+                    "comments": data.comments
                 }
+                print(data_dict)
                 data_result.append(data_dict)
                 paginator = Paginator(data_result, 5)
                 page_number = request.GET.get('page')
@@ -851,9 +865,21 @@ def download_list_data(request):
                 data1 = model.objects.filter(username=current_user).order_by('-start_date')
                 print('data1', data1)
             else:
-                start_date = table_data["start_date"]
-                end_date = table_data["end_date"]
-                data1 = model.objects.filter(start_date__range=(start_date, end_date), end_date__range=(start_date, end_date), username=current_user) 
+                if table_data["start_date"]:
+                    start_date = table_data["start_date"]
+                else:
+                    start_date = None
+                if table_data["end_date"]:
+                    end_date = table_data["end_date"]
+                else:
+                    end_date = None
+
+                if start_date and end_date:
+                    data1 = model.objects.filter(start_date__range=(start_date, end_date), end_date__range=(start_date, end_date), username=current_user) 
+                elif start_date:
+                    data1 = model.objects.filter(start_date__gte=start_date, username=current_user) 
+                else:
+                    data1 = model.objects.filter(end_date__lte=end_date, username=current_user)
                 print('data1', data1)
 
 
