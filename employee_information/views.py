@@ -468,11 +468,10 @@ def TimeSheetCreate(request):
 
         print('here')
         from datetime import datetime, timedelta 
-        current_date9 = datetime.now()
-        current_date9 = current_date9.date()
-        start_of_week9 = current_date9 - timedelta(days=current_date9.weekday())
-        end_of_week9 = start_of_week9 + timedelta(days=6)
+        start_of_week9 = datetime.strptime(data.get('start_date'), "%Y-%m-%d").date()
+        end_of_week9 = datetime.strptime(data.get('end_date'), "%Y-%m-%d").date()
         leave_dates_this_week = []
+        print(start_of_week9, end_of_week9)
         
         
         for leave_request in leave_date_in:
@@ -603,6 +602,7 @@ def TimeSheetCreate(request):
                     data["leave_end_date"] = leave_date[0].end_date
                     data["leave_status"] = leave_date[0].status
                     data["leave_date_days"] = leave_days_of_week
+                    print('if condition')
                 
 
                 

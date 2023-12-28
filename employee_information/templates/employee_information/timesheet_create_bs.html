@@ -277,8 +277,8 @@ input[type="text"]:not(#project_name):not(#task) {
         })
         .then(response => response.json())
         .then(data => {
-          console.log("first script")
-          if (!data) {
+          console.log("first script", data)
+          if (!data || !data.monday_value) {
             console.log("first script reload")
             location.reload();}
             
@@ -381,7 +381,52 @@ input[type="text"]:not(#project_name):not(#task) {
                         taskNameRow.parentNode.insertBefore(newRow, taskNameRow);
                     }console.log("dont")}
                 
+                // change date
+                console.log('change date', data)
+                // Removing the grey fields
+                var days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
                 
+                for(let i = 0; i < days.length; i++) {
+
+                  var inputElements = document.querySelectorAll('.'+days[i]+'_value');
+
+                  inputElements.forEach(inputElement => {
+                      let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
+                      if (color == 'rgb(128, 128, 128)') {
+                        
+                          inputElement.style.backgroundColor = 'transparent';
+                          inputElement.ariaPlaceholder = '0';
+                          inputElement.readOnly = false;
+                      }
+                  });
+                  var inputElements = document.querySelectorAll('.ovt_'+days[i]);
+
+                  inputElements.forEach(inputElement => {
+                      let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
+                      if (color == 'rgb(128, 128, 128)') {
+                        
+                          inputElement.style.backgroundColor = 'transparent';
+                          inputElement.ariaPlaceholder = '0';
+                          inputElement.readOnly = false;
+                      }
+                  });
+
+                  }
+                  //Adding grey fields for leave
+                  if (data && data.leave_date && data["leave_date"][0]) {
+                    console.log('here4.1')
+                      for( var k = 0; k<data["leave_date_days"].length; k++ ){
+                        console.log('4for')
+                              document.querySelectorAll("."+data["leave_date_days"][k]+"_value").forEach(element => {
+                                element.value = 0
+                                element.setAttribute('readonly', true);
+                                element.style.setProperty("background-color", "grey", "important"); });
+                                
+                                document.getElementById("ovt_"+data["leave_date_days"][k]).value = 0
+                                document.getElementById("ovt_"+data["leave_date_days"][k]).setAttribute('readonly', true)
+                                document.getElementById("ovt_"+data["leave_date_days"][k]).style.setProperty("background-color", "grey", "important");
+                            }
+                          }
                 
                 if (data?.status!="uncheck" ) {
                   console.log('here1')
@@ -442,165 +487,9 @@ input[type="text"]:not(#project_name):not(#task) {
                     document.getElementById("ot").readOnly = false;
                     document.getElementById("total_hour").readOnly = false;
                     }
-                if (!data.leave_date){
-                  console.log("here1.2")
-                  
-                  id5 = ["monday_value", "tuesday_value", "wednesday_value", "thursday_value", "friday_value"]
-                  id6 = ["ovt_monday", "ovt_tuesday", "ovt_wednesday", "ovt_thursday", "ovt_friday"]
-                  for (i=0; i <= id5.length; i++){
-                  var leave_input = document.querySelectorAll('.'+id5[i]);
-                  leave_input.forEach((input) => {
-                        input.style.backgroundColor = "transparent";
-                        input.readOnly = false;
-                    });
-                    var leave_input1 = document.querySelectorAll('.'+id6[i]);
-                  leave_input1.forEach((input) => {
-                        input.style.backgroundColor = "transparent";
-                        input.readOnly = false;
-                    });
-                  }
-                }
-                else {
-                  
-                      // Define an array of IDs of the input fields
-    var dayIds = ['monday_value', 'tuesday_value', 'wednesday_value', 'thursday_value', 'friday_value', 'saturday_value','sunday_value'];
-    let days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    var ovtIds = ['ovt_monday', 'ovt_tuesday', 'ovt_wednesday', 'ovt_thursday', 'ovt_friday', 'ovt_saturday', 'ovt_sunday'];
-    
-    
-    
-    console.log("first")
-    console.log(data)
-    for( var k = 0; k<=data["leave_date"].length; k++ ){
-      
-      
-      
-      
-    if (data["leave_date"][k].status == "Approved") {
-      
-      for (var i = 0; i <= 0; i++) {
-        var startdate = data["leave_date"][k].start_date
-        var enddate = data["leave_date"][k].end_date
-        
-
-        // Get the start date and end date from the table fields
-        var startDateField = document.getElementById('start_date').value;
-        var startDateField = new Date(startDateField);
-        var endDateField = document.getElementById('end_date').value;
-        var endDateField = new Date(endDateField);
-
-        var startdate = new Date(startdate);
-        var enddate = new Date(enddate);
-        
-        
-        
-
-        if (startDateField <= startdate && startDateField <= enddate) {
-          console.log("first1.1")
-          // total_days = startdate - enddate;
-          var total_days = Math.round((enddate - startdate) / (1000 * 60 * 60 * 24));
-          
-          var starting_date = Math.round((startdate - startDateField) / (1000 * 60 * 60 * 24));
-          console.log("starting date", starting_date)
-          
-          for(let i = 0; i < days.length; i++) {
-
-          let inputElements = document.querySelectorAll('.'+days[i]+'_value');
-
-          inputElements.forEach(inputElement => {
-              let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
-              if (color == 'rgb(128, 128, 128)') {
+               
                 
-                  inputElement.style.backgroundColor = 'transparent';
-                  inputElement.ariaPlaceholder = '0';
-                  inputElement.readOnly = false;
-              }
-          });
-          let inputElements4 = document.querySelectorAll('.ovt_'+days[i]);
-          inputElements4.forEach(inputElement => {
-              let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
-              if (color == 'rgb(128, 128, 128)') {
-                
-                  inputElement.style.backgroundColor = 'transparent';
-                  inputElement.ariaPlaceholder = '0';
-                  inputElement.readOnly = false;
-              }
-          });
-          }
 
-
-          if (total_days == 0){
-            console.log("first1.3")
-            
-            
-            var dayId = dayIds[starting_date];
-            var ovtId = ovtIds[starting_date];
-            document.querySelectorAll("."+dayId).forEach(element => {
-              element.value = 0
-              element.setAttribute('readonly', true);
-              element.style.setProperty("background-color", "grey", "important"); });
-              
-              document.getElementById(ovtId).value = 0
-              document.getElementById(ovtId).setAttribute('readonly', true)
-              document.getElementById(ovtId).style.setProperty("background-color", "grey", "important");
-          }
-          else{
-            
-            let days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-            console.log("first1.2")
-            for(let i = 0; i < days.length; i++) {
-
-                let inputElements = document.querySelectorAll('.'+days[i]+'_value');
-                
-                inputElements.forEach(inputElement => {
-                    let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
-                    if (color == 'rgb(128, 128, 128)') {
-                      
-                        inputElement.style.backgroundColor = 'transparent';
-                        inputElement.ariaPlaceholder = '0';
-                        inputElement.readOnly = false;
-                    }
-                });
-                let inputElements4 = document.querySelectorAll('.ovt_'+days[i]);
-                inputElements4.forEach(inputElement => {
-                    let color = window.getComputedStyle(inputElement).getPropertyValue('background-color');
-                    if (color == 'rgb(128, 128, 128)') {
-                      
-                        inputElement.style.backgroundColor = 'transparent';
-                        inputElement.ariaPlaceholder = '0';
-                        inputElement.readOnly = false;
-                    }
-                });
-            }
-            for (var i = starting_date; total_days>= 0; i++){
-              
-              
-              var dayId = dayIds[i];
-              var ovtId = ovtIds[i];
-              
-              
-              document.querySelectorAll("."+dayId).forEach(element => {
-              element.value = 0
-              element.setAttribute('readonly', true);
-              element.style.setProperty("background-color", "grey", "important"); });
-
-            
-              document.getElementById(ovtId).value = 0
-              document.getElementById(ovtId).setAttribute('readonly', true)
-              document.getElementById(ovtId).style.setProperty("background-color", "grey", "important");
-              total_days--;
-            }
-        }
-        }
-        else{
-          
-        }
-
-
-
-        
-      }
-        
       if (data?.project_name && data?.status!="uncheck") {
                     messageBox1.style.display = "block"; // Show the message box
                     // Removing buttons
@@ -658,8 +547,8 @@ input[type="text"]:not(#project_name):not(#task) {
                     document.getElementById("total_hour").readOnly = false;
     }
        
-    }}
-                }
+  
+                
                 if (data.status!="uncheck") {
                   console.log("first1.2")
                     messageBox1.style.display = "block"; // Show the message box
