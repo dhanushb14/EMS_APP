@@ -414,7 +414,7 @@ input[type="text"]:not(#project_name):not(#task) {
                   }
                   //Adding grey fields for leave
                   if (data && data.leave_date && data["leave_date"][0]) {
-                    console.log('here4.1')
+                    console.log('here45.1')
                       for( var k = 0; k<data["leave_date_days"].length; k++ ){
                         console.log('4for')
                               document.querySelectorAll("."+data["leave_date_days"][k]+"_value").forEach(element => {
@@ -1035,7 +1035,7 @@ input[type="text"]:not(#project_name):not(#task) {
 
 
       if (data && data.leave_date && data["leave_date"][0]) {
-        console.log('here4.1')
+        console.log('here42.1')
           for( var k = 0; k<data["leave_date_days"].length; k++ ){
             console.log('4for')
                   document.querySelectorAll("."+data["leave_date_days"][k]+"_value").forEach(element => {
@@ -1511,10 +1511,11 @@ if (savedTableData) {
     console.log('here4')
     console.log(data)
 if (data && data.leave_date && data["leave_date"][0]) {
-  console.log('here4.1')
-    for( var k = 0; k<=data["leave_date"].length; k++ ){
+  console.log('here41.1')
+  console.log(data["leave_date"].length)
+    
       if (data && data.leave_date && data["leave_date"][0]) {
-        console.log('here4.1')
+        console.log('here43.1')
           for( var k = 0; k<data["leave_date_days"].length; k++ ){
             console.log('4for')
                   document.querySelectorAll("."+data["leave_date_days"][k]+"_value").forEach(element => {
@@ -1577,7 +1578,7 @@ inputFields.forEach(function(field) {
         field.readOnly = false;
     }
 });
-    }}}
+    }}
     if (data?.project_name && data?.status!="uncheck") {
                     messageBox1.style.display = "block"; // Show the message box
                     // Removing buttons
