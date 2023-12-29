@@ -745,29 +745,52 @@ def timesheet_manager( request ):
             elif len(data)<=2:
             
                 try:
-                    print("in")
-                    print(data)
-                    print("project_name", data.get('project_name'))
-                    print("selected", data.get('selected'))
+                    from django.db.models import Q
 
-                    if request.user.role == "manager":                       
-                        if data.get('selected') == "project_name":
-                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(project_name=data.get('project_name')).order_by('-start_date')
-                        elif data.get('selected') == "emp_name":
-                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(username=data.get('project_name')).order_by('-start_date')
-                        elif data.get('selected') == "status":
-                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(status=data.get('project_name')).order_by('-start_date')
-                        else:
-                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(start_date=data.get('project_name')).order_by('-start_date')
-                    else :
-                        if data.get('selected') == "project_name":
-                            data_result = model.objects.filter(project_name=data.get('project_name')).order_by('-start_date')
-                        elif data.get('selected') == "emp_name":
-                            data_result = model.objects.filter(username=data.get('project_name')).order_by('-start_date')
-                        elif data.get('selected') == "status":
-                            data_result = model.objects.filter(status=data.get('project_name')).order_by('-start_date')
-                        else:
-                            data_result = model.objects.filter(start_date=data.get('project_name')).order_by('-start_date')
+                    values_list = data.get('project_name')
+
+                    if request.user.role == "manager":      
+                        queryset = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True))
+                    else:
+                        queryset = model.objects.all()
+
+                    if values_list[0] and not values_list[1] and not values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0])
+                    elif not values_list[0] and values_list[1] and not values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(username=values_list[1])
+                    elif not values_list[0] and not values_list[1] and values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                    elif not values_list[0] and not values_list[1] and not values_list[2] and values_list[3]:
+                        queryset = queryset.filter(status=values_list[3])
+                    elif values_list[0] and values_list[1] and not values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], username=values_list[1])
+                    elif values_list[0] and not values_list[1] and values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                    elif values_list[0] and not values_list[1] and not values_list[2] and values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], status=values_list[3])
+                    elif not values_list[0] and values_list[1] and values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                    elif not values_list[0] and values_list[1] and not values_list[2] and values_list[3]:
+                        queryset = queryset.filter(username=values_list[1], status=values_list[3])
+                    elif not values_list[0] and not values_list[1] and values_list[2] and values_list[3]:
+                        queryset = queryset.filter(start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                    elif values_list[0] and values_list[1] and values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                    elif values_list[0] and values_list[1] and not values_list[2] and values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], username=values_list[1], status=values_list[3])
+                    elif values_list[0] and not values_list[1] and values_list[2] and values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                    elif not values_list[0] and values_list[1] and values_list[2] and values_list[3]:
+                        queryset = queryset.filter(username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                    elif values_list[0] and values_list[1] and values_list[2] and values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                    
+                    
+                    
+                    
+
+
+                    data_result = queryset
 
                     print("data_result",data_result)
                     data_list = []

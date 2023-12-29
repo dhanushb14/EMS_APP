@@ -13,22 +13,35 @@
     <h1></h1>
   </div>
   <div class="row mx-auto" style="background-color: #ecd5ef; height: 51%">
-    <div class="col-lg-auto col-md-6 my-2">
-      <select id="filter" name="status" class="form-select fw-medium text-center" style="background-color: #e9ecef;">
-        <option value="project_name">Project Name</option>
-        <option value="emp_name">Employee Name</option>
-        <option value="start_date">Date</option>
-        <option value="status">Status</option>
-      </select>
+    <div class="col-lg-3 col-md-6 my-2">
+      <div class="input-group ">
+        <label class="input-group-text">Project Name</label>
+        <input id="project_name_select" type=text class="form-control" ></input>
+      </div>
     </div>
-    <div class="col-lg-auto col-md-6 my-auto ms-0">
-      <input type="text" id="project_name_filter" class="form-control" />
+      <div class="col-lg-3 col-md-6 my-2">
+        <div class="input-group ">
+          <span class="input-group-text">Emp Name</span>
+          <input id="emp_name_select" type=text class=" form-control"></input>
+        </div>
+      </div>
+    <div class="col-lg-2 col-md-6 my-2">
+      <div class="input-group ">
+        <span class="input-group-text">Start Date</span>
+        <input id="date_select" type=date class=" form-control"></input>
+      </div>
+    </div>
+    <div class="col-lg-2 col-md-6 my-2">
+      <div class="input-group ">
+        <label class="input-group-text">Status</label>
+        <input id="status_select" type=text class="form-control"></input>
+      </div>
     </div>
     <div class="col-auto my-2 ms-2">
       <button
         class="btn text-light"
         style="background-color: #4981b2"
-        id="applyFilterBtn"
+        id="applyFilterBtn" disabled="true"
       >
         <i class="fa-solid fa-magnifying-glass"></i>
       </button>
@@ -40,7 +53,7 @@
       <i class="fa-solid fa-xmark"></i>
     </button>
     </div>
-    <div class="col-auto my-2 ms-auto me-2 ">
+    <div class="col-auto my-2 ms-auto me-1 ">
       
       <button
         class="btn text-light px-3"
@@ -56,7 +69,7 @@
       <table class="table table-bordered">
         <thead>
           <tr class="table-secondary fw-light">
-            <th class="fw-medium text-center">Project Name <i class="fa-solid fa-sort"></i></th>
+            <th class="fw-medium text-center">Project Name <button style="border: none; background-color: transparent;"><i class="fa-solid fa-sort"></i></button></th>
             <th class="fw-medium text-center">Employee Name</th>
             <th class="fw-medium text-center">Start Date</th>
             <th class="fw-medium text-center">End Date</th>
@@ -179,10 +192,31 @@
 <script>
   //download button
   document.getElementById('saveBtn').addEventListener('click', function() {
-    var value = document.getElementById('project_name_filter').value;
-    var projectDropdown = document.getElementById('filter');
-    var project_name = projectDropdown.value;
-    console.log("project_name", value)
+    
+    var project_select = document.getElementById("project_name_select").value
+    var emp_name_select = document.getElementById("emp_name_select").value
+    var start_date_select = document.getElementById("date_select").value
+    var status_select = document.getElementById("status_select").value
+    if (project_select){
+      project_name = "project_name"
+      value = project_select
+    }
+    else if (emp_name_select){
+      project_name = "employee_name"
+      value = emp_name_select
+    }
+    else if (start_date_select){
+      project_name = "start_date"
+      value = start_date_select
+    }
+    else if (status_select){
+      project_name = "status"
+      value = status_select
+    }
+    else{
+      value = null
+    }
+
     if (value){
       var filter = "1";
     }
@@ -224,33 +258,71 @@
 </script>
 <script>
   // Filter start date change, disabling filter button
-  document.getElementById('filter').addEventListener('change', function() {
-    var selectedOption = this.value;
-    var nextInputField = document.getElementById('project_name_filter');
-    if (selectedOption === 'start_date') {
-        nextInputField.type = 'date';
-    } else {
-        nextInputField.type = 'text';
-    }
-});
 
-document.getElementById('project_name_filter').addEventListener('input', function() {
-    var projectName = this.value;
+  function checkInputs() {
+    var projectInput = document.getElementById('project_name_select');
+    var empInput = document.getElementById('emp_name_select');
+    var dateInput = document.getElementById('date_select');
+    var statusInput = document.getElementById('status_select');
     var applyFilterBtn = document.getElementById('applyFilterBtn');
-    if (projectName.trim() !== '') {
-        applyFilterBtn.disabled = false;
-    } else {
+
+    // If any of the input fields is empty, disable the button
+    if (!projectInput.value && !empInput.value && !dateInput.value && !statusInput.value) {
         applyFilterBtn.disabled = true;
+    } else {
+        applyFilterBtn.disabled = false;
     }
-});
+}
+
+document.getElementById('project_name_select').addEventListener('input', checkInputs);
+document.getElementById('emp_name_select').addEventListener('input', checkInputs);
+document.getElementById('date_select').addEventListener('input', checkInputs);
+document.getElementById('status_select').addEventListener('input', checkInputs);
+
   
 </script>
 <script>
   //filter button, submit button
   document.getElementById('applyFilterBtn').addEventListener('click', function() {
-    var value = document.getElementById('project_name_filter').value;
-    var projectDropdown = document.getElementById('filter');
-    var project_name = projectDropdown.value;
+    var project_select = document.getElementById("project_name_select").value;
+    var emp_name_select = document.getElementById("emp_name_select").value;
+    var start_date_select = document.getElementById("date_select").value;
+    var status_select = document.getElementById("status_select").value;
+    var project_name = [];
+    var value = [];
+    if (project_select){
+      project_name.push( "project_name")
+      value.push(project_select)
+    }
+    else{
+      project_name.push( "project_name")
+      value.push("")
+    }
+    if (emp_name_select){
+      project_name.push("employee_name")
+      value.push(emp_name_select)
+    }
+    else{
+      project_name.push( "employee_name")
+      value.push("")
+    }
+    if (start_date_select){
+      project_name.push("start_date")
+      value.push(start_date_select)
+    }
+    else{
+      project_name.push( "start_date")
+      value.push("")
+    }
+    if (status_select){
+      project_name.push("status")
+      value.push(status_select)
+      console.log(status_select)
+    }
+    else{
+      project_name.push( "status")
+      value.push("")
+    }
     var data = {
         "selected": project_name,
         "project_name": value
