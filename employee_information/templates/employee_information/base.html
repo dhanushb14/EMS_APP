@@ -235,7 +235,7 @@
 
       @media (min-width: 577px) {
         .mg-t {
-          margin-top: 6%;
+          margin-top: 7%;
         }
       }
     </style>
@@ -286,6 +286,18 @@
               <span class="nav_name">Home</span>
             </a>
             <!-- end of homepage -->
+            {% if request.user.role == "superadmin" %}
+              <a
+                href="/admin"
+                target="_blank"
+                class="nav_link"
+                title="Admin Panel"
+              >
+                <i class="fa-solid fa-screwdriver-wrench nav_icon"></i>
+                <!-- <i class="fa-solid fa-user-tie nav_icon"></i> -->
+                <span class="nav_name">Admin Panel</span>
+              </a>
+            {% endif %}
             {% if request.user.role == "superadmin" or request.user.role == "manager" %}
             <!-- employee list -->
             <a
@@ -293,7 +305,7 @@
               class="nav_link {% if request.path == '/employees' %}active{% endif %}"
               title="Employee List"
             >
-              <i class="fa-solid fa-user-group nav_icon"></i>
+              <i class="fa-solid fa-address-book nav_icon"></i>
               <span class="nav_name">Employee List</span>
             </a>
             <!-- end of employee list  -->

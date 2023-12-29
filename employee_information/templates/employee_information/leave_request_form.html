@@ -2,15 +2,30 @@
 
 <body class="body_bg">
   <div class="container  mg-t">
-    <h2 class="fw-bold mb-4 ">Leave Management</h2>
-    <div id="alertdiv" class="text-center">
+    <div class="row">
+      <div class="col">
+        <h2 class="fw-bold mb-4 ">Leave Management</h2>
+      </div>
+      <div class="col d-flex flex-column align-items-end">
+        <a
+          href="{% url 'leave_detail' %}"
+          style="background-color: #4981b2"
+          class="btn btn-primary"
+          role="button"
+          >My leave requests</a
+        >
+      </div>
+    </div>
+    <div class="row">
+      <div id="alertdiv" class="text-center">
+    </div>
     </div>
   </div>
   
   <div class="container mt-5" >
   <div class="card">
     <div class="card-body" style="background-color: #e9eaef;">
-      <form method="POST" autocomplete="off">
+      <form method="POST" autocomplete="off" onsubmit="message()">
         <div class="row">
           <div class="col-md-6 mt-4 mx-auto">
             <label class="h5">Request type:</label>
@@ -37,7 +52,7 @@
           <div class="text-center my-4">
             {% csrf_token %}
             <input class="btn btn-primary me-5" 
-            style="background-color: #4981b2" type="submit" value="Submit" onsubmit="message()" />
+            style="background-color: #4981b2" type="submit" value="Submit"/>
             <a
               href="{% url 'leave_detail'%}"
               class="btn btn-danger ms-5"

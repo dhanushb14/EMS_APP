@@ -1154,7 +1154,8 @@ def leave_request_manager(request):
     paginator = Paginator(all_leave_requests,5)
     page = request.GET.get('page')
     paginated_results = paginator.get_page(page)
-    return render(request, 'employee_information/leave_bs.html', {'filter_queryset':filter_queryset,'paginated_results':paginated_results})
+    employee_names = list(set(leave_request.employee_name for leave_request in paginated_results))
+    return render(request, 'employee_information/leave_bs.html', {'filter_queryset':filter_queryset,'paginated_results':paginated_results,'employee_names':employee_names})
 
 def leave_request_manager_model(request):
     if request.method == 'GET':

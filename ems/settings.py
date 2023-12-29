@@ -60,7 +60,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
-SESSION_EXPIRE_SECONDS = 1800 
+SESSION_EXPIRE_SECONDS = 3600
 
 SESSION_TIMEOUT_REDIRECT = 'User:login'
 
