@@ -55,9 +55,9 @@
             <th class="fw-medium text-center">End Date</th>
             <th class="fw-medium text-center">ST</th>
             <th class="fw-medium text-center">OT</th>
-            <th class="fw-medium text-center">Status</th>
             <th class="fw-medium text-center">Comment</th>
-            <th class="fw-medium text-center">Approved By</th>
+            <th class="fw-medium text-center">Status</th>
+            
           </tr>
         </thead>
         {% for position in data_result|slice:":5" %}
@@ -68,22 +68,20 @@
           <td class="text-center">{{ position.end_date }}</td>
           <td class="text-center">{{ position.St }}</td>
           <td class="text-center">{{ position.ot }}</td>
-          {% if position.status and position.status != " " %}
-          <td class="text-center">{{ position.status }}</td>
-          {% else %}
-          <td class="text-center">Pending</td>
-          {% endif %} 
+          
           <td class="text-center">
             <!-- <div class="form-group"> -->
               <!-- <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea> -->
             <!-- </div> -->
             {{ position.comments }}
           </td>
-          {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
-          <td class="text-center">Manager</td>
-          {% else %}
-          <td class="text-center"></td>
-          {% endif %} 
+          <td class="text-center">
+          <button
+            class="btn btn-sm text btn-{% if position.status == 'Approved' %}success{% elif position.status == 'Rejected' %}danger{% elif position.status == 'uncheck' %}warning{% else %}primary{% endif %}"
+          >
+            {{ position.status }}
+          </button>
+        </td> 
         </tr>
         {% endfor %}
         
@@ -274,19 +272,27 @@
                 <td class="text-center">${item.St}</td>
                 <td class="text-center">${item.ot}</td>
                 <td class="text-center">
-                    ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? item.status : 
-                        "Pending"
-                    }
-                </td>
-                <td class="text-center">
                   ${item.comments ? item.comments : 
                         ""
                     }
                 </td>
                 <td class="text-center">
-                  ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? "Manager" : 
-                        "" }
+                    
+                  <button
+                      class="btn btn-sm text btn-${
+                        item.status == 'Approved'
+                          ? 'success'
+                          : item.status == 'Rejected'
+                          ? 'danger'
+                          : item.status == 'uncheck'
+                          ? 'warning'
+                          : 'primary'
+                      }"
+                    >
+                      ${item.status}
+                    </button>
                 </td>
+                
             `;
             tableBody.appendChild(row);
         });

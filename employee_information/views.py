@@ -410,6 +410,11 @@ def time_sheet_status(request):
         else:
             data = model.objects.filter( end_date__lte=end_date)
 
+        
+
+        
+
+
         data_result = []
         # print(data.status)
 
@@ -809,6 +814,7 @@ def timesheet_manager( request ):
                     comments = data['comment']
                     # Update the status and comments for the given emp_id and project_name
                     model.objects.filter(username=emp_id, project_name=project_name).update(status=status, comments=comments)
+                    
                     print(data)
                     return JsonResponse({"message": "Update successful", "data": status}, status=200)
                 else:
@@ -918,6 +924,7 @@ def download_list_data(request):
 
 @login_required
 def view_timesheet(request):
+    from datetime import timedelta
     model = TimeSheet
     print("view_timesheet")
     if request.method == 'GET':
@@ -940,7 +947,7 @@ def view_timesheet(request):
         try:
             date_string_end = data["data-end_date"]
             date_string_end = date_string_end.replace("Sept", "Sep")
-            date_object = datetime.strptime(date_string_start, "%b. %d, %Y")
+            date_object = datetime.strptime(date_string_end, "%b. %d, %Y")
             formatted_date_end = date_object.strftime("%Y-%m-%d")
         except Exception:
             formatted_date_end = data["data-end_date"]
@@ -993,11 +1000,47 @@ def view_timesheet(request):
                     "th_hour_5": data_retrived[0].th_hour[5],
                     "th_hour_6": data_retrived[0].th_hour[6],
 
-                }
-        print("position tasks",position["th_hour_0"])
-        print(position)
-        print(data_retrived[0].th_hour)
-        return render(request, 'employee_information/uni_modal.html', {"position":position})
+                } 
+        try:
+            ## Leave object
+            leave_date_in = LeaveRequest.objects.filter(
+                Q(employee_name=data["id"]) & Q(status="Approved") &
+                (Q(start_date__lte=formatted_date_end) & Q(end_date__gte=formatted_date_start))
+            )
+            
+            if leave_date_in.exists(): 
+                pass
+            else:
+                leave_date_in = None
+
+            leave_dates_this_week = []
+            start_of_week9 = datetime.strptime(formatted_date_start, "%Y-%m-%d").date()
+            end_of_week9 = datetime.strptime(formatted_date_end, "%Y-%m-%d").date()
+            for leave_request in leave_date_in:
+                leave_dates_this_week.append({
+                    "start_date": max(leave_request.start_date, start_of_week9),
+                    "end_date": min(leave_request.end_date, end_of_week9)
+                })
+            leave_days_of_week = []
+            for leave_date9 in leave_dates_this_week:
+                current_date9 = leave_date9['start_date']
+                while current_date9 <= leave_date9['end_date']:
+                    day_of_week9 = current_date9.strftime('%A')
+                    if day_of_week9 not in leave_days_of_week:
+                        leave_days_of_week.append(day_of_week9)
+                    current_date9 += timedelta(days=1)
+            leave_days_of_week = [day.lower() for day in leave_days_of_week]
+            print('leave', leave_date_in, data["id"], formatted_date_start, formatted_date_end, leave_days_of_week)
+            leave = {
+                "day": leave_days_of_week,
+            }
+        except:
+            leave = {
+                "day": ["1"],
+            }
+
+
+        return render(request, 'employee_information/uni_modal.html', {"position":position, 'leave': leave})
         #print(formatted_date)
     if request.method == "POST":
         model= TimeSheet
