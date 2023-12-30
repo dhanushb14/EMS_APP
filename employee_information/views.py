@@ -43,6 +43,7 @@ from django.http import HttpResponse
 from django.http import FileResponse
 from tempfile import NamedTemporaryFile
 
+
 # employees = [
 
 #     {
@@ -866,27 +867,74 @@ def download_list_data(request):
     if request.method == 'POST':
         print('download123')
         # Get the JSON data from the request body
-        table_data = json.loads(request.body)
+        table_data = json.loads(request.body) 
+        data = json.loads(request.body)
         print('table_data', table_data)
         model = TimeSheet
+        model_user = Employee
         if table_data["html"] == "manager":
             print("timesheet manager 1") 
+            ## Empty data
             if table_data["filter"] == "0": 
                 print('inside filter')
-                data1 = model.objects.all().order_by('-start_date')
-                print('manager data', data1)
-            else:
-                model_user= Employee
-                if table_data["selected"] == "project_name":
-                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(project_name=table_data["project_name"]).order_by('-start_date')
-                elif table_data["selected"] == "emp_name":
-                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(username=table_data["project_name"]).order_by('-start_date')
-                elif table_data["selected"] == "status":
-                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(status=table_data["project_name"]).order_by('-start_date')
+                if request.user.role == "manager":      
+                    ## Excluding all the manager data
+                        data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True))
                 else:
-                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(start_date=table_data["project_name"]).order_by('-start_date')
+                    ## All the data for the admin
+                        data1 = model.objects.all().order_by('-start_date')
+                
+                
+            else:
+                ## Based on filters
+                try:
+                    from django.db.models import Q
+                    import pdb
+                    pdb.set_trace()
+                    values_list = data.get('project_name')
+                    if request.user.role == "manager":      
+                    ## Excluding all the manager data
+                        data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True))
+                    else:
+                        ## Including all the data for the admin with filter
+                        data1 = model.objects.all()
 
-                print("data1", data1)   
+                        if values_list[0] and not values_list[1] and not values_list[2] and not values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0])
+                        elif not values_list[0] and values_list[1] and not values_list[2] and not values_list[3]:
+                            data1 = data1.filter(username=values_list[1])
+                        elif not values_list[0] and not values_list[1] and values_list[2] and not values_list[3]:
+                            data1 = data1.filter(start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                        elif not values_list[0] and not values_list[1] and not values_list[2] and values_list[3]:
+                            data1 = data1.filter(status=values_list[3])
+                        elif values_list[0] and values_list[1] and not values_list[2] and not values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], username=values_list[1])
+                        elif values_list[0] and not values_list[1] and values_list[2] and not values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                        elif values_list[0] and not values_list[1] and not values_list[2] and values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], status=values_list[3])
+                        elif not values_list[0] and values_list[1] and values_list[2] and not values_list[3]:
+                            data1 = data1.filter(username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                        elif not values_list[0] and values_list[1] and not values_list[2] and values_list[3]:
+                            data1 = data1.filter(username=values_list[1], status=values_list[3])
+                        elif not values_list[0] and not values_list[1] and values_list[2] and values_list[3]:
+                            data1 = data1.filter(start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                        elif values_list[0] and values_list[1] and values_list[2] and not values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                        elif values_list[0] and values_list[1] and not values_list[2] and values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], username=values_list[1], status=values_list[3])
+                        elif values_list[0] and not values_list[1] and values_list[2] and values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                        elif not values_list[0] and values_list[1] and values_list[2] and values_list[3]:
+                            data1 = data1.filter(username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                        elif values_list[0] and values_list[1] and values_list[2] and values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                except:
+                    print('error passing')
+                   
+
+                    
+                   
         else:
             print("timesheet status 1")
             current_user = request.user.employee_name

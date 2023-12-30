@@ -193,31 +193,47 @@
   //download button
   document.getElementById('saveBtn').addEventListener('click', function() {
     
-    var project_select = document.getElementById("project_name_select").value
-    var emp_name_select = document.getElementById("emp_name_select").value
-    var start_date_select = document.getElementById("date_select").value
-    var status_select = document.getElementById("status_select").value
+    var project_select = document.getElementById("project_name_select").value;
+    var emp_name_select = document.getElementById("emp_name_select").value;
+    var start_date_select = document.getElementById("date_select").value;
+    var status_select = document.getElementById("status_select").value;
+    var project_name = [];
+    var value = [];
     if (project_select){
-      project_name = "project_name"
-      value = project_select
-    }
-    else if (emp_name_select){
-      project_name = "employee_name"
-      value = emp_name_select
-    }
-    else if (start_date_select){
-      project_name = "start_date"
-      value = start_date_select
-    }
-    else if (status_select){
-      project_name = "status"
-      value = status_select
+      project_name.push( "project_name")
+      value.push(project_select)
     }
     else{
-      value = null
+      project_name.push( "project_name")
+      value.push("")
     }
-
-    if (value){
+    if (emp_name_select){
+      project_name.push("employee_name")
+      value.push(emp_name_select)
+    }
+    else{
+      project_name.push( "employee_name")
+      value.push("")
+    }
+    if (start_date_select){
+      project_name.push("start_date")
+      value.push(start_date_select)
+    }
+    else{
+      project_name.push( "start_date")
+      value.push("")
+    }
+    if (status_select){
+      project_name.push("status")
+      value.push(status_select)
+      console.log(status_select)
+    }
+    else{
+      project_name.push( "status")
+      value.push("")
+    }
+    
+    if (project_select || emp_name_select || start_date_select || status_select){
       var filter = "1";
     }
     else{
