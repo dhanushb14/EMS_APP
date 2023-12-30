@@ -889,8 +889,7 @@ def download_list_data(request):
                 ## Based on filters
                 try:
                     from django.db.models import Q
-                    import pdb
-                    pdb.set_trace()
+                    
                     values_list = data.get('project_name')
                     if request.user.role == "manager":      
                     ## Excluding all the manager data
