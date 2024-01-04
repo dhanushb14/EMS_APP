@@ -27,8 +27,10 @@
       crossorigin="anonymous"
     />
     <style>
+      
       .modal-backdrop {
         display: none;
+        
       }
       .body_bg {
         background-color: rgb(247, 246, 251);
@@ -51,6 +53,7 @@
       ::after {
         box-sizing: border-box;
       }
+      
       body {
         position: relative;
         margin: var(--header-height) 0 0 0;
@@ -84,6 +87,7 @@
         cursor: pointer;
       }
       .l-navbar {
+        
         position: fixed;
         top: 0;
         left: -30%;
@@ -96,6 +100,7 @@
         
       }
       .nav {
+        
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -288,7 +293,7 @@
     .dropdown-content a:hover {background-color: var(--first-color);color: #ffffff;}
 
     /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-    .show {display:block;}
+    .show {display:relative;}
     </style>
   </head>
 
@@ -669,9 +674,11 @@
     <script>
       window.start_loader = function () {
         $("body").removeClass("loaded");
+        
       };
       window.end_loader = function () {
         $("body").addClass("loaded");
+        
       };
       window.uni_modal = function ($title = "", $url = "", $size = "") {
         start_loader();
