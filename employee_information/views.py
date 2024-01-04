@@ -41,7 +41,10 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from django.http import HttpResponse
 from django.http import FileResponse
 from tempfile import NamedTemporaryFile
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 # employees = [
 
 #     {
@@ -103,6 +106,7 @@ def home(request):
 
     # Modify the query to filter by the start_date within the current month
     result_list = list(model.objects.filter(username=current_user, start_date__gte=start_of_month, start_date__lte=end_of_month).order_by('-start_date')) + list(LeaveRequest.objects.filter(employee=request.user, start_date__gte=start_of_month, start_date__lte=end_of_month).order_by('-start_date'))
+    pending_lists = list(model.objects.filter(Q(status='Pending') | Q(status=''),start_date__gte=start_of_month, start_date__lte=end_of_month).order_by('-start_date')) + list(LeaveRequest.objects.filter(start_date__gte=start_of_month, start_date__lte=end_of_month,status='Pending').order_by('-start_date'))
     print(result_list)
     paginator = Paginator(data_result, 5)  # Show 10 items per page
 
@@ -135,7 +139,7 @@ def home(request):
         'scrum_master': scrum_master,
         'allManagers': manager,
         'data_result': result_list,
-        
+        'pending_lists': pending_lists,
         
         'total_employee': len(Employee.objects.all()),
     }
@@ -640,6 +644,8 @@ def timesheet_manager( request ):
 
      page_number = request.GET.get('page')
      page_obj = paginator.get_page(page_number)
+     proj_names = list(set(proj_name.project_name for proj_name in page_obj))
+     emp_names = list(set(emp_name.username for emp_name in page_obj))
      if request.method == 'POST':
         
             data = json.loads(request.body)
@@ -743,8 +749,7 @@ def timesheet_manager( request ):
                     return JsonResponse({"message": "Update successful", "data": status}, status=200)
                 else:
                     return JsonResponse({"message": "Invalid request method"}, status=400)
-
-     return render(request, 'employee_information/timesheet_manager_bs.html', {"data":page_obj, "role":request.user.role} )
+     return render(request, 'employee_information/timesheet_manager_bs.html', {"data":page_obj, "role":request.user.role,"proj_names":proj_names,"emp_names":emp_names} )
 
 @login_required
 def timesheet_update_view(request, timesheet_id):

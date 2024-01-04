@@ -24,7 +24,20 @@
     <div class="col-auto my-auto ms-0">
       <input type="text" id="project_name_filter" class="form-control" />
     </div>
-    <div class="col-auto my-2 ms-3">
+    <div class="col-lg-2 col-md-6 my-2">
+      <div class="input-group ">
+        <label class="input-group-text">Status</label>
+        <!-- <input id="status_select" type=text class="form-control"></input> -->
+        <select id="status_select" class="form-select" aria-label="Default select example">
+          <option selected>---------</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Uncheck  ">Uncheck</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-auto my-2 ms-2">
       <button
         class="btn text-light px-3"
         style="background-color: #4981b2"
@@ -52,18 +65,70 @@
     </div>
   </div>
   <div class="row mt-5 mx-auto">
-    <table class="table table-responsive table-bordered">
-      <thead>
-        <tr class="table-secondary fw-light">
-          <th class="fw-medium text-center">Project Name</th>
-          <th class="fw-medium text-center">Employee Name</th>
-          <th class="fw-medium text-center">Start Date</th>
-          <th class="fw-medium text-center">End Date</th>
-          <th class="fw-medium text-center">ST</th>
-          <th class="fw-medium text-center">OT</th>
-          <th class="fw-medium text-center">Status</th>
-          <th class="fw-medium text-center">Comment</th>
-          <th class="fw-medium text-center"></th>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr class="table-secondary fw-light">
+            <th class="fw-medium text-center">Project Name</th>
+            <th class="fw-medium text-center">Employee Name</th>
+            <th class="fw-medium text-center">Start Date</th>
+            <th class="fw-medium text-center">End Date</th>
+            <th class="fw-medium text-center">ST</th>
+            <th class="fw-medium text-center">OT</th>
+            <th class="fw-medium text-center">Status</th>
+            <th class="fw-medium text-center">Comment</th>
+            <th class="fw-medium text-center"></th>
+          </tr>
+        </thead>
+        {% for position in data|slice:":5" %}
+        <tr>
+          <td id="project_name" class="text-center">{{ position.project_name }}</td>
+          <td id="username" class="text-center">{{ position.username }}</td>
+          <td id='start_date' class="text-center">{{ position.start_date }}</td>
+          <td id='end_date' class="text-center">{{ position.end_date }}</td>
+          <td id='St' class="text-center">{{ position.St }}</td>
+          <td id='ot' class="text-center">{{ position.ot }}</td>
+          {% if request.user.role != "scrummaster" %}
+            {% if position.status == "Approved" %}
+              <td id="status" class="text-center">Approved</td>
+            {% elif position.status == "Rejected" %}
+              <td id="status" class="text-center">Rejected</td>
+            {% elif position.status == "uncheck" %}
+              <td id="status" class="text-center">uncheck</td>
+            {% else %}
+              <td id="status" class="text-center">
+                <select name="status" style="background-color: transparent; border: none;">
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                  <option value="uncheck">Uncheck</option>
+                </select>
+              </td>
+            {% endif %}
+          {% else %}
+            <td id="status" class="text-center">{% if position.status%}{{ position.status }} {% else %}Pending{% endif %}</td>
+            
+          {% endif %} 
+          <td>
+            <div class="form-group">
+              <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea>
+            </div>
+          </td>
+          <td class="text-center">
+            {% if request.user.role != "scrummaster" %}
+            
+            
+            {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
+              <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn"></button>
+              <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="display:none; background-color: #4981b2;" ></button>
+            {% else %}
+            <button onclick="submitForm(event)" id="send-btn" type="button" class="btn btn-primary fa-solid fa-paper-plane p-2 btn-sm send-btn" style="background-color: #4981b2;"></button>
+            <button id="undo-btn" type="button" class="btn btn-success fa-solid fa-check p-2 btn-sm undo-btn" style="display:none;"></button> 
+            {% endif %}
+            {% endif %}
+            <button id = "visibility" class="btn btn-secondary btn-sm edit-data mt-lg-0 mt-2" type="button"  data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </td>
         </tr>
       </thead>
       {% for position in data|slice:":5" %}
@@ -121,15 +186,6 @@
     </table>
   </div>
   <div class="row">
-    <!-- <div class="col-auto mx-auto d-flex justify-content-center align-items-center" id="pagination">
-      {% if data.has_previous %}
-          <button onclick="location.href='?page={{ data.previous_page_number }}'"><</button>
-      {% endif %}
-      <span id="pageDisplay">Page {{ data.number }} of {{ data.paginator.num_pages }}</span>
-      {% if data.has_next %}
-          <button onclick="location.href='?page={{ data.next_page_number }}'">></button>
-      {% endif %}
-    </div> -->
     <div class="col">
       <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
@@ -561,5 +617,31 @@ document.getElementById('project_name_filter').addEventListener('input', functio
         
     })
 </script>
-
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script>
+  $(function() {
+    var projNames = [
+      "{% for proj_name in proj_names %}"
+        ,"{{ proj_name }}",
+      "{% endfor %}"
+    ];
+    $("#project_name_select").autocomplete({
+      source: projNames
+    });
+  });
+</script>
+<script>
+  $(function() {
+    var empNames = [
+      "{% for emp_name in emp_names %}"
+        ,"{{ emp_name }}",
+      "{% endfor %}"
+    ];
+    $("#emp_name_select").autocomplete({
+      source: empNames
+    });
+  });
+</script>
 {% endblock pageContent %}

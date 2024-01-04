@@ -6,6 +6,9 @@
   .rejected-row {
     border-left: 5px solid #ff8491;
   }
+  .pending-row {
+    border-left: 5px solid rgb(249, 249, 113);
+  }
   .table-responsive {
     overflow-y: auto;
     max-height: 138.5px; /* Adjust the max-height as per your requirement */
@@ -14,9 +17,30 @@
 <body class="body_bg">
   <div class="container mg-t">
     <div class="row">
+      {% if request.user.role == "superadmin" %}
+      <div class="col-6">
+        <h2 class="fw-bold mb-4">Dashboard</h2>
+      </div>
+      <div class="col-3">
+        <div class="input-group ">
+          <label class="input-group-text">Select Month</label>
+          <input id="report_month" type=month class="form-control" ></input>
+        </div>
+      </div>
+      <div class="col-3">
+        <button
+        class="btn text-light px-3"
+        style="background-color: #4981b2"
+        id="download"
+      >
+        <i class="fa-solid fa-download"></i> 
+      </button>
+      </div>
+      {% else %}
       <div class="col-12">
         <h2 class="fw-bold mb-4">Dashboard</h2>
       </div>
+      {% endif %}
     </div>
   </div>
   <div class="row">
@@ -59,69 +83,128 @@
     <div class="col">
       <div class="card mb-3" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
         <div class="card-body">
-          <p class="h2 text-center">
-            <i class="fa-solid fa-bell me-4" style="color: rgb(28, 35, 119);"></i>Notice
-            Board
-          </p>
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Comments</th>
-              </thead>
-              <tbody>
-                {% if data_result %}
-                  {% for position in data_result %}
-                    {% if position.status == "Rejected" %}
-                      <tr class="rejected-row">
-                        <td>{{position.start_date}}</td>
-                        {% if position.leave_type %}
-                          <td>LeaveRequest</td>
-                        {% else %}
-                          <td>TimeSheet</td>
-                        {% endif %}
-                        <td>Rejected</td>
-                        <td>{{position.comments}}</td>
-                      </tr>
-                    {% endif %}
-                    {% if position.status == "uncheck" %}
-                      <tr class="rejected-row">
-                        <td>{{position.start_date}}</td>
-                        {% if position.leave_type %}
-                          <td>LeaveRequest</td>
-                        {% else %}
-                          <td>TimeSheet</td>
-                        {% endif %}
-                        <td>Uncheck</td>
-                        <td>{{position.comments}}</td>
-                      </tr>
-                    {% endif %}
-                    {% if position.status == "Approved" %}
-                      <tr class="approved-row">
-                        <td>{{position.start_date}}</td>
-                        {% if position.leave_type %}
-                          <td>LeaveRequest</td>
-                        {% else %}
-                          <td>TimeSheet</td>
-                        {% endif %}
-                        <td>Approved</td>
-                        <td>{{position.comments}}</td>
-                      </tr>
-                    {% endif %}
-                  {% endfor %}
-                {% else %}
-                  <tr class="rejected-row">
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                {% endif %}
-                  </tr>
-              </tbody>
-            </table>
+          <div class="row">
+            <div class="col text-center">
+              <a type="button" class="btn position-relative" style="cursor:default;">
+                <i class="fa-solid fa-bell" style="font-size: 30px; color: rgb(28, 35, 119);"></i>
+                <span class="position-absolute top-0 start-10 translate-middle badge rounded-pill bg-danger">
+                  {{pending_lists|length}}
+                  <span class="visually-hidden">pending time sheet approvals</span>
+                </span>
+              </a>
+              <span class="h4 text-uppercase">
+                Notice Board
+              </span>
+            </div>
           </div>
+          <div class="row">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Comments</th>
+                </thead>
+                <tbody>
+                  {% if request.user.role == 'superadmin' %}
+                    {% if pending_lists %}
+                      {% for pending_list in pending_lists %}
+                          <tr class="pending-row">
+                            <td>{{pending_list.start_date}}</td>
+                            {% if pending_list.leave_type %}
+                              <td>LeaveRequest</td>
+                            {% else %}
+                              <td>TimeSheet</td>
+                            {% endif %}
+                            <td>Pending</td>
+                            <td>{{pending_list.comments}}</td>
+                          </tr>
+                      {% endfor %}
+                    {% else %}
+                    <tr class="rejected-row">
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                    </tr>
+                    {% endif %}
+                  {% else %}
+                    {% if data_result %}
+                    {% for position in data_result %}
+                      {% if position.status == "Rejected" %}
+                        <tr class="rejected-row">
+                          <td>{{position.start_date}}</td>
+                          {% if position.leave_type %}
+                            <td>LeaveRequest</td>
+                          {% else %}
+                            <td>TimeSheet</td>
+                          {% endif %}
+                          <td>Rejected</td>
+                          <td>{{position.comments}}</td>
+                        </tr>
+                      {% endif %}
+                      {% if position.status == "uncheck" %}
+                        <tr class="rejected-row">
+                          <td>{{position.start_date}}</td>
+                          {% if position.leave_type %}
+                            <td>LeaveRequest</td>
+                          {% else %}
+                            <td>TimeSheet</td>
+                          {% endif %}
+                          <td>Uncheck</td>
+                          <td>{{position.comments}}</td>
+                        </tr>
+                      {% endif %}
+                      {% if position.status == "Approved" %}
+                        <tr class="approved-row">
+                          <td>{{position.start_date}}</td>
+                          {% if position.leave_type %}
+                            <td>LeaveRequest</td>
+                          {% else %}
+                            <td>TimeSheet</td>
+                          {% endif %}
+                          <td>Approved</td>
+                          <td>{{position.comments}}</td>
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    <tr class="rejected-row">
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                  {% endif %}
+                    </tr>
+                  {% endif %}
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- <div class="row">
+            <div class="col mt-3 text-center">
+              <p class="h5">Pending Time sheet approvals</p>
+              <a type="button" class="btn position-relative mt-3" href="{% url 'timesheet_manager' %}">
+                <i class="fa-solid fa-clock" style="font-size: 50px; color: rgb(28, 35, 119);"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{ tms_pending_list|length }}
+                  <span class="visually-hidden">pending time sheet approvals</span>
+                </span>
+              </a>
+            </div>
+            <div class="col mt-3 text-center">
+              <p class="h5">Pending Leave approvals</p>
+              <a type="button" class="btn position-relative mt-3" href="{% url 'leave_manager' %}">
+                <i class="fa-regular fa-calendar" style="font-size: 50px; color: rgb(28, 35, 119);"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{ lms_pending_list|length }}
+                  <span class="visually-hidden">pending leave approvals</span>
+                </span>
+              </a>
+            </div>
+          </div> -->
         </div>
       </div>
     </div>
