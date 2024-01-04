@@ -1,6 +1,6 @@
 {% extends "employee_information/base.html" %} {% block pageContent %}
 
-<div class="container" style="margin-top: 5%">
+<div class="container mg-t">
   <div class="row">
     <div class="col-12">
       <h2 class="fw-bold mb-4">Time Sheets</h2>
@@ -8,13 +8,13 @@
   </div>
   
   <div class="row mx-auto" style="background-color: #ecd5ef; min-height: 7%">
-    <div class="col-auto my-2">
+    <div class="col-lg-auto col-md-6 my-2">
       <div class="input-group">
         <span class="input-group-text" id="basic-addon1">Start Date</span>
         <input type="date" id="start_date" class="form-control" /> 
       </div>
     </div>
-    <div class="col-auto my-2">
+    <div class="col-lg-auto col-md-6 my-2">
       <div class="input-group">
         <span class="input-group-text" id="basic-addon1">End Date</span>
         <input type="date" id="end_date" class="form-control" />
@@ -22,11 +22,11 @@
     </div>
     <div class="col-auto my-2 mx-2">
       <button
-        class="btn text-light px-3"
+        class="btn text-light"
         style="background-color: #4981b2"
         id="applyFilterBtn"
       >
-        Filter
+        <i class="fa-solid fa-magnifying-glass"></i>
       </button>
       <a href="{% url 'time_sheet_status' %}">
         <button
@@ -34,7 +34,7 @@
             style="background-color: #b24949"
             id="clear"
           >
-          Clear
+          <i class="fa-solid fa-xmark"></i>
       </button>
       </a>
     </div>
@@ -45,48 +45,48 @@
     </div>
   </div>
   <div class="row mt-5 mx-auto">
-    <table class="table table-responsive table-bordered">
-      <thead>
-        <tr class="table-secondary fw-light">
-          <th class="fw-medium text-center">Project Name</th>
-          <th class="fw-medium text-center">Employee Name</th>
-          <th class="fw-medium text-center">Start Date</th>
-          <th class="fw-medium text-center">End Date</th>
-          <th class="fw-medium text-center">ST</th>
-          <th class="fw-medium text-center">OT</th>
-          <th class="fw-medium text-center">Status</th>
-          <th class="fw-medium text-center">Comment</th>
-          <th class="fw-medium text-center">Approved By</th>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr class="table-secondary fw-light">
+            <th class="fw-medium text-center">Project Name</th>
+            <th class="fw-medium text-center">Employee Name</th>
+            <th class="fw-medium text-center">Start Date</th>
+            <th class="fw-medium text-center">End Date</th>
+            <th class="fw-medium text-center">ST</th>
+            <th class="fw-medium text-center">OT</th>
+            <th class="fw-medium text-center">Comment</th>
+            <th class="fw-medium text-center">Status</th>
+            
+          </tr>
+        </thead>
+        {% for position in data_result|slice:":5" %}
+        <tr>
+          <td class="text-center">{{ position.project_name }}</td>
+          <td class="text-center">{{ position.username }}</td>
+          <td class="text-center">{{ position.start_date }}</td>
+          <td class="text-center">{{ position.end_date }}</td>
+          <td class="text-center">{{ position.St }}</td>
+          <td class="text-center">{{ position.ot }}</td>
+          
+          <td class="text-center">
+            <!-- <div class="form-group"> -->
+              <!-- <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea> -->
+            <!-- </div> -->
+            {{ position.comments }}
+          </td>
+          <td class="text-center">
+          <button
+            class="btn btn-sm text btn-{% if position.status == 'Approved' %}success{% elif position.status == 'Rejected' %}danger{% elif position.status == 'uncheck' %}warning{% else %}primary{% endif %}"
+          >
+            {{ position.status }}
+          </button>
+        </td> 
         </tr>
-      </thead>
-      {% for position in data_result|slice:":5" %}
-      <tr>
-        <td class="text-center">{{ position.project_name }}</td>
-        <td class="text-center">{{ position.username }}</td>
-        <td class="text-center">{{ position.start_date }}</td>
-        <td class="text-center">{{ position.end_date }}</td>
-        <td class="text-center">{{ position.St }}</td>
-        <td class="text-center">{{ position.ot }}</td>
-        {% if position.status and position.status != " " %}
-        <td class="text-center">{{ position.status }}</td>
-        {% else %}
-        <td class="text-center">Pending</td>
-        {% endif %} 
-        <td class="text-center">
-          <!-- <div class="form-group"> -->
-            <!-- <textarea id="comment" name="review_comments" rows="2" cols="15" class="form-control">{{ position.comments }}</textarea> -->
-          <!-- </div> -->
-          {{ position.comments }}
-        </td>
-        {% if position.status == "Approved" or position.status == "Rejected" or position.status == "uncheck" %}
-        <td class="text-center">Manager</td>
-        {% else %}
-        <td class="text-center"></td>
-        {% endif %} 
-      </tr>
-      {% endfor %}
-      
-    </table>
+        {% endfor %}
+        
+      </table>
+    </div>
   </div>
   <div class="row">
     <!-- <div class="col-auto mx-auto" id="pagination" style="text-align: right;">
@@ -272,19 +272,27 @@
                 <td class="text-center">${item.St}</td>
                 <td class="text-center">${item.ot}</td>
                 <td class="text-center">
-                    ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? item.status : 
-                        "Pending"
-                    }
-                </td>
-                <td class="text-center">
-                  ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? item.comments : 
+                  ${item.comments ? item.comments : 
                         ""
                     }
                 </td>
                 <td class="text-center">
-                  ${item.status == "Approved" || item.status == "Rejected" || item.status == "Redo" ? "Manager" : 
-                        "" }
+                    
+                  <button
+                      class="btn btn-sm text btn-${
+                        item.status == 'Approved'
+                          ? 'success'
+                          : item.status == 'Rejected'
+                          ? 'danger'
+                          : item.status == 'uncheck'
+                          ? 'warning'
+                          : 'primary'
+                      }"
+                    >
+                      ${item.status}
+                    </button>
                 </td>
+                
             `;
             tableBody.appendChild(row);
         });

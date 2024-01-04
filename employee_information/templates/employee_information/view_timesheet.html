@@ -143,6 +143,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% if request.user.role != "scrummaster" %}
                         {% for task, monday_value, tuesday_value, wednesday_value, thursday_value, friday_value, saturday_value, sunday_value in position.zipped_values %}  
                         <tr style="background-color: #e0e0e0;">
                             
@@ -219,13 +220,86 @@
                         <tr id="message">
                             <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
                         </tr>
+                        {% else %}
+                        {% for task, monday_value, tuesday_value, wednesday_value, thursday_value, friday_value, saturday_value, sunday_value in position.zipped_values %}  
+                        <tr style="background-color: #e0e0e0;">
+                            
+                            <td class="px-2 py-1 text-center">
+                                <input class="task-input" type="text" id="task" name="task" placeholder="Task Name" readonly style="width: 100%" value={{task}} > 
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="monday_value" type="text" id="monday_value" name="monday_value" placeholder="0" readonly  style="width: 50px" value={{monday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="tuesday_value" type="text" id="tuesday_value" name="tuesday_value" placeholder="0" readonly  style="width: 50px" value={{tuesday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="wednesday_value" type="text" id="wednesday_value" name="wednesday_value" placeholder="0" readonly style="width: 50px" value={{wednesday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="thursday_value" type="text" id="thursday_value" name="thursday_value" placeholder="0" readonly style="width: 50px" value={{thursday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="friday_value" type="text" id="friday_value" name="friday_value" placeholder="0" readonly  style="width: 50px" value={{friday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="saturday_value" type="text" id="saturday_value" name="saturday_value" placeholder="0" readonly  style="width: 50px" value={{saturday_value}}>
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input class="sunday_value" type="text" id="sunday_value" name="sunday_value" placeholder="0" readonly  style="width: 50px" value={{sunday_value}}>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr style="background-color: #e0e0e0;">
+                            <td class="px-2 py-1 text-center">
+                                Overtime Hours 
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_monday" name="ovt_monday" placeholder="0" readonly style="width: 50px" value={{position.ovt_monday}} >
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_tuesday" name="ovt_tuesday" placeholder="0" readonly style="width: 50px" value={{position.ovt_tuesday}} >
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_wednesday" name="ovt_wednesday" placeholder="0" readonly style="width: 50px" value={{position.ovt_wednesday}} >
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_thursday" name="ovt_thursday" placeholder="0" readonly style="width: 50px" value={{position.ovt_thursday}} >
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_friday" name="ovt_friday" placeholder="0" readonly style="width: 50px" value={{position.ovt_friday}} >
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_saturday" name="ovt_saturday" placeholder="0" readonly style="width: 50px" value={{position.ovt_saturday}} >
+                            </td>
+                            <td class="px-2 py-1 text-center">
+                                <input type="text" id="ovt_sunday" name="ovt_sunday" placeholder="0" readonly style="width: 50px" value={{position.ovt_sunday}} >
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
+                        </tr>
+                        <tr style="background-color: #e0e0e0;">
+                            <td class="px-2 py-1 text-center" colspan="2">
+                                Standard Time: &nbsp;&nbsp;&nbsp&nbsp;
+                                <input  type="text" id="St1" name="St" placeholder="0"  style="width: 50px;" value={{position.St}} readonly >
+                            </td>
+                            <td class="px-2 py-1 text-center" colspan="2">
+                                Over Time: &nbsp;&nbsp;&nbsp&nbsp;
+                                <input  type="text" id="ot1" name="ot" placeholder="0"  style="width: 50px" value={{position.ot}} readonly>
+                            </td>
+                            <td class="px-2 py-1 text-center" colspan="2">
+                                Total Hours: &nbsp;&nbsp;&nbsp&nbsp;
+                                <input type="text" id="total_hour" name="total_hour" placeholder="0" value={{position.total_hour}} style="width: 50px" readonly>
+                            </td>
+                        </tr>
+                        <tr id="message">
+                            <td colspan="8" class="px-2 py-1 text-center no-border">&nbsp;</td>
+                        </tr>
+                        {% endif %}
                     </tbody>
                 </table>
-            </div>
-            
-            <div id="parent">
-                
-                <button type="submit" id="submitBtn" class="btn btn-success" style="float: right;">Submit</button>
             </div>
             </form>
         </div>

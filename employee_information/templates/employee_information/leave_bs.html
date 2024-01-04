@@ -33,7 +33,7 @@
 </style>
 
 <body class="body_bg">
-  <div class="container mg-t  ">
+  <div class="container mg-t">
     <div class="row">
       <div class="col">
         <h2 class="fw-bold mb-4">Leave Management</h2>
@@ -42,25 +42,31 @@
     <div class="row mx-auto mt-2" style="background-color: #ecd5ef; min-height: 7%">
       <form method="get">
         <div class="row">
-          <div class="col-auto my-2">
+          <div class="col-lg-2 col-md-6 my-2">
             {% render_field filter_queryset.form.employee_name|attr:"class:form-control name"|attr:"placeholder:Name"%}
           </div>
-          <div class="col-auto my-2">
+          <div class="col-lg-2 col-md-6 my-2">
             <div class="input-group">
               <span class="input-group-text">Start Date</span>
               {% render_field filter_queryset.form.start_date|add_class:"form-control start_date"|attr:"type:date"%}
             </div>
           </div>
-          <div class="col-auto my-2">
+          <div class="col-lg-2 col-md-6 my-2">
             <div class="input-group">
               <span class="input-group-text">End Date</span>
               {% render_field filter_queryset.form.end_date|add_class:"form-control end_date"|attr:"type:date"%}
             </div>
           </div>
-          <div class="col-auto my-2">
+          <div class="col-lg-2 col-md-6 my-2">
             <div class="input-group">
               <span class="input-group-text" id="basic-addon1">Status</span>
               {{filter_queryset.form.status|add_class:"form-control status"}} 
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-6 my-2">
+            <div class="input-group">
+              <span class="input-group-text" id="basic-addon1">Type</span>
+              {{filter_queryset.form.leave_type|add_class:"form-control leave_type"}} 
             </div>
           </div>
           <div class="col-auto my-2">
@@ -69,14 +75,14 @@
             style="background-color: #4981b2 !important"
             type="submit"
           >
-            Filter
+          <i class="fa-solid fa-magnifying-glass"></i>
             </button>
             <button
               class="btn text-light ms-1"
               style="background-color: #b24949 !important"
               id="clear"
             >
-            Clear
+            <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
           <div class="col-auto ms-auto ms-xs-1 me-1 my-2">
@@ -91,7 +97,7 @@
     </div>
     <div class="row mt-5">
       <div class="col">
-        <div class="card">
+        <div class="card mb-5">
           <form method="post" action="">
             {% csrf_token %}
             <div class="table-responsive">
@@ -174,7 +180,7 @@
                         style="background-color: #4981b2 !important"><i class="fa-solid fa-paper-plane p-1"></i></button>
                         {% else %}
                         <button class="btn btn-success btn-sm my-auto" style="pointer-events: none;" ><i class="fa-solid fa-check"></i></button>
-                        <button id= "visibility" class="btn btn-secondary btn-sm edit-data my-auto visibility-btn"
+                        <button id= "visibility" class="btn btn-secondary btn-sm edit-data my-auto visibility-btn mt-lg-0 mt-2"
                         type="button"
                         data-toggle="modal"
                         data-target="#myModal"
@@ -457,6 +463,7 @@ function getCookie(name) {
       $('.start_date').val('');
       $('.end_date').val('');
       $('.status').val('');
+      $('.leave_type').val('');
     });
   });
 </script>

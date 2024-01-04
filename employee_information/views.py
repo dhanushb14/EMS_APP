@@ -7,6 +7,7 @@ import datetime
 from dotenv import load_dotenv
 import smtplib
 import os
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from User.models import Employee
@@ -41,10 +42,7 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from django.http import HttpResponse
 from django.http import FileResponse
 from tempfile import NamedTemporaryFile
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
 # employees = [
 
 #     {
@@ -392,14 +390,31 @@ def time_sheet_status(request):
     page_obj = paginator.get_page(page_number)
     if request.method == 'POST':
         data = json.loads(request.body)
-        start_date = data.get('start_date')
-        end_date = data.get('end_date')
+        print('2', data)
+        if data["start_date"]:
+            start_date = data.get('start_date')
+        else:
+            start_date = None
+        if data['end_date']:
+            end_date = data.get('end_date')
+        else:
+            end_date = None
         current_user = request.user.employee_name
 
         # Convert start_date and end_date to datetime objects
+        
+        if start_date and end_date:
+            data = model.objects.filter(start_date__range=(
+                start_date, end_date), end_date__range=(start_date, end_date))
+        elif start_date:
+            data = model.objects.filter(start_date__gte=start_date)
+        else:
+            data = model.objects.filter( end_date__lte=end_date)
 
-        data = model.objects.filter(start_date__range=(
-            start_date, end_date), end_date__range=(start_date, end_date))
+        
+
+        
+
 
         data_result = []
         # print(data.status)
@@ -414,7 +429,9 @@ def time_sheet_status(request):
                     "St": data.St,
                     "ot": data.ot,
                     "status": data.status,
+                    "comments": data.comments
                 }
+                print(data_dict)
                 data_result.append(data_dict)
                 paginator = Paginator(data_result, 5)
                 page_number = request.GET.get('page')
@@ -458,14 +475,53 @@ def TimeSheetCreate(request):
     if request.method == 'POST':
 
         data = json.loads(request.body)
-        leave_date = leave.objects.filter(employee_name=request.user.employee_name, start_date__gte=data.get('start_date'), end_date__lte=data.get('end_date'))
+        leave_date = leave.objects.filter(
+            Q(employee_name=request.user.employee_name) & 
+            (Q(start_date__lte=data.get('end_date')) & Q(end_date__gte=data.get('start_date')))
+        )
+        
+
+        leave_date_in = leave.objects.filter(
+            Q(employee_name=request.user.employee_name, status = 'Approved') &
+            (Q(start_date__lte=data.get('end_date')) & Q(end_date__gte=data.get('start_date')))
+        )
+
+        print('here')
+        from datetime import datetime, timedelta 
+        start_of_week9 = datetime.strptime(data.get('start_date'), "%Y-%m-%d").date()
+        end_of_week9 = datetime.strptime(data.get('end_date'), "%Y-%m-%d").date()
+        leave_dates_this_week = []
+        print(start_of_week9, end_of_week9)
+        
+        
+        for leave_request in leave_date_in:
+            leave_dates_this_week.append({
+                "start_date": max(leave_request.start_date, start_of_week9),
+                "end_date": min(leave_request.end_date, end_of_week9)
+            })
+        leave_days_of_week = []
+
+        # Iterate through the leave_dates_this_week list and add the corresponding day of the week to the list
+        for leave_date9 in leave_dates_this_week:
+            current_date9 = leave_date9['start_date']
+            while current_date9 <= leave_date9['end_date']:
+                day_of_week9 = current_date9.strftime('%A')
+                if day_of_week9 not in leave_days_of_week:
+                    leave_days_of_week.append(day_of_week9)
+                current_date9 += timedelta(days=1)
+        leave_days_of_week = [day.lower() for day in leave_days_of_week]
+        # Now leave_days_of_week contains the unique days of the week for which leave has been taken
+        print('leave_dates_this_week_list', leave_dates_this_week)
+        print('day', leave_days_of_week)
+        
+        
 
         data["username"] = request.user.employee_name
 
        # if data["method_1"] != "first_fetch":  # Loading the date into db
         print("storing undo", data)
         if len(data)>7:
-            print("first if")
+            
             from datetime import datetime
             start_date = data.get('start_date')
             end_date = data.get('end_date')
@@ -512,9 +568,9 @@ def TimeSheetCreate(request):
         else:    # Fetching the data with start and end date
             start_date = data.get('start_date')
             end_date = data.get('end_date')
-            print("asdf44refa", start_date, end_date)
+            
             username = request.user.employee_name
-            print("date change")
+            
             from datetime import datetime
 
             # Convert start_date and end_date to datetime objects
@@ -525,9 +581,9 @@ def TimeSheetCreate(request):
             # pdb.set_trace()
             try:
             # Filter data based on start_date and end_date
-                print(start_date, username, end_date)
+                
                 data = model.objects.filter(start_date=start_date, username=username )
-                print("1", data)
+                
                 
                 
                 data = {
@@ -559,13 +615,17 @@ def TimeSheetCreate(request):
 
                 }
                 if leave_date:
-                    print("in leave_date")
+                    
                     leave_date_list = list(leave_date.values())
                     data["leave_date"] = leave_date_list
                     data["leave_start_date"] = leave_date[0].start_date
                     data["leave_end_date"] = leave_date[0].end_date
                     data["leave_status"] = leave_date[0].status
-                print("data",data)
+                    data["leave_date_days"] = leave_days_of_week
+                    print('if condition')
+                
+
+                
             except Exception:
                 try:
                     from datetime import datetime, timedelta
@@ -576,29 +636,41 @@ def TimeSheetCreate(request):
 
                     # Calculate the most recent past Monday
                     start_of_week = current_date - timedelta(days=current_date.weekday())
-                    print('454', start_of_week.date(), start_date)
+                    
                     if start_date == start_of_week.date() :
-                        print("in start_date") 
+                         
                         
                         leave_date_list = list(leave_date.values())
+                        
+                        print('here1', data)
+                        
+
+                        ###############
+                       
+                            ####################
+
                         data = {
+                            #  "leave_start_date": leave_start_date,
                             "leave_start_date": leave_date[0].start_date,
                             "leave_end_date": leave_date[0].end_date,
+                            # "leave_end_date": leave_end_date,
                             "leave_status": leave_date[0].status,
                             "leave_date" : leave_date_list,
+                            "leave_date_days": leave_days_of_week,
                         }
+                        print('leave data', data)
                     else:
-                        print("inside ifffffffffffffffffffffffffffffffff")
+                        
                         if data[0]:
-                            print("daaaaaaaaaaaaaaa", data)
+                            
                             pass
                         else:
-                            print("eeeeeeeeeeeeeeeeeeeellllllllllse")
+                            
                             data = None
                 except:
-                    print("failed with leave date")
+                    
                     data = None 
-                print("111111111111111111111111111111111111111111111111111")
+                
                 # For testing
             # data =            {
             #     "project_name": "DHL",
@@ -608,16 +680,15 @@ def TimeSheetCreate(request):
             #     "Approved_By": "",
 
             # }
-            print("in")
-            print(data)
+            print('data', data)
             return JsonResponse(data, safe=False)
     if request.method == 'GET':
         #print('IN')
         return render(request, 'employee_information/timesheet_create_bs.html', context)
     if leave_date:
         context["leave_date"] = leave_date
-        print("leave_date", leave_date)
-    print("final context", context)
+        
+    
     return render(request, 'employee_information/timesheet_create_bs.html', context)
 
 
@@ -637,7 +708,7 @@ def timesheet_manager( request ):
         data = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).order_by('-start_date')
         
      elif request.user.role == "employee":
-        data = model_user.objects.filter(employee_id=request.user.employee_id).order_by('-start_date')
+        data = model_user.objects.filter(employee_id=request.user.employee_id)
      else:
         data = model.objects.all().order_by('-start_date')
      paginator = Paginator(data, 5)  # Show 10 items per page
@@ -650,6 +721,7 @@ def timesheet_manager( request ):
         
             data = json.loads(request.body)
             print(len(data))
+            print(data)
             if len(data) ==3:
                 try:
                     print("try")
@@ -676,29 +748,52 @@ def timesheet_manager( request ):
             elif len(data)<=2:
             
                 try:
-                    print("in")
-                    print(data)
-                    print("project_name", data.get('project_name'))
-                    print("selected", data.get('selected'))
+                    from django.db.models import Q
 
-                    if request.user.role == "manager":                       
-                        if data.get('selected') == "project_name":
-                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(project_name=data.get('project_name')).order_by('-start_date')
-                        elif data.get('selected') == "emp_name":
-                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(username=data.get('project_name')).order_by('-start_date')
-                        elif data.get('selected') == "status":
-                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(status=data.get('project_name')).order_by('-start_date')
-                        else:
-                            data_result = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(start_date=data.get('project_name')).order_by('-start_date')
-                    else :
-                        if data.get('selected') == "project_name":
-                            data_result = model.objects.filter(project_name=data.get('project_name')).order_by('-start_date')
-                        elif data.get('selected') == "emp_name":
-                            data_result = model.objects.filter(username=data.get('project_name')).order_by('-start_date')
-                        elif data.get('selected') == "status":
-                            data_result = model.objects.filter(status=data.get('project_name')).order_by('-start_date')
-                        else:
-                            data_result = model.objects.filter(start_date=data.get('project_name')).order_by('-start_date')
+                    values_list = data.get('project_name')
+
+                    if request.user.role == "manager":      
+                        queryset = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True))
+                    else:
+                        queryset = model.objects.all()
+
+                    if values_list[0] and not values_list[1] and not values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0])
+                    elif not values_list[0] and values_list[1] and not values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(username=values_list[1])
+                    elif not values_list[0] and not values_list[1] and values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                    elif not values_list[0] and not values_list[1] and not values_list[2] and values_list[3]:
+                        queryset = queryset.filter(status=values_list[3])
+                    elif values_list[0] and values_list[1] and not values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], username=values_list[1])
+                    elif values_list[0] and not values_list[1] and values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                    elif values_list[0] and not values_list[1] and not values_list[2] and values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], status=values_list[3])
+                    elif not values_list[0] and values_list[1] and values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                    elif not values_list[0] and values_list[1] and not values_list[2] and values_list[3]:
+                        queryset = queryset.filter(username=values_list[1], status=values_list[3])
+                    elif not values_list[0] and not values_list[1] and values_list[2] and values_list[3]:
+                        queryset = queryset.filter(start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                    elif values_list[0] and values_list[1] and values_list[2] and not values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                    elif values_list[0] and values_list[1] and not values_list[2] and values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], username=values_list[1], status=values_list[3])
+                    elif values_list[0] and not values_list[1] and values_list[2] and values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                    elif not values_list[0] and values_list[1] and values_list[2] and values_list[3]:
+                        queryset = queryset.filter(username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                    elif values_list[0] and values_list[1] and values_list[2] and values_list[3]:
+                        queryset = queryset.filter(project_name=values_list[0], username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                    
+                    
+                    
+                    
+
+
+                    data_result = queryset
 
                     print("data_result",data_result)
                     data_list = []
@@ -729,9 +824,9 @@ def timesheet_manager( request ):
                     }
                 except Exception as e:
                     # Handle the exception here
-                    print(f"An error occurred: {str(e)}")
+                    
                     response_data = {'error': str(e)}
-                print("data_list", data_list)
+                
                 
                 return JsonResponse(response_data, safe=False)
             else:
@@ -745,6 +840,7 @@ def timesheet_manager( request ):
                     comments = data['comment']
                     # Update the status and comments for the given emp_id and project_name
                     model.objects.filter(username=emp_id, project_name=project_name).update(status=status, comments=comments)
+                    
                     print(data)
                     return JsonResponse({"message": "Update successful", "data": status}, status=200)
                 else:
@@ -772,27 +868,73 @@ def download_list_data(request):
     if request.method == 'POST':
         print('download123')
         # Get the JSON data from the request body
-        table_data = json.loads(request.body)
+        table_data = json.loads(request.body) 
+        data = json.loads(request.body)
         print('table_data', table_data)
         model = TimeSheet
+        model_user = Employee
         if table_data["html"] == "manager":
             print("timesheet manager 1") 
+            ## Empty data
             if table_data["filter"] == "0": 
                 print('inside filter')
-                data1 = model.objects.all().order_by('-start_date')
-                print('manager data', data1)
-            else:
-                model_user= Employee
-                if table_data["selected"] == "project_name":
-                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(project_name=table_data["project_name"]).order_by('-start_date')
-                elif table_data["selected"] == "emp_name":
-                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(username=table_data["project_name"]).order_by('-start_date')
-                elif table_data["selected"] == "status":
-                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(status=table_data["project_name"]).order_by('-start_date')
+                if request.user.role == "manager":      
+                    ## Excluding all the manager data
+                        data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True))
                 else:
-                    data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True)).filter(start_date=table_data["project_name"]).order_by('-start_date')
+                    ## All the data for the admin
+                        data1 = model.objects.all().order_by('-start_date')
+                
+                
+            else:
+                ## Based on filters
+                try:
+                    from django.db.models import Q
+                    
+                    values_list = data.get('project_name')
+                    if request.user.role == "manager":      
+                    ## Excluding all the manager data
+                        data1 = model.objects.exclude(username__in=model_user.objects.filter(role="manager").values_list('employee_name', flat=True))
+                    else:
+                        ## Including all the data for the admin with filter
+                        data1 = model.objects.all()
 
-                print("data1", data1)   
+                        if values_list[0] and not values_list[1] and not values_list[2] and not values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0])
+                        elif not values_list[0] and values_list[1] and not values_list[2] and not values_list[3]:
+                            data1 = data1.filter(username=values_list[1])
+                        elif not values_list[0] and not values_list[1] and values_list[2] and not values_list[3]:
+                            data1 = data1.filter(start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                        elif not values_list[0] and not values_list[1] and not values_list[2] and values_list[3]:
+                            data1 = data1.filter(status=values_list[3])
+                        elif values_list[0] and values_list[1] and not values_list[2] and not values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], username=values_list[1])
+                        elif values_list[0] and not values_list[1] and values_list[2] and not values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                        elif values_list[0] and not values_list[1] and not values_list[2] and values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], status=values_list[3])
+                        elif not values_list[0] and values_list[1] and values_list[2] and not values_list[3]:
+                            data1 = data1.filter(username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                        elif not values_list[0] and values_list[1] and not values_list[2] and values_list[3]:
+                            data1 = data1.filter(username=values_list[1], status=values_list[3])
+                        elif not values_list[0] and not values_list[1] and values_list[2] and values_list[3]:
+                            data1 = data1.filter(start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                        elif values_list[0] and values_list[1] and values_list[2] and not values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date())
+                        elif values_list[0] and values_list[1] and not values_list[2] and values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], username=values_list[1], status=values_list[3])
+                        elif values_list[0] and not values_list[1] and values_list[2] and values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                        elif not values_list[0] and values_list[1] and values_list[2] and values_list[3]:
+                            data1 = data1.filter(username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                        elif values_list[0] and values_list[1] and values_list[2] and values_list[3]:
+                            data1 = data1.filter(project_name=values_list[0], username=values_list[1], start_date=datetime.strptime(values_list[2], "%Y-%m-%d").date(), status=values_list[3])
+                except:
+                    print('error passing')
+                   
+
+                    
+                   
         else:
             print("timesheet status 1")
             current_user = request.user.employee_name
@@ -800,9 +942,21 @@ def download_list_data(request):
                 data1 = model.objects.filter(username=current_user).order_by('-start_date')
                 print('data1', data1)
             else:
-                start_date = table_data["start_date"]
-                end_date = table_data["end_date"]
-                data1 = model.objects.filter(start_date__range=(start_date, end_date), end_date__range=(start_date, end_date), username=current_user) 
+                if table_data["start_date"]:
+                    start_date = table_data["start_date"]
+                else:
+                    start_date = None
+                if table_data["end_date"]:
+                    end_date = table_data["end_date"]
+                else:
+                    end_date = None
+
+                if start_date and end_date:
+                    data1 = model.objects.filter(start_date__range=(start_date, end_date), end_date__range=(start_date, end_date), username=current_user) 
+                elif start_date:
+                    data1 = model.objects.filter(start_date__gte=start_date, username=current_user) 
+                else:
+                    data1 = model.objects.filter(end_date__lte=end_date, username=current_user)
                 print('data1', data1)
 
 
@@ -841,6 +995,7 @@ def download_list_data(request):
 
 @login_required
 def view_timesheet(request):
+    from datetime import timedelta
     model = TimeSheet
     print("view_timesheet")
     if request.method == 'GET':
@@ -863,7 +1018,7 @@ def view_timesheet(request):
         try:
             date_string_end = data["data-end_date"]
             date_string_end = date_string_end.replace("Sept", "Sep")
-            date_object = datetime.strptime(date_string_start, "%b. %d, %Y")
+            date_object = datetime.strptime(date_string_end, "%b. %d, %Y")
             formatted_date_end = date_object.strftime("%Y-%m-%d")
         except Exception:
             formatted_date_end = data["data-end_date"]
@@ -916,11 +1071,47 @@ def view_timesheet(request):
                     "th_hour_5": data_retrived[0].th_hour[5],
                     "th_hour_6": data_retrived[0].th_hour[6],
 
-                }
-        print("position tasks",position["th_hour_0"])
-        print(position)
-        print(data_retrived[0].th_hour)
-        return render(request, 'employee_information/uni_modal.html', {"position":position})
+                } 
+        try:
+            ## Leave object
+            leave_date_in = LeaveRequest.objects.filter(
+                Q(employee_name=data["id"]) & Q(status="Approved") &
+                (Q(start_date__lte=formatted_date_end) & Q(end_date__gte=formatted_date_start))
+            )
+            
+            if leave_date_in.exists(): 
+                pass
+            else:
+                leave_date_in = None
+
+            leave_dates_this_week = []
+            start_of_week9 = datetime.strptime(formatted_date_start, "%Y-%m-%d").date()
+            end_of_week9 = datetime.strptime(formatted_date_end, "%Y-%m-%d").date()
+            for leave_request in leave_date_in:
+                leave_dates_this_week.append({
+                    "start_date": max(leave_request.start_date, start_of_week9),
+                    "end_date": min(leave_request.end_date, end_of_week9)
+                })
+            leave_days_of_week = []
+            for leave_date9 in leave_dates_this_week:
+                current_date9 = leave_date9['start_date']
+                while current_date9 <= leave_date9['end_date']:
+                    day_of_week9 = current_date9.strftime('%A')
+                    if day_of_week9 not in leave_days_of_week:
+                        leave_days_of_week.append(day_of_week9)
+                    current_date9 += timedelta(days=1)
+            leave_days_of_week = [day.lower() for day in leave_days_of_week]
+            print('leave', leave_date_in, data["id"], formatted_date_start, formatted_date_end, leave_days_of_week)
+            leave = {
+                "day": leave_days_of_week,
+            }
+        except:
+            leave = {
+                "day": ["1"],
+            }
+
+
+        return render(request, 'employee_information/uni_modal.html', {"position":position, 'leave': leave})
         #print(formatted_date)
     if request.method == "POST":
         model= TimeSheet
@@ -982,18 +1173,18 @@ def view_timesheet(request):
 
 def leave_request_manager(request):
     if request.method == 'POST':
-        print('in')
+        # print('in')
         # status = request.POST.get('status')
         # review_comments = request.POST.get('comments')
         # employee_id = request.POST.get('employee')  # Assuming 'employee_id' is the correct name
 
         data = json.loads(request.body)
-        print('data', data)
+        # print('data', data)
         employee_id = data.get('employee_id')
         id = data.get('id')
         status = data.get('status')
         comments = data['comments']
-        print("comments", comments, employee_id, id, status)
+        # print("comments", comments, employee_id, id, status)
         try:
             # Retrieve the LeaveRequest based on the associated Employee
             # leave_request = LeaveRequest.objects.get(employee__id=employee_id)
@@ -1003,20 +1194,20 @@ def leave_request_manager(request):
             # print(request.POST)
             LeaveRequest.objects.filter(id=id).update(
                 status=status, comments=comments)
-            print("success")
+            # print("success")
             data_result = {
                 'message': 'success',
                 'status': status,
                 'comments': comments,
                 'employee_id': employee_id,
             }
-            print("all success")
+            # print("all success")
             return JsonResponse(data_result, safe=False)
 
             # messages.success(request, 'Leave request updated successfully.')
         except LeaveRequest.DoesNotExist:
             data_result = 'failed'
-            print("failed")
+            # print("failed")
             return JsonResponse(data_result, safe=False)
 
         # Redirect to the same page or another page after processing the form
@@ -1031,10 +1222,11 @@ def leave_request_manager(request):
         all_leave_requests = LeaveRequest.objects.exclude(employee=request.user).order_by('-start_date')
         filter_queryset = FilterForm(request.GET,queryset=all_leave_requests)
         all_leave_requests = filter_queryset.qs
-    paginator = Paginator(all_leave_requests,2)
+    paginator = Paginator(all_leave_requests,5)
     page = request.GET.get('page')
     paginated_results = paginator.get_page(page)
-    return render(request, 'employee_information/leave_bs.html', {'filter_queryset':filter_queryset,'paginated_results':paginated_results})
+    employee_names = list(set(leave_request.employee_name for leave_request in paginated_results))
+    return render(request, 'employee_information/leave_bs.html', {'filter_queryset':filter_queryset,'paginated_results':paginated_results,'employee_names':employee_names})
 
 def leave_request_manager_model(request):
     if request.method == 'GET':
@@ -1100,7 +1292,7 @@ def leave_request_manager_model(request):
 
 def user_leave_request(request):
     leave_requests = LeaveRequest.objects.filter(employee=request.user)
-    paginator = Paginator(leave_requests,1)
+    paginator = Paginator(leave_requests,4)
     page = request.GET.get('page')
     paginated_results = paginator.get_page(page)
     employee = Employee.objects.get(employee_name=request.user.employee_name)
@@ -1125,7 +1317,7 @@ def create_leave_request(request):
             leave_request.employee = request.user
             leave_request.save()
             form.save()
-            print("Form submitted successfully")
+            # print("Form submitted successfully")
             return redirect('leave_detail')
         else:
             print("Form is invalid:", form.errors)
@@ -1159,8 +1351,8 @@ load_dotenv()
 
 
 def send_email(employee_email, employee_name, decrypted_password, employee_id):
-    sender_email = os.getenv("SENDER_EMAIL")
-    sender_password = os.getenv("SENDER_PASSWORD")
+    sender_email = 'intellectoglobal@gmail.com'
+    sender_password = 'yawx mjxr mxqv lswr'
     subject = 'Password Recovery'
 
     message = MIMEMultipart()
@@ -1185,7 +1377,7 @@ def send_password(request):
         employee_id = employee.employee_id
         employee_name = employee.employee_name
         password = employee.password
-        print(employee,employee_id,employee_name,password)
+        # print(employee,employee_id,employee_name,password)
         # decrypted_password =  decrypt_password(password)
         # print(decrypted_password)
         send_email(employee_email, employee_name, password, employee_id)

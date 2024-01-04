@@ -1,0 +1,187 @@
+{% extends "employee_information/base.html" %} {% block pageContent %}
+<style>
+    .input-large {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+    .highlight-row{
+        background-color: #e0e0e0 !important;
+        height: 20px !important;
+        border-color: white;
+        
+        
+
+    }
+
+    
+.highlight-row td {
+height: 30px;
+border-top: 1px solid transparent; /* Adjust this value */
+border-bottom: 1px solid transparent; /* Adjust this value */
+vertical-align: center; /* To align the text vertically in the middle */
+
+padding: 0; /* Add this line */
+}
+    .italic-text {
+        
+        white-space: nowrap;
+    }
+    .spaced-table {
+        border-collapse: separate;
+        border-spacing: 0 5px;
+    }
+    .spaced-table th {
+        color: white !important;
+    }
+    .button-group {
+    display: flex;
+    justify-content: flex-end;
+    }
+
+    .message-box {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: black;
+        color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .message-box.show {
+        opacity: 1;
+        display: block;
+        animation: fadeOut 0.5s ease-in-out;
+    }
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+}
+</style>
+<div class="italic-text">
+    <h2> Task Tracker</h2>
+</div>
+
+<div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+    <div class="mdc-card">
+        <div class="row">
+        <div class="col-md-6">
+        <div class="table-responsive">
+            <form id="timeSheetForm">
+            <table class="table table-bordered spaced-table table1">
+                <colgroup>
+                    <col width="12%">
+                    <col width="12%">
+                    <col width="12%">
+                    <col width="10%">
+                </colgroup>
+                <thead style="height: 10px;" >
+                    <tr style="background-color: grey;">
+                        <th class="text-center ">Name</th>
+                        <th class="text-center ">Start Date</th>
+                        <th class="text-center ">End Date</th>
+                        <th class="text-center "></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for position in page_obj|slice:":5" %}    
+                        <tr class="highlight-row" >
+                        <td id='name' class=" text-center">{{ position.username }}</td>
+                        
+                        <td id='start_date' class=" text-center">{{ position.start_date }}</td>
+                        <td  id='end_date' class=" text-center">{{ position.end_date }}</td>
+                        
+                        <td class="px-2 py-3 text-center">
+                           <button id = "visibility" class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="button" data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
+                                <i class="material-icons mdc-button__icon">visibility</i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="table-responsive">
+            <form id="timeSheetForm">
+            <table class="table table-bordered spaced-table table2">
+                <colgroup>
+                    <col width="12%">
+                    <col width="12%">
+                    <col width="12%">
+                    <col width="10%">
+                </colgroup>
+                <thead style="height: 10px;" >
+                    <tr style="background-color: grey;">
+                        <th class="text-center ">Name</th>
+                        <th class="text-center ">Start Date</th>
+                        <th class="text-center ">End Date</th>
+                        <th class="text-center "></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for position in page_obj|slice:"5:" %}    
+                        <tr class="highlight-row" >
+                        <td id='name' class=" text-center">{{ position.username }}</td>
+                        
+                        <td id='start_date' class=" text-center">{{ position.start_date }}</td>
+                        <td  id='end_date' class=" text-center">{{ position.end_date }}</td>
+                        
+                        <td class="px-2 py-3 text-center">
+                           <button id = "visibility" class="mdc-button mdc-button--raised p-1 icon-button filled-button--light mdc-ripple-upgraded edit-data" type="button" data-id="{{ position.username }}" data-project="{{ position.project_name }}" data-start_date="{{ position.start_date }}" data-end_date="{{ position.end_date }}" title="Edit">
+                                <i class="material-icons mdc-button__icon">visibility</i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                        <tr class="highlight-row">
+                            <td colspan="4" class="text-center">No data available</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </form>
+        
+    </div>
+    <div id="pagination" style="text-align: right;">
+        {% if page_obj.has_previous %}
+            <button onclick="location.href='?page={{ page_obj.previous_page_number }}'"><</button>
+        {% endif %}
+        <span id="pageDisplay">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <button onclick="location.href='?page={{ page_obj.next_page_number }}'">></button>
+        {% endif %}
+    </div>
+    </div>
+    </div>
+</div>
+<script>
+    $('.edit-data').click(function() {
+    var id = $(this).attr('data-id');
+    var project = $(this).attr('data-project');
+    var startDate = $(this).attr('data-start_date');
+    var endDate = $(this).attr('data-end_date');
+    
+    // Call the uni_modal function with the appropriate parameters
+    uni_modal("Edit TimeSheet", "{% url 'view_timesheet' %}?id=" + id + "&data-project=" + project + "&data-start_date=" + startDate + "&data-end_date=" + endDate, 'modal-lg');
+});
+</script>
+
+{% endblock pageContent %} {% block ScriptBlock %}
+
+
+{% endblock ScriptBlock %}

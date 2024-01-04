@@ -5,6 +5,9 @@ input[type="text"]:not(#project_name):not(#task) {
 }
 </style>
 <style>
+  .grey-background {
+    background-color: grey;
+}
   .small-alert {
     width: 40%;
     text-align: center;
@@ -66,25 +69,25 @@ input[type="text"]:not(#project_name):not(#task) {
             <input class="text-center task-input" type="text" id="task" name="task" placeholder="Task Name" value="{{task}}">
           </td>
           <td class="text-center">
-            <input class="monday_value"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;" value="{{monday_value|default:'0'}}">
+            <input class="monday_value {% for item in leave.day %}{% if item == 'monday' %}grey-background{% endif %}{% endfor %}"  type="text" id="monday_value" name="monday_value" placeholder="0" style="border: none;" value="{{monday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="tuesday_value"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;" value="{{tuesday_value|default:'0'}}">
+            <input class="tuesday_value {% for item in leave.day %}{% if item == 'tuesday' %}grey-background{% endif %}{% endfor %}"  type="text" id="tuesday_value" name="tuesday_value" placeholder="0" style="border: none;" value="{{tuesday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="wednesday_value"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;" value="{{wednesday_value|default:'0'}}">
+            <input class="wednesday_value {% for item in leave.day %}{% if item == 'wednesday' %}grey-background{% endif %}{% endfor %}"  type="text" id="wednesday_value" name="wednesday_value" placeholder="0" style="border: none;" value="{{wednesday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="thursday_value"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;" value="{{thursday_value|default:'0'}}">
+            <input class="thursday_value {% for item in leave.day %}{% if item == 'thursday' %}grey-background{% endif %}{% endfor %}"  type="text" id="thursday_value" name="thursday_value" placeholder="0" style="border: none;" value="{{thursday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="friday_value"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;" value="{{friday_value|default:'0'}}">
+            <input class="friday_value {% for item in leave.day %}{% if item == 'friday' %}grey-background{% endif %}{% endfor %}"  type="text" id="friday_value" name="friday_value" placeholder="0" style="border: none;" value="{{friday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="saturday_value"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;" value="{{saturday_value|default:'0'}}">
+            <input class="saturday_value {% for item in leave.day %}{% if item == 'saturday' %}grey-background{% endif %}{% endfor %}"  type="text" id="saturday_value" name="saturday_value" placeholder="0" style="border: none;" value="{{saturday_value|default:'0'}}">
           </td>
           <td class="text-center">
-            <input class="sunday_value"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;" value="{{sunday_value|default:'0'}}">
+            <input class="sunday_value {% for item in leave.day %}{% if item == 'sunday' %}grey-background{% endif %}{% endfor %}"  type="text" id="sunday_value" name="sunday_value" placeholder="0" style="border: none;" value="{{sunday_value|default:'0'}}">
           </td>
           
         </tr>
@@ -95,25 +98,25 @@ input[type="text"]:not(#project_name):not(#task) {
             Overtime Hours
           </td>
           <td class="text-center">
-            <input class="ovt_monday"  type="text" id="ovt_monday" name="monday_value" placeholder="0" style="border: none;" value="{{position.ovt_monday}}">
+            <input class="ovt_monday {% for item in leave.day %}{% if item == 'monday' %}grey-background{% endif %}{% endfor %}"  type="text" id="ovt_monday" name="monday_value" placeholder="0" style="border: none;" value="{{position.ovt_monday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_tuesday"  type="text" id="ovt_tuesday" name="tuesday_value" placeholder="0" style="border: none;" value="{{position.ovt_tuesday}}">
+            <input class="ovt_tuesday {% for item in leave.day %}{% if item == 'tuesday' %}grey-background{% endif %}{% endfor %}"  type="text" id="ovt_tuesday" name="tuesday_value" placeholder="0" style="border: none;" value="{{position.ovt_tuesday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_wednesday"  type="text" id="ovt_wednesday" name="wednesday_value" placeholder="0" style="border: none;" value="{{position.ovt_wednesday}}">
+            <input class="ovt_wednesday {% for item in leave.day %}{% if item == 'wednesday' %}grey-background{% endif %}{% endfor %}"  type="text" id="ovt_wednesday" name="wednesday_value" placeholder="0" style="border: none;" value="{{position.ovt_wednesday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_thursday"  type="text" id="ovt_thursday" name="thursday_value" placeholder="0" style="border: none;" value="{{position.ovt_thursday}}">
+            <input class="ovt_thursday {% for item in leave.day %}{% if item == 'thursday' %}grey-background{% endif %}{% endfor %}"  type="text" id="ovt_thursday" name="thursday_value" placeholder="0" style="border: none;" value="{{position.ovt_thursday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_friday"  type="text" id="ovt_friday" name="friday_value" placeholder="0" style="border: none;" value="{{position.ovt_friday}}">
+            <input class="ovt_friday {% for item in leave.day %}{% if item == 'friday' %}grey-background{% endif %}{% endfor %}"  type="text" id="ovt_friday" name="friday_value" placeholder="0" style="border: none;" value="{{position.ovt_friday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_saturday"  type="text" id="ovt_saturday" name="saturday_value" placeholder="0" style="border: none;" value="{{position.ovt_saturday}}">
+            <input class="ovt_saturday {% for item in leave.day %}{% if item == 'saturday' %}grey-background{% endif %}{% endfor %}"  type="text" id="ovt_saturday" name="saturday_value" placeholder="0" style="border: none;" value="{{position.ovt_saturday}}">
           </td>
           <td class="text-center">
-            <input class="ovt_sunday"  type="text" id="ovt_sunday" name="sunday_value" placeholder="0" style="border: none;" value="{{position.ovt_sunday}}">
+            <input class="ovt_sunday {% for item in leave.day %}{% if item == 'sunday' %}grey-background{% endif %}{% endfor %}"  type="text" id="ovt_sunday" name="sunday_value" placeholder="0" style="border: none;" value="{{position.ovt_sunday}}">
           </td>
         </tr>
         
@@ -177,7 +180,23 @@ input[type="text"]:not(#project_name):not(#task) {
     </div>
 </div>
 </div>
-
+<script>
+  function leave (leave) {
+    console.log("inside windows.load script")
+    console.log(leave)
+    for( var k = 0; k<leave.length; k++ ){
+      console.log('4for')
+            document.querySelectorAll("."+leave[k]+"_value").forEach(element => {
+              element.value = 0
+              element.setAttribute('readonly', true);
+              element.style.setProperty("background-color", "grey", "important"); });
+              
+              document.getElementById("ovt_"+leave[k]).value = 0
+              document.getElementById("ovt_"+leave[k]).setAttribute('readonly', true)
+              document.getElementById("ovt_"+leave[k]).style.setProperty("background-color", "grey", "important");
+          }
+  };
+</script>
 <script>
   function applyDynamicRowStyling() {
   $('input[type="text"]:not(#project_name):not(#task)').css('width', '100px');
@@ -413,5 +432,6 @@ $(document).on('input[class$="_value"], input[class^="ovt_"]').on('input', calcu
 });
 
 </script>
+
 
 {% endblock %}
