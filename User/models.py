@@ -40,7 +40,11 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     work_from_home  = models.IntegerField(default=3)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
+    employee_shift = [
+        ('Morning shift', 'Morning shift'),
+        ('Night shift', 'Night shift')
+    ]
+    shift = models.CharField(max_length = 50, choices=employee_shift)
     objects = EmployeeManager()
 
     USERNAME_FIELD = 'employee_id'

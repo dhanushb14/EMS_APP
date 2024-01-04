@@ -22,7 +22,7 @@
       <div class="col-lg-3 col-md-6 my-2">
         <div class="input-group ">
           <span class="input-group-text">Emp Name</span>
-          <input id="emp_name_select" type=text class=" form-control"></input>
+          <input id="emp_name_select" type=text class=" form-control"><input type=date style="width: 25px; text-indent: -9999px; border: none;" id="employee_date"></input></input>
         </div>
       </div>
     <div class="col-lg-2 col-md-6 my-2">
@@ -87,6 +87,7 @@
             <th class="fw-medium text-center"></th>
           </tr>
         </thead>
+        <span id="data_employee_date" style="display: none;">{{data}}</span>
         {% for position in data|slice:":5" %}
         <tr>
           <td id="project_name" class="text-center">{{ position.project_name }}</td>
@@ -105,9 +106,11 @@
             {% else %}
               <td id="status" class="text-center">
                 <select name="status" style="background-color: transparent; border: none;">
+                  <option value="Pending">Pending</option>
                   <option value="Approved">Approved</option>
                   <option value="Rejected">Rejected</option>
                   <option value="uncheck">Uncheck</option>
+                  
                 </select>
               </td>
             {% endif %}
@@ -346,6 +349,17 @@
     window.URL.revokeObjectURL(url);
 });
 });
+</script>
+<script>
+    // Filter start date change, disabling filter button
+
+    function checkdate() {
+      console.log('checkdate')
+    var empInput = document.getElementById('emp_name_select');
+    var emp_data = document.getElementById('data_employee_date').textContent;
+    console.log("emp_data", emp_data);
+}
+  document.getElementById('emp_name_select').addEventListener('input', checkdate);
 </script>
 <script>
   // Filter start date change, disabling filter button
@@ -680,6 +694,7 @@ document.getElementById('status_select').addEventListener('input', checkInputs);
                           var statusField = row.querySelector('td:nth-child(7)');
                           statusField.innerHTML = `
                             <select name="status" id="status" style="background-color: transparent; border: none;">
+                                  <option class="text-center" value="Pending">Pending</option>
                                   <option class="text-center" value="Approved">Approved</option>
                                   <option class="text-center" value="Rejected">Rejected</option>
                                   <option class="text-center" value="uncheck">Uncheck</option>
