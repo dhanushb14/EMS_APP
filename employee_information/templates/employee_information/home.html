@@ -40,6 +40,9 @@
       <div class="spinner-border text-primary spinner-border-md" id="export_data_loading" role="status" style="display: none;">
         <span class="sr-only">Loading...</span>
       </div>
+      <div class="toast" role="alert" aria-live="polite" aria-atomic="true" data-delay="1000" id="alert_toast" data-animation="true">
+        <div role="alert" aria-live="assertive" aria-atomic="true">No Data</div>
+      </div>
       
       </div>
       {% else %}
@@ -340,6 +343,7 @@
     function export_data (){
       console.log('export data')
       // Removing download button and adding loading button
+      var toast = document.getElementById('alert_toast')
       var download_button = document.getElementById("download")
       download_button.style.display = 'none' 
       var loading_icon = document.getElementById('export_data_loading')
@@ -374,8 +378,14 @@
     console.log(blob)
     if (blob.type == 'application/json'){
       // Show the error message here if needed
-      download_button.style.display = 'block'
       loading_icon.style.display = 'none'
+      $('.toast').toast('show');
+      $('.toast').on('hidden.bs.toast', function () {
+  // do something...
+  download_button.style.display = 'block'
+});
+      
+      
     }
     else{
             download_button.style.display = 'block'
