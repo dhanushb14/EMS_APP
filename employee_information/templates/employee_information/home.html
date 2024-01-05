@@ -15,8 +15,8 @@
   }
 </style>
 <body class="body_bg">
-  <div class="container mg-t">
-    <div class="row">
+  <div class="container mg-t ">
+    <div class="row ">
       {% if request.user.role == "superadmin" %}
       <div class="col-6">
         <h2 class="fw-bold mb-4">Dashboard</h2>
@@ -24,17 +24,23 @@
       <div class="col-3">
         <div class="input-group ">
           <label class="input-group-text">Select Month</label>
-          <input id="report_month" type=month class="form-control" ></input>
+          <input id="report_month" type=month class="form-control"></input>
         </div>
       </div>
       <div class="col-3">
         <button
-        class="btn text-light px-3"
+        class="btn text-light "
         style="background-color: #4981b2"
         id="download"
+        onclick="export_data()"
       >
-        <i class="fa-solid fa-download"></i> 
+        <i class="fa-solid fa-download" id="export_data_icon"></i> 
+        
       </button>
+      <div class="spinner-border text-primary spinner-border-md" id="export_data_loading" role="status" style="display: none;">
+        <span class="sr-only">Loading...</span>
+      </div>
+      
       </div>
       {% else %}
       <div class="col-12">
@@ -329,4 +335,66 @@
       </div>
     </div>
   </div>
+  <script>
+    // export data by month and year wise
+    function export_data (){
+      console.log('export data')
+      // Removing download button and adding loading button
+      var download_button = document.getElementById("download")
+      download_button.style.display = 'none' 
+      var loading_icon = document.getElementById('export_data_loading')
+      loading_icon.style.display = 'block'     
+      var input = document.getElementById("report_month").value
+      var date = new Date(input);
+
+      var data = {
+        'month': date.getMonth()+1,
+        'year' : date.getFullYear(),
+    }
+
+      console.log(data);
+
+      // using fetch to expot the month and year to views
+      fetch("{% url 'export_data' %}", {
+        method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+    if (!response.ok) {
+        // If the response is not ok, print the response text
+        console.log('11111')
+        response.text().then(text => console.log(text));
+        throw new Error('Network response was not ok');
+    }
+    return response.blob();
+  }).then(blob => {
+    console.log(blob)
+    if (blob.type == 'application/json'){
+      // Show the error message here if needed
+      download_button.style.display = 'block'
+      loading_icon.style.display = 'none'
+    }
+    else{
+            download_button.style.display = 'block'
+            loading_icon.style.display = 'none'
+
+            // Create a new object URL for the blob
+            const url = window.URL.createObjectURL(blob);
+
+            // Create a link and click it to start the download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'my_data.csv';
+            link.click();
+
+            // Release the reference to the object URL
+            window.URL.revokeObjectURL(url);
+    }});
+        }
+    
+  </script>
+
 {% endblock pageContent %}
