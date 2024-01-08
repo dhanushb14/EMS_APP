@@ -42,7 +42,8 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from django.http import HttpResponse
 from django.http import FileResponse
 from tempfile import NamedTemporaryFile
-
+import calendar
+import pandas as pd
 
 # employees = [
 
@@ -105,6 +106,7 @@ def home(request):
 
     # Modify the query to filter by the start_date within the current month
     result_list = list(model.objects.filter(username=current_user, start_date__gte=start_of_month, start_date__lte=end_of_month).order_by('-start_date')) + list(LeaveRequest.objects.filter(employee=request.user, start_date__gte=start_of_month, start_date__lte=end_of_month).order_by('-start_date'))
+    pending_lists = list(model.objects.filter(Q(status='Pending') | Q(status=''),start_date__gte=start_of_month, start_date__lte=end_of_month).order_by('-start_date')) + list(LeaveRequest.objects.filter(start_date__gte=start_of_month, start_date__lte=end_of_month,status='Pending').order_by('-start_date'))
     print(result_list)
     paginator = Paginator(data_result, 5)  # Show 10 items per page
 
@@ -137,7 +139,7 @@ def home(request):
         'scrum_master': scrum_master,
         'allManagers': manager,
         'data_result': result_list,
-        
+        'pending_lists': pending_lists,
         
         'total_employee': len(Employee.objects.all()),
     }
@@ -715,6 +717,8 @@ def timesheet_manager( request ):
 
      page_number = request.GET.get('page')
      page_obj = paginator.get_page(page_number)
+     proj_names = list(set(proj_name.project_name for proj_name in page_obj))
+     emp_names = list(set(emp_name.username for emp_name in page_obj))
      if request.method == 'POST':
         
             data = json.loads(request.body)
@@ -843,8 +847,7 @@ def timesheet_manager( request ):
                     return JsonResponse({"message": "Update successful", "data": status}, status=200)
                 else:
                     return JsonResponse({"message": "Invalid request method"}, status=400)
-
-     return render(request, 'employee_information/timesheet_manager_bs.html', {"data":page_obj, "role":request.user.role} )
+     return render(request, 'employee_information/timesheet_manager_bs.html', {"data":page_obj, "role":request.user.role,"proj_names":proj_names,"emp_names":emp_names} )
 
 @login_required
 def timesheet_update_view(request, timesheet_id):
@@ -1413,3 +1416,266 @@ def download_data(request):
         csv_writer.writerow([leave_request.employee_name, leave_request.start_date, leave_request.end_date, leave_request.no_of_days, leave_request.leave_type, leave_request.comments, leave_request.status])
 
     return response
+
+## Views for all the employee data per month for the admin
+def export_data(request): 
+    
+    if request.method == 'POST':    # import pdb
+        # pdb.set_trace()
+        data = json.loads(request.body)
+        year = data['year']
+        month = data['month']
+        print('year month', year, month)
+        # now = datetime.now()
+        _, last_day = calendar.monthrange(year, month)
+        current_month = month
+        start_date = datetime(year, month, 1)
+        end_date = datetime(year, month, last_day)
+        queryset = TimeSheet.objects.filter(Q(start_date__range=(start_date, end_date)) | Q(end_date__range=(start_date, end_date)))
+        if queryset:
+            print(queryset)
+            pass
+        else:
+            print('11111111111111111111111')
+            return JsonResponse({'message': 'failed'})
+        queryset = queryset.order_by('username', 'end_date')  
+
+        ## Excel header
+        dates = [datetime(year, month, day).strftime('%d') for day in range(1, last_day + 1)]
+        day = [datetime(year, month, day).strftime('%A') for day in range(1, last_day + 1)]
+        employee = [emp.username for emp in queryset] ## All the employee list
+        employee_list = list(set(employee))
+        first_column = [""]
+        last_column = ["", "Leave", "Project & Holiday", "WFH"]
+        dates_joined = first_column + dates
+        day_joined = first_column + day + last_column 
+        with open("my_data.csv", "w", newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(day_joined)
+            writer.writerow(dates_joined)
+            #import pdb
+            #pdb.set_trace()
+            for emp in employee_list:
+                writer_list = []
+                for query_data in queryset:
+                    print(query_data) 
+                    if emp == query_data.username:
+                        username_list = [query_data.username]
+                        # getting data if the timesheet is from previous month to current month
+                        if query_data.start_date.strftime('%m') != current_month and query_data.end_date.strftime('%m') == current_month:
+                            print('condition false')
+                            starting_date = int(query_data.end_date.strftime('%d'))
+                            next_month_list = query_data.th_hour[::-1][0:starting_date][::-1]
+                            writer_list = writer_list + next_month_list
+                        # getting data if the timesheet is from current month to next month
+                        elif query_data.start_date.strftime('%m') == current_month and query_data.end_date.strftime('%m') != current_month:
+                            total_days = last_day - query_data.end_date.strftime('%d')
+                            previous_month_list = query_data.th_hour[:total_days]
+                            writer_list = writer_list + previous_month_list
+                        else:
+                            writer_list = writer_list + query_data.th_hour
+                writer.writerow(username_list + writer_list)
+
+        
+        df = pd.read_csv('./my_data.csv')
+        
+        queryset_user = Employee.objects.all()
+        leave_queryset = LeaveRequest.objects.filter(Q(start_date__range=(start_date, end_date)) | Q(end_date__range=(start_date, end_date)))
+        leave_queryset = leave_queryset.order_by('end_date')
+        sat_sun = [col for col in df.columns if col.startswith('S')]
+        sat_sun_morning = [col for col in df.columns if col.startswith('Sun')]
+        week_days = [col for col in df.columns if col not in sat_sun]
+        week_days_morning = [col for col in df.columns if col not in sat_sun_morning]
+        all_days = [col for col in df.columns if col !='Unnamed: 0']
+        
+
+        for index, row in df.iterrows():
+            if index >= 1:
+                emp = Employee.objects.filter(employee_name = row['Unnamed: 0'])
+                for employee_shift in emp:
+                    if employee_shift.shift == 'Night shift':
+                        emp_wfh = leave_queryset.filter(employee_name = employee_shift.employee_name, leave_type= 'Work from home')
+                        emp_wfh = emp_wfh.order_by('end_date')
+                        emp_project_holiday = leave_queryset.filter(employee_name = row['Unnamed: 0'], leave_type= 'Project holiday')
+                        emp_project_holiday = emp_project_holiday.order_by('end_date')
+                        
+                            
+                        ## Making Present instead of Numbers and ## Making Absent if total hour is 0
+                        # import pdb
+                        # pdb.set_trace()
+                        for i in week_days:
+                            if pd.isna(row[i]):  # Check if the value is NaN
+                                row[i] = '0'  # Replace with your desired value
+                            if i != 'Unnamed: 0':
+                                if row[i] == '0' or row[i] == 0 or row[i] == "" or row[i] == "NaN":
+                                    df.loc[index, i] = "A"
+                                else:
+                                    df.loc[index, i] = 'P'
+                        ## Making WFH fields 
+                        if emp_wfh:
+                            print('wfh present')
+                            for wfh in emp_wfh:
+                                # for those who applied from last_month to current_month
+                                if wfh.start_date.strftime('%m') != current_month and wfh.end_date.strftime("%m") == current_month:
+                                    for i in all_days:
+                                        calculating_date = 0
+                                        if i != 'Unnamed: 0' and calculating_date != wfh.end_date.strftime('%d') :
+                                            df.loc[index, i] = 'WFH'
+                                            calculating_date +=1
+                                # for those who applied from current_month to next_month
+                                elif wfh.start_date.strftime('%m') == current_month and wfh.end_date.strftime("%m") != current_month:
+                                    calculating_date1 = 0
+                                    for i in all_days[::-1]:
+                                        if i != 'Unnamed: 0' and calculating_date1 != last_day:
+                                            df.loc[index, i] = 'WFH'
+                                            calculating_date1 +=1
+                                else:
+                                    print('else wfh')
+                                    for i in week_days[int(wfh.start_date.strftime('%d')) : int(wfh.end_date.strftime('%d'))+1]: 
+                                        df.loc[index, i] = 'WFH'
+                        else:
+                            print('no wfh')
+
+                        ## Making PH fields
+                        if emp_project_holiday:
+                            for ph in emp_project_holiday:
+                                # for those who applied from last_month to current_month
+                                if ph.start_date.strftime('%m') != current_month and ph.end_date.strftime("%m") == current_month:
+                                    for i in all_days:
+                                        calculating_date = 0
+                                        if i != 'Unnamed: 0' and calculating_date != ph.end_date.strftime('%d') :
+                                            df.loc[index, i] = 'PH'
+                                            calculating_date +=1
+                                # for those who applied from current_month to next_month
+                                elif ph.start_date.strftime('%m') == current_month and ph.end_date.strftime("%m") != current_month:
+                                    calculating_date1 = 0
+                                    for i in all_days[::-1]:
+                                        if i != 'Unnamed: 0' and calculating_date1 != last_day:
+                                            df.loc[index, i] = 'PH'
+                                            calculating_date1 +=1
+                                else:
+                                    for i in week_days[int(ph.start_date.strftime('%d')) : int(ph.end_date.strftime('%m'))+1]:
+                                        df.loc[index, i] = 'PH' 
+
+                        ## Making saturday and sunday as 'WO'
+                        for i in sat_sun:
+                            df.loc[index, i] = 'WO'
+
+                    ## Morning shift employees
+                    else:
+                        print('last else')
+                        emp_wfh = leave_queryset.filter(employee_name = row['Unnamed: 0'], leave_type= 'Work from home')
+                        emp_wfh = emp_wfh.order_by('end_date')
+                        if index >= 1: 
+                            
+                            ## Making Present instead of Numbers and ## Making Absent if total hour is 0
+                            for i in week_days_morning:
+                                if i != 'Unnamed: 0':
+                                    if row[i] == '0' or row[i] == 0:
+                                        df.loc[index, i] = "A"
+                                    else:
+                                        df.loc[index, i] = 'P'
+                            ## Making WFH fields 
+                            if emp_wfh:
+                                print('wfh present')
+                                for wfh in emp_wfh:
+                                    # for those who applied from last_month to current_month
+                                    if wfh.start_date.strftime('%m') != current_month and wfh.end_date.strftime("%m") == current_month:
+                                        for i in all_days:
+                                            calculating_date = 0
+                                            if i != 'Unnamed: 0' and calculating_date != wfh.end_date.strftime('%d') :
+                                                df.loc[index, i] = 'WFH'
+                                                calculating_date +=1
+                                    # for those who applied from current_month to next_month
+                                    elif wfh.start_date.strftime('%m') == current_month and wfh.end_date.strftime("%m") != current_month:
+                                        calculating_date1 = 0
+                                        for i in all_days[::-1]:
+                                            if i != 'Unnamed: 0' and calculating_date1 != last_day:
+                                                df.loc[index, i] = 'WFH'
+                                                calculating_date1 +=1
+                                    else:
+                                        print('else wfh')
+                                        for i in week_days[int(wfh.start_date.strftime('%d')) : int(wfh.end_date.strftime('%d'))+1]: 
+                                            df.loc[index, i] = 'WFH'
+                            else:
+                                print('no wfh')
+
+                            ## Making PH fields
+                            if emp_project_holiday:
+                                for ph in emp_project_holiday:
+                                    # for those who applied from last_month to current_month
+                                    if ph.start_date.strftime('%m') != current_month and ph.end_date.strftime("%m") == current_month:
+                                        for i in all_days:
+                                            calculating_date = 0
+                                            if i != 'Unnamed: 0' and calculating_date != ph.end_date.strftime('%d') :
+                                                df.loc[index, i] = 'PH'
+                                                calculating_date +=1
+                                    # for those who applied from current_month to next_month
+                                    elif ph.start_date.strftime('%m') == current_month and ph.end_date.strftime("%m") != current_month:
+                                        calculating_date1 = 0
+                                        for i in all_days[::-1]:
+                                            if i != 'Unnamed: 0' and calculating_date1 != last_day:
+                                                df.loc[index, i] = 'PH'
+                                                calculating_date1 +=1
+                                    else:
+                                        for i in week_days[int(ph.start_date.strftime('%d')) : int(ph.end_date.strftime('%m'))+1]:
+                                            df.loc[index, i] = 'PH' 
+                            else:
+                                print('No project Holiday')
+
+                            ## Making sunday as 'WO'
+                            for i in sat_sun_morning:
+                                df.loc[index, i] = 'WO'
+
+        ## Total Leave, Total WFH, Total PH
+        # import pdb
+        # pdb.set_trace()
+        for index, row in df.iterrows():
+            total_wfh = 0
+            total_ph = 0
+            total_leave = 0
+            if index >= 1:
+                for col in df.columns:
+                    if col != 'Unnamed: 0':
+                        ## calculating total wfh
+                        if df.loc[index, col] == 'WFH':
+                            total_wfh += 1
+                        ## calculating total project holiday
+                        if df.loc[index, col] == 'PH':
+                            total_ph += 1
+                        ## calculating total leave
+                        if df.loc[index, col] == 'A':
+                            total_leave += 1
+
+                        ## Assigning total wfh, ph, leave
+                        if col == 'Leave':
+                            df.loc[index, col] = total_leave
+                        if col == 'Project & Holiday':
+                            df.loc[index, col] = total_ph
+                        if col == 'WFH':
+                            df.loc[index, col] = total_wfh
+
+        ## Modifying the df
+        df.rename(columns={'Unnamed: 0': 'Employee Name'}, inplace=True)
+        df.drop('Unnamed: 32', axis=1, inplace=True)
+        exceptList = ['Employee Name', 'Leave', 'Project & Holiday', 'WFH']
+        for i in df.columns:
+            if i not in exceptList:
+                df.rename(columns={i: i[:3]}, inplace=True)
+        
+
+        df.to_csv('./my_data.csv', index=False)
+        # Create the HttpResponse object and set headers
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="my_data.csv"'
+        # Write the DataFrame to the response using a CSV writer
+        with open('./my_data.csv', 'rb') as csvfile:  # Open in binary mode for proper handling
+            response.write(csvfile.read())
+                
+        return response  
+        # return JsonResponse(data="success", safe=False)
+    if request.method != 'POST':
+        return response
+        
+
+

@@ -40,7 +40,11 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     work_from_home  = models.IntegerField(default=3)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
+    employee_shift = [
+        ('Morning shift', 'Morning shift'),
+        ('Night shift', 'Night shift')
+    ]
+    shift = models.CharField(max_length = 50, choices=employee_shift)
     objects = EmployeeManager()
 
     USERNAME_FIELD = 'employee_id'
@@ -56,9 +60,12 @@ class Employee(AbstractBaseUser, PermissionsMixin):
         print(self.employee_name)
         LeaveRequest = apps.get_model('employee_information', 'LeaveRequest')
         data = LeaveRequest.objects.filter(employee_name = self.employee_name, status='Approved')
-
-        self.available_leave = 2
-        self.work_from_home = 3
+        if self.shift == 'Night shift':
+            self.available_leave = 7
+            self.work_from_home = 2
+        else:
+            self.available_leave = 24
+            self.work_from_home = 0
         for i in data:
             
             print("1")
@@ -93,8 +100,12 @@ class Employee(AbstractBaseUser, PermissionsMixin):
                     current_date = last_day_of_current_month.date()
                     print('current date',current_date)
                     while current_date <= end_date:
-                        if current_date.weekday() not in [5, 6]:  # Check if the day is not Saturday or Sunday
-                            working_days += 1
+                        if self.shift == "Night shift":
+                            if current_date.weekday() not in [5, 6]:  # Check if the day is not Saturday or Sunday
+                                working_days += 1
+                        else:
+                            if current_date.weekday() not in [6]:  # Check if the day is not Saturday or Sunday
+                                working_days += 1
                         current_date += timedelta(days=1)
                         print('1')
                         
@@ -115,8 +126,12 @@ class Employee(AbstractBaseUser, PermissionsMixin):
                     for day in range(1, total_days_in_current_month + 1):
                         date = datetime.date(current_year, current_month, day)
                         # Check if the day is not a Saturday (5) or Sunday (6)
-                        if date.weekday() not in [5, 6]:
-                            working_days += 1
+                        if self.shift == "Night shift":
+                            if date.weekday() not in [5, 6]:
+                                working_days += 1
+                        else:
+                            if date.weekday() not in [6]:
+                                working_days += 1
 
                     print("765",working_days)
                     

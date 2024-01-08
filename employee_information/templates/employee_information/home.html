@@ -6,19 +6,67 @@
   .rejected-row {
     border-left: 5px solid #ff8491;
   }
+  .pending-row {
+    border-left: 5px solid rgb(249, 249, 113);
+  }
   .table-responsive {
     overflow-y: auto;
     max-height: 138.5px; /* Adjust the max-height as per your requirement */
   }
+  @media (min-width: 576px){
+    #export_data_loading{
+      position: absolute;
+      left: 900px;
+    }
+  }
+  @media (max-width: 577px){
+    #export_data_loading{
+      position: absolute;
+      left: 250px;}
+    #download{
+      min-width:360px;
+    }
+  }
 </style>
 <body class="body_bg">
-  <div class="container mg-t">
-    <div class="row">
-      <div class="col-12">
-        <h2 class="fw-bold mb-4">Dashboard</h2>
+  <div class="row mg-t">
+    <div class="col-lg-4 col-md-6">
+      <h2 class="fw-bold">Dashboard</h2>
+    </div>
+    <div class="col-lg-8 text-center my-3 my-lg-0">
+      <div class="spinner-border text-primary spinner-border-md" id="export_data_loading" role="status" style="display: none;">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <div class="alert alert-danger toast" role="alert" id="alert_toast" style=" background-color: #b24949; color: white;">
+        No Data!
       </div>
     </div>
   </div>
+  {% if request.user.role == "superadmin" %}
+    <div class="row mb-4 mx-auto" style="background-color: #ecd5ef; height: 51%; border-radius: 5px;">
+      <div class="col-lg-8 col-md-6 my-2">
+        <span class="fs-5">Download Monthly Report</span>
+      </div>
+      <div class="col-lg-3 col-md-6 my-2">
+        <div class="input-group">
+          <label class="input-group-text">Select Month</label>
+          <input id="report_month" type=month class="form-control" oninput="checkInput()"></input>
+        </div>
+      </div>
+      <div class="col-lg-auto col-md-6 my-2 ms-auto me-1 ">
+        <button
+        class="btn text-light"
+        style="background-color: #4981b2"
+        id="download"
+        onclick="export_data()"
+        disabled="true"
+      >
+        <i class="fa-solid fa-download" id="export_data_icon"></i> 
+        
+      </button>
+      </div>
+    </div>
+  {% endif %}
   <div class="row">
     <div class="col-lg-5 col-md-12 mb-5 mb-lg-0">
       <div class="card" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
@@ -59,69 +107,128 @@
     <div class="col">
       <div class="card mb-3" style="height: 215px; box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
         <div class="card-body">
-          <p class="h4 text-uppercase text-center">
-            <i class="fa-solid fa-bell me-4" style="color: rgb(28, 35, 119);"></i>Notice
-            Board
-          </p>
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Comments</th>
-              </thead>
-              <tbody>
-                {% if data_result %}
-                  {% for position in data_result %}
-                    {% if position.status == "Rejected" %}
-                      <tr class="rejected-row">
-                        <td>{{position.start_date}}</td>
-                        {% if position.leave_type %}
-                          <td>LeaveRequest</td>
-                        {% else %}
-                          <td>TimeSheet</td>
-                        {% endif %}
-                        <td>Rejected</td>
-                        <td>{{position.comments}}</td>
-                      </tr>
-                    {% endif %}
-                    {% if position.status == "uncheck" %}
-                      <tr class="rejected-row">
-                        <td>{{position.start_date}}</td>
-                        {% if position.leave_type %}
-                          <td>LeaveRequest</td>
-                        {% else %}
-                          <td>TimeSheet</td>
-                        {% endif %}
-                        <td>Uncheck</td>
-                        <td>{{position.comments}}</td>
-                      </tr>
-                    {% endif %}
-                    {% if position.status == "Approved" %}
-                      <tr class="approved-row">
-                        <td>{{position.start_date}}</td>
-                        {% if position.leave_type %}
-                          <td>LeaveRequest</td>
-                        {% else %}
-                          <td>TimeSheet</td>
-                        {% endif %}
-                        <td>Approved</td>
-                        <td>{{position.comments}}</td>
-                      </tr>
-                    {% endif %}
-                  {% endfor %}
-                {% else %}
-                  <tr class="rejected-row">
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                {% endif %}
-                  </tr>
-              </tbody>
-            </table>
+          <div class="row">
+            <div class="col text-center">
+              <a type="button" class="btn position-relative" style="cursor:default;">
+                <i class="fa-solid fa-bell" style="font-size: 30px; color: rgb(28, 35, 119);"></i>
+                <span class="position-absolute top-0 start-10 translate-middle badge rounded-pill bg-danger">
+                  {{pending_lists|length}}
+                  <span class="visually-hidden">pending time sheet approvals</span>
+                </span>
+              </a>
+              <span class="h4 text-uppercase">
+                Notice Board
+              </span>
+            </div>
           </div>
+          <div class="row">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Comments</th>
+                </thead>
+                <tbody>
+                  {% if request.user.role == 'superadmin' %}
+                    {% if pending_lists %}
+                      {% for pending_list in pending_lists %}
+                          <tr class="pending-row">
+                            <td>{{pending_list.start_date}}</td>
+                            {% if pending_list.leave_type %}
+                              <td>LeaveRequest</td>
+                            {% else %}
+                              <td>TimeSheet</td>
+                            {% endif %}
+                            <td>Pending</td>
+                            <td>{{pending_list.comments}}</td>
+                          </tr>
+                      {% endfor %}
+                    {% else %}
+                    <tr class="rejected-row">
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                    </tr>
+                    {% endif %}
+                  {% else %}
+                    {% if data_result %}
+                    {% for position in data_result %}
+                      {% if position.status == "Rejected" %}
+                        <tr class="rejected-row">
+                          <td>{{position.start_date}}</td>
+                          {% if position.leave_type %}
+                            <td>LeaveRequest</td>
+                          {% else %}
+                            <td>TimeSheet</td>
+                          {% endif %}
+                          <td>Rejected</td>
+                          <td>{{position.comments}}</td>
+                        </tr>
+                      {% endif %}
+                      {% if position.status == "uncheck" %}
+                        <tr class="rejected-row">
+                          <td>{{position.start_date}}</td>
+                          {% if position.leave_type %}
+                            <td>LeaveRequest</td>
+                          {% else %}
+                            <td>TimeSheet</td>
+                          {% endif %}
+                          <td>Uncheck</td>
+                          <td>{{position.comments}}</td>
+                        </tr>
+                      {% endif %}
+                      {% if position.status == "Approved" %}
+                        <tr class="approved-row">
+                          <td>{{position.start_date}}</td>
+                          {% if position.leave_type %}
+                            <td>LeaveRequest</td>
+                          {% else %}
+                            <td>TimeSheet</td>
+                          {% endif %}
+                          <td>Approved</td>
+                          <td>{{position.comments}}</td>
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    <tr class="rejected-row">
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                  {% endif %}
+                    </tr>
+                  {% endif %}
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- <div class="row">
+            <div class="col mt-3 text-center">
+              <p class="h5">Pending Time sheet approvals</p>
+              <a type="button" class="btn position-relative mt-3" href="{% url 'timesheet_manager' %}">
+                <i class="fa-solid fa-clock" style="font-size: 50px; color: rgb(28, 35, 119);"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{ tms_pending_list|length }}
+                  <span class="visually-hidden">pending time sheet approvals</span>
+                </span>
+              </a>
+            </div>
+            <div class="col mt-3 text-center">
+              <p class="h5">Pending Leave approvals</p>
+              <a type="button" class="btn position-relative mt-3" href="{% url 'leave_manager' %}">
+                <i class="fa-regular fa-calendar" style="font-size: 50px; color: rgb(28, 35, 119);"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{ lms_pending_list|length }}
+                  <span class="visually-hidden">pending leave approvals</span>
+                </span>
+              </a>
+            </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -246,4 +353,83 @@
       </div>
     </div>
   </div>
+  <script>
+    // export data by month and year wise
+    function export_data (){
+      console.log('export data')
+      // Removing download button and adding loading button
+      var toast = document.getElementById('alert_toast')
+      var download_button = document.getElementById("download") 
+      var loading_icon = document.getElementById('export_data_loading')
+      loading_icon.style.display = 'block'     
+      var input = document.getElementById("report_month").value
+      var date = new Date(input);
+
+      var data = {
+        'month': date.getMonth()+1,
+        'year' : date.getFullYear(),
+    }
+
+      console.log(data);
+
+      // using fetch to expot the month and year to views
+      fetch("{% url 'export_data' %}", {
+        method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+    if (!response.ok) {
+        // If the response is not ok, print the response text
+        console.log('11111')
+        response.text().then(text => console.log(text));
+        throw new Error('Network response was not ok');
+    }
+    return response.blob();
+  }).then(blob => {
+    console.log(blob)
+    if (blob.type == 'application/json'){
+      // Show the error message here if needed
+      loading_icon.style.display = 'none'
+      $('.toast').toast('show');
+      $('.toast').on('hidden.bs.toast', function () {
+  // do something...
+  download_button.style.display = 'block'
+});
+      
+      
+    }
+    else{
+            download_button.style.display = 'block'
+            loading_icon.style.display = 'none'
+
+            // Create a new object URL for the blob
+            const url = window.URL.createObjectURL(blob);
+
+            // Create a link and click it to start the download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'my_data.csv';
+            link.click();
+
+            // Release the reference to the object URL
+            window.URL.revokeObjectURL(url);
+    }});
+        }
+    
+  </script>
+<script>
+  function checkInput() {
+    var inputField = document.getElementById('report_month').value;
+    var downloadButton = document.getElementById('download');
+    if (!inputField) {
+      downloadButton.disabled = true;
+    } else {
+      downloadButton.disabled = false;
+    }
+  }
+</script>
+
 {% endblock pageContent %}

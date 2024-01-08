@@ -50,5 +50,6 @@ urlpatterns = [
     path('signup/', views.signup_bs, name='signup'),
     path('forgot_password/', views.forgot_password, name='forgot_password'),
     path('send_password',views.send_password,name='send_password'),
-    path('download',views.download_data,name='download')
+    path('download',views.download_data,name='download'),
+    path('export_data', views.export_data, name='export_data'),
 ]

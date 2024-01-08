@@ -74,7 +74,7 @@ class TimeSheet(models.Model):
         ('Reject', 'Reject'),
         ('Pending', 'Pending'),
     )
-    status = models.CharField(max_length=20, choices=timesheet_status)
+    status = models.CharField(max_length=20, choices=timesheet_status, default='Pending')
 
     def __str__(self):
         return f"Time Sheet for {self.project_name} ({self.start_date} - {self.end_date})"

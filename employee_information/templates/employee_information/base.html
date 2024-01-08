@@ -27,8 +27,10 @@
       crossorigin="anonymous"
     />
     <style>
+      
       .modal-backdrop {
         display: none;
+        
       }
       .body_bg {
         background-color: rgb(247, 246, 251);
@@ -51,6 +53,7 @@
       ::after {
         box-sizing: border-box;
       }
+      
       body {
         position: relative;
         margin: var(--header-height) 0 0 0;
@@ -84,6 +87,7 @@
         cursor: pointer;
       }
       .l-navbar {
+        
         position: fixed;
         top: 0;
         left: -30%;
@@ -96,6 +100,7 @@
         
       }
       .nav {
+        
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -160,21 +165,26 @@
       }
       .sub_menu_nav_link {
         position: relative;
-        
+        border-radius: 10px;
         color: var(--first-color-light);
         /* margin-bottom: 0.5rem; */
       }
       .sub_menu_nav_link:hover {
         color: var(--white-color);
+        border-radius: 10px;
       }
       .sub_menu_div_bg {
         background-color: #142248;
         margin-top: -10px;
+        margin-left: 20px;
+        max-width: 220px;
+        border-radius: 10px;
         
       }
       .sub_menu_bg:hover {
         background-color: var(--white-color);
         text-align: center;
+        border-radius: 10px;
       }
       .sub_menu_font {
         color: #949393;
@@ -198,7 +208,7 @@
       .sub_menu_icon {
         font-size: 1.1rem;
         color: #ffffff;
-        margin-left: 10px;
+        /* margin-left: 10px; */
       }
       .sub_menu_active_icon {
         font-size: 1.1rem;
@@ -221,10 +231,10 @@
           padding: 1rem 1.2rem 0 0;
         }
         .show {
-          width: calc(var(--nav-width) + 156px);
+          width: calc(var(--nav-width) + 210px);
         }
         .body-pd {
-          padding-left: calc(var(--nav-width) + 188px);
+          padding-left: calc(var(--nav-width) + 230px);
         }
       }
       @media (max-width: 576px) {
@@ -238,6 +248,52 @@
           margin-top: 7%;
         }
       }
+     /* Dropdown Button */
+     .dropbtn {
+      background-color: transparent;
+      padding: 16px;
+      font-size: 26px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Dropdown button on hover & focus */
+    .dropbtn:hover, .dropbtn:focus {
+      background-color: transparent;
+      border: none;
+      outline: none;
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #ddd ;
+      min-width: 160px;
+      max-width: 170px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+      color: #142248;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {background-color: var(--first-color);color: #ffffff;}
+
+    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+    .show {display:block;}
     </style>
   </head>
 
@@ -253,12 +309,27 @@
         ></i>
       </div>
       <!-- end of toggle icon -->
-      <!-- icon with logged in user name -->
-      <div class="h4">
+      <!-- <div class="h4">
         <i class="fa-solid fa-user me-2 my-5" style="color: var(--first-color)"></i>
         {{ request.user.employee_name }}
+      </div> -->
+      <div class="dropdown" onclick="myFunction()">
+        <!-- button of icon with logged in user name -->
+        <button class="dropbtn">
+          <i class="fa-solid fa-user me-2" style="color: var(--first-color)"></i>
+          {{ request.user.employee_name }}
+          <i class="fas fa-caret-down" style="font-size: 20px;"></i>
+        </button>
+        <!-- end of button -->
+        <!-- logout dropdown -->
+        <div id="myDropdown" class="dropdown-content">
+          <a href="{% url 'User:logout' %}" title="Logout">
+            <i class="fa-solid fa-right-from-bracket me-2"></i>
+            <span> Logout</span>
+          </a>
+        </div>
+        <!-- end of logout dropdown -->
       </div>
-      <!-- end of user icon -->
     </header>
     <!-- end of top bar -->
     <!-- side nav bar -->
@@ -319,7 +390,7 @@
               title="Time Sheet Management"
             >
               <i class="fa-solid fa-clock nav_icon"></i>
-              <span class="nav_name">TMS <i class="fas fa-caret-down"></i></span>
+              <span class="nav_name">Time sheet management <i class="fas fa-caret-down"></i></span>
             </a>
             <!-- Time sheet Management collapsible sub menu-->
             <div class="collapse sub_menu_div_bg" id="TMSSubmenu">
@@ -336,7 +407,7 @@
                   ></i>
                   <span
                     class="sub_menu_font {% if request.path == '/timesheet_manager' %}sub_menu_active_font{% endif %}"
-                    >Pending approvals</span
+                    >My pending approvals</span
                   >
                 </a>
                 <!-- end of TMS My pending approvals -->
@@ -355,7 +426,7 @@
                   ></i>
                   <span
                     class="sub_menu_font {% if request.path == '/timesheets_create' %}sub_menu_active_font{% endif %}"
-                    >Submit Time Sheet</span
+                    >Submit time sheet</span
                   >
                 </a>
                 <!-- end of submit timesheet -->
@@ -372,7 +443,7 @@
                   ></i>
                   <span
                     class="sub_menu_font {% if request.path == '/time_sheet_status' %}sub_menu_active_font{% endif %} text-center"
-                    >Time Sheet Status</span
+                    >Time sheet status</span
                   >
                 </a>
                 <!-- end of timesheet status -->
@@ -389,7 +460,7 @@
               title="Leave Management"
             >
               <i class="fa-regular fa-calendar nav_icon"></i>
-              <span class="nav_name">LMS <i class="fas fa-caret-down"></i></span>
+              <span class="nav_name">Leave management <i class="fas fa-caret-down"></i></span>
             </a>
             <!-- Leave Management collapsible sub menu-->
             <div class="collapse sub_menu_div_bg" id="LMSSubmenu">
@@ -406,7 +477,7 @@
                   ></i>
                   <span
                     class="sub_menu_font {% if request.path == '/leave_manager/' %}sub_menu_active_font{% endif %}"
-                    >Pending approvals</span
+                    >My pending approvals</span
                   >
                 </a>
                 <!-- end of LMS My pending approvals -->
@@ -425,7 +496,7 @@
                   ></i>
                   <span
                     class="sub_menu_font {% if request.path == '/leave_request/' %}sub_menu_active_font{% endif %}"
-                    >Apply Leave</span
+                    >Apply for leave</span
                   >
                 </a>
                 <!-- end of apply leave -->
@@ -442,7 +513,7 @@
                   ></i>
                   <span
                     class="sub_menu_font {% if request.path == '/leave_detail/' %}sub_menu_active_font{% endif %}"
-                    >Leave Status</span
+                    >Leave request status</span
                   >
                 </a>
                 <!-- end of leave status -->
@@ -597,9 +668,11 @@
     <script>
       window.start_loader = function () {
         $("body").removeClass("loaded");
+        
       };
       window.end_loader = function () {
         $("body").addClass("loaded");
+        
       };
       window.uni_modal = function ($title = "", $url = "", $size = "") {
         start_loader();
@@ -668,4 +741,23 @@
         });
       });
       </script>
+<script>
+  function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+  }
+
+  // Close the dropdown menu if the user clicks outside of it
+  window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      var i;
+      for (i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  }
+</script>
 </html>

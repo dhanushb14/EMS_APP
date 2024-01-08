@@ -34,7 +34,14 @@
     <div class="col-lg-2 col-md-6 my-2">
       <div class="input-group ">
         <label class="input-group-text">Status</label>
-        <input id="status_select" type=text class="form-control"></input>
+        <!-- <input id="status_select" type=text class="form-control"></input> -->
+        <select id="status_select" class="form-select" aria-label="Default select example">
+          <option selected>---------</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Uncheck  ">Uncheck</option>
+        </select>
       </div>
     </div>
     <div class="col-auto my-2 ms-2">
@@ -69,7 +76,7 @@
       <table class="table table-bordered">
         <thead>
           <tr class="table-secondary fw-light">
-            <th class="fw-medium text-center">Project Name <button style="border: none; background-color: transparent;"><i class="fa-solid fa-sort"></i></button></th>
+            <th class="fw-medium text-center">Project Name</th>
             <th class="fw-medium text-center">Employee Name</th>
             <th class="fw-medium text-center">Start Date</th>
             <th class="fw-medium text-center">End Date</th>
@@ -136,15 +143,6 @@
     </div>
   </div>
   <div class="row">
-    <!-- <div class="col-auto mx-auto d-flex justify-content-center align-items-center" id="pagination">
-      {% if data.has_previous %}
-          <button onclick="location.href='?page={{ data.previous_page_number }}'"><</button>
-      {% endif %}
-      <span id="pageDisplay">Page {{ data.number }} of {{ data.paginator.num_pages }}</span>
-      {% if data.has_next %}
-          <button onclick="location.href='?page={{ data.next_page_number }}'">></button>
-      {% endif %}
-    </div> -->
     <div class="col">
       <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
@@ -271,6 +269,17 @@
     window.URL.revokeObjectURL(url);
 });
 });
+</script>
+<script>
+    // Filter start date change, disabling filter button
+
+    function checkdate() {
+      console.log('checkdate')
+    var empInput = document.getElementById('emp_name_select');
+    var emp_data = document.getElementById('data_employee_date').textContent;
+    console.log("emp_data", emp_data);
+}
+  document.getElementById('emp_name_select').addEventListener('input', checkdate);
 </script>
 <script>
   // Filter start date change, disabling filter button
@@ -605,6 +614,7 @@ document.getElementById('status_select').addEventListener('input', checkInputs);
                           var statusField = row.querySelector('td:nth-child(7)');
                           statusField.innerHTML = `
                             <select name="status" id="status" style="background-color: transparent; border: none;">
+                                  <option class="text-center" value="Pending">Pending</option>
                                   <option class="text-center" value="Approved">Approved</option>
                                   <option class="text-center" value="Rejected">Rejected</option>
                                   <option class="text-center" value="uncheck">Uncheck</option>
@@ -651,5 +661,31 @@ document.getElementById('status_select').addEventListener('input', checkInputs);
         
     })
 </script>
-
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script>
+  $(function() {
+    var projNames = [
+      "{% for proj_name in proj_names %}"
+        ,"{{ proj_name }}",
+      "{% endfor %}"
+    ];
+    $("#project_name_select").autocomplete({
+      source: projNames
+    });
+  });
+</script>
+<script>
+  $(function() {
+    var empNames = [
+      "{% for emp_name in emp_names %}"
+        ,"{{ emp_name }}",
+      "{% endfor %}"
+    ];
+    $("#emp_name_select").autocomplete({
+      source: empNames
+    });
+  });
+</script>
 {% endblock pageContent %}
