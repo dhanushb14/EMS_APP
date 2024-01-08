@@ -13,55 +13,60 @@
     overflow-y: auto;
     max-height: 138.5px; /* Adjust the max-height as per your requirement */
   }
+  @media (min-width: 576px){
+    #export_data_loading{
+      position: absolute;
+      left: 900px;
+    }
+  }
+  @media (max-width: 577px){
+    #export_data_loading{
+      position: absolute;
+      left: 250px;}
+    #download{
+      min-width:360px;
+    }
+  }
 </style>
 <body class="body_bg">
-  <div class="container mg-t ">
-    <div class="row mb-4">
-      {% if request.user.role == "superadmin" %}
-      <div class="col-lg-2 col-md-6">
-        <h2 class="fw-bold">Dashboard</h2>
+  <div class="row mg-t">
+    <div class="col-lg-4 col-md-6">
+      <h2 class="fw-bold">Dashboard</h2>
+    </div>
+    <div class="col-lg-8 text-center my-3 my-lg-0">
+      <div class="spinner-border text-primary spinner-border-md" id="export_data_loading" role="status" style="display: none;">
+        <span class="sr-only">Loading...</span>
       </div>
-      <div class="col-lg-2 ms-auto text-center my-3 my-lg-0">
-        <div class="spinner-border text-primary spinner-border-md" id="export_data_loading" role="status" style="display: none;">
-          <span class="sr-only">Loading...</span>
-        </div>
-        <div class="alert alert-danger text-center toast" role="alert" id="alert_toast" style=" background-color: #b24949; color: white;">
-          No Data!
-        </div>
-        <!-- <div class="toast" role="alert" aria-live="polite" aria-atomic="true" data-delay="1000"  data-animation="true">
-          <div role="alert" aria-live="assertive" aria-atomic="true">No Data</div>
-          
-        </div> -->
+      <div class="alert alert-danger toast" role="alert" id="alert_toast" style=" background-color: #b24949; color: white;">
+        No Data!
       </div>
-      <div class="col-lg-3 col-md-6 ms-lg-auto my-3 my-lg-0">
-        <div class="row">
-          <div class="col">
-            <div class="input-group">
-              <label class="input-group-text">Select Month</label>
-              <input id="report_month" type=month class="form-control" oninput="checkInput()"></input>
-            </div>
-          </div>
-          <div class="col ms-lg-0 ms-5">
-            <button
-                class="btn btn-md-lg text-light"
-                style="background-color: #4981b2"
-                id="download"
-                onclick="export_data()"
-                disabled="true"
-              >
-                <i class="fa-solid fa-download" id="export_data_icon"></i> 
-                
-              </button>
-          </div>
-        </div>
-      </div>
-      {% else %}
-      <div class="col-12">
-        <h2 class="fw-bold mb-4">Dashboard</h2>
-      </div>
-      {% endif %}
     </div>
   </div>
+  {% if request.user.role == "superadmin" %}
+    <div class="row mb-4 mx-auto" style="background-color: #ecd5ef; height: 51%; border-radius: 5px;">
+      <div class="col-lg-8 col-md-6 my-2">
+        <span class="fs-5">Download Monthly Report</span>
+      </div>
+      <div class="col-lg-3 col-md-6 my-2">
+        <div class="input-group">
+          <label class="input-group-text">Select Month</label>
+          <input id="report_month" type=month class="form-control" oninput="checkInput()"></input>
+        </div>
+      </div>
+      <div class="col-lg-auto col-md-6 my-2 ms-auto me-1 ">
+        <button
+        class="btn text-light"
+        style="background-color: #4981b2"
+        id="download"
+        onclick="export_data()"
+        disabled="true"
+      >
+        <i class="fa-solid fa-download" id="export_data_icon"></i> 
+        
+      </button>
+      </div>
+    </div>
+  {% endif %}
   <div class="row">
     <div class="col-lg-5 col-md-12 mb-5 mb-lg-0">
       <div class="card" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">

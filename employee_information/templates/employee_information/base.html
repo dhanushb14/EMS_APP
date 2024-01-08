@@ -248,8 +248,8 @@
           margin-top: 7%;
         }
       }
-    /* Dropdown Button */
-    .dropbtn {
+     /* Dropdown Button */
+     .dropbtn {
       background-color: transparent;
       padding: 16px;
       font-size: 26px;
@@ -293,7 +293,7 @@
     .dropdown-content a:hover {background-color: var(--first-color);color: #ffffff;}
 
     /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-    .show {display:relative;}
+    .show {display:block;}
     </style>
   </head>
 
@@ -313,9 +313,9 @@
         <i class="fa-solid fa-user me-2 my-5" style="color: var(--first-color)"></i>
         {{ request.user.employee_name }}
       </div> -->
-      <div class="dropdown">
+      <div class="dropdown" onclick="myFunction()">
         <!-- button of icon with logged in user name -->
-        <button onclick="myFunction()" class="dropbtn">
+        <button class="dropbtn">
           <i class="fa-solid fa-user me-2" style="color: var(--first-color)"></i>
           {{ request.user.employee_name }}
           <i class="fas fa-caret-down" style="font-size: 20px;"></i>
@@ -323,12 +323,6 @@
         <!-- end of button -->
         <!-- logout dropdown -->
         <div id="myDropdown" class="dropdown-content">
-          {% if request.user.role == "superadmin" %}
-          <a href="#" title="Logout">
-            <i class="fa-solid fa-download me-2"></i>
-            <span>Monthly report</span>
-          </a>
-          {% endif %}
           <a href="{% url 'User:logout' %}" title="Logout">
             <i class="fa-solid fa-right-from-bracket me-2"></i>
             <span> Logout</span>
@@ -747,23 +741,23 @@
         });
       });
       </script>
-      <script>
-        function myFunction() {
-          document.getElementById("myDropdown").classList.toggle("show");
-        }
+<script>
+  function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+  }
 
-        // Close the dropdown menu if the user clicks outside of it
-        window.onclick = function(event) {
-          if (!event.target.matches('.dropbtn')) {
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            var i;
-            for (i = 0; i < dropdowns.length; i++) {
-              var openDropdown = dropdowns[i];
-              if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
-              }
-            }
-          }
+  // Close the dropdown menu if the user clicks outside of it
+  window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      var i;
+      for (i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
         }
-      </script>
+      }
+    }
+  }
+</script>
 </html>
