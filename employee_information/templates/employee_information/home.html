@@ -109,16 +109,23 @@
         <div class="card-body">
           <div class="row">
             <div class="col text-center">
-              <a type="button" class="btn position-relative" style="cursor:default;">
-                <i class="fa-solid fa-bell" style="font-size: 30px; color: rgb(28, 35, 119);"></i>
-                <span class="position-absolute top-0 start-10 translate-middle badge rounded-pill bg-danger">
-                  {{pending_lists|length}}
-                  <span class="visually-hidden">pending time sheet approvals</span>
+              {% if request.user.role == "superadmin" %}
+                <a type="button" class="btn position-relative" style="cursor:default;">
+                  <i class="fa-solid fa-bell" style="font-size: 30px; color: rgb(28, 35, 119);"></i>
+                  <span class="position-absolute top-0 start-10 translate-middle badge rounded-pill bg-danger">
+                    {{pending_lists|length}}
+                    <span class="visually-hidden">pending time sheet approvals</span>
+                  </span>
+                </a>
+                <span class="h4 text-uppercase">
+                  Notice Board
                 </span>
-              </a>
-              <span class="h4 text-uppercase">
-                Notice Board
-              </span>
+              {% else %}
+              <p class="h4 text-uppercase text-center">
+                <i class="fa-solid fa-bell me-4" style="color: rgb(28, 35, 119);"></i>Notice
+                Board
+              </p>
+              {% endif %}
             </div>
           </div>
           <div class="row">
