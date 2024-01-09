@@ -711,6 +711,13 @@ def timesheet_manager( request ):
         
      elif request.user.role == "employee":
         data = model_user.objects.filter(employee_id=request.user.employee_id)
+     elif request.user.role == "scrummaster":
+        try:
+            team_member = Teams.objects.get(scrum_master_id = request.user.id)
+            employe_team = [i.employee_name for i in team_member.team_members.all()]
+        except:
+            employe_team = None
+        data = model.objects.filter(username__in= employe_team).order_by('-start_date')
      else:
         data = model.objects.all().order_by('-start_date')
      paginator = Paginator(data, 5)  # Show 10 items per page
