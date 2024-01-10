@@ -248,52 +248,6 @@
           margin-top: 7%;
         }
       }
-     /* Dropdown Button */
-     .dropbtn {
-      background-color: transparent;
-      padding: 16px;
-      font-size: 26px;
-      border: none;
-      cursor: pointer;
-    }
-
-    /* Dropdown button on hover & focus */
-    .dropbtn:hover, .dropbtn:focus {
-      background-color: transparent;
-      border: none;
-      outline: none;
-    }
-
-    /* The container <div> - needed to position the dropdown content */
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
-
-    /* Dropdown Content (Hidden by Default) */
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #ddd ;
-      min-width: 160px;
-      max-width: 170px;
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-      z-index: 1;
-    }
-
-    /* Links inside the dropdown */
-    .dropdown-content a {
-      color: #142248;
-      padding: 12px 16px;
-      text-decoration: none;
-      display: block;
-    }
-
-    /* Change color of dropdown links on hover */
-    .dropdown-content a:hover {background-color: var(--first-color);color: #ffffff;}
-
-    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-    .show {display:block;}
     </style>
   </head>
 
@@ -309,27 +263,11 @@
         ></i>
       </div>
       <!-- end of toggle icon -->
-      <!-- <div class="h4">
+      <div class="h4">
         <i class="fa-solid fa-user me-2 my-5" style="color: var(--first-color)"></i>
         {{ request.user.employee_name }}
-      </div> -->
-      <div class="dropdown" onclick="myFunction()">
-        <!-- button of icon with logged in user name -->
-        <button class="dropbtn">
-          <i class="fa-solid fa-user me-2" style="color: var(--first-color)"></i>
-          {{ request.user.employee_name }}
-          <i class="fas fa-caret-down" style="font-size: 20px;"></i>
-        </button>
-        <!-- end of button -->
-        <!-- logout dropdown -->
-        <div id="myDropdown" class="dropdown-content">
-          <a href="{% url 'User:logout' %}" title="Logout">
-            <i class="fa-solid fa-right-from-bracket me-2"></i>
-            <span> Logout</span>
-          </a>
-        </div>
-        <!-- end of logout dropdown -->
       </div>
+      
     </header>
     <!-- end of top bar -->
     <!-- side nav bar -->
@@ -344,7 +282,7 @@
               alt=""
               style="height: 30px"
             />
-            <span class="nav_logo-name">IGS Time Sheet</span>
+            <span class="nav_logo-name">IGS Employee Portal</span>
           </p>
           <div class="nav_list">
             <!-- homepage -->
@@ -741,23 +679,4 @@
         });
       });
       </script>
-<script>
-  function myFunction() {
-    document.getElementById("myDropdown").classList.toggle("show");
-  }
-
-  // Close the dropdown menu if the user clicks outside of it
-  window.onclick = function(event) {
-    if (!event.target.matches('.dropbtn')) {
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      var i;
-      for (i = 0; i < dropdowns.length; i++) {
-        var openDropdown = dropdowns[i];
-        if (openDropdown.classList.contains('show')) {
-          openDropdown.classList.remove('show');
-        }
-      }
-    }
-  }
-</script>
 </html>
