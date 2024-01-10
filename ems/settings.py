@@ -60,9 +60,9 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
-SESSION_EXPIRE_SECONDS = 3600
+SESSION_COOKIE_AGE = 7200
 
-SESSION_TIMEOUT_REDIRECT = 'User:login'
+SESSION_SAVE_EVERY_REQUEST = True
 
 ROOT_URLCONF = 'ems.urls'
 

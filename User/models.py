@@ -35,10 +35,20 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     phonenumber = models.CharField(max_length=20, unique=True)
     employee_id = models.CharField(unique=True, max_length=10)
     password = models.CharField(max_length=100)
-    role = models.CharField(max_length=100, default='employee')
+    employee_role = [
+        ('superadmin', 'Super Admin'),
+        ('manager', 'Manager'),
+        ('scrummaster', 'Scrum Master'),
+        ('employee', 'Employee')
+    ]
+    role = models.CharField(max_length=100, default='employee',choices=employee_role)
     available_leave = models.IntegerField(default=2)
     work_from_home  = models.IntegerField(default=3)
-    is_active = models.BooleanField(default=True)
+    employee_active = [
+        (True,'Active'),
+        (False,'In Active')
+    ]
+    is_active = models.BooleanField(default=True,choices=employee_active)
     is_staff = models.BooleanField(default=False)
     employee_shift = [
         ('Morning shift', 'Morning shift'),

@@ -22,7 +22,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import TimeSheet, LeaveRequest, Teams
 from .forms import EmployeeForm, LeaveRequestForm
-from .filters import FilterForm
+from .filters import FilterForm, EmployeeListFilter
 import json
 from django.views.decorators.http import require_http_methods
 from User.models import Employee
@@ -294,9 +294,20 @@ def delete_position(request):
 # Employees
 def employees(request):
     employee_list = Employee.objects.all()
+    filter_queryset = EmployeeListFilter(request.GET,queryset=employee_list)
+    employee_list = filter_queryset.qs
+    paginator = Paginator(employee_list,5)
+    page = request.GET.get('page')
+    paginated_results = paginator.get_page(page)
+    employee_names_list = list(set(employee_names.employee_name for employee_names in paginated_results))
+    employee_ids_list = list(set(employee_ids.employee_id for employee_ids in paginated_results))
 
     context = {
         'employees': employee_list,
+        'paginated_results': paginated_results,
+        'filter_queryset': filter_queryset,
+        'employee_names_list': employee_names_list,
+        'employee_ids_list': employee_ids_list,
     }
     return render(request, 'employee_information/employees.html', context)
 

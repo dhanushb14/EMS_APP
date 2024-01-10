@@ -1,89 +1,191 @@
 {% extends "employee_information/base.html" %} {% block pageContent %}
+{% load widget_tweaks %}
 <body class="body_bg">
+  <!-- container start -->
   <div class="container mg-t">
+    <!-- Heading row -->
     <div class="row">
       <div class="col">
         <h2 class="fw-bold mb-4">Employee List</h2>
       </div>
     </div>
-  </div>
-</div>
-<div class="container mx-auto">
-  <div class="card">
-    <div class="table-responsive">
-      <table class="table table-bordered">
-        <colgroup>
-          <col width="10%" />
-          <col width="26%" />
-          <col width="26%" />
-          <col width="16%" />
-          <col width="11%" />
-        </colgroup>
-        <thead>
-          <tr class="table-secondary">
-            <th class="text-center py-2">Employee Id</th>
-            <th class="text-center py-2">Name</th>
-            <th class="text-center py-2">Role</th>
-            <th class="text-center py-2">Status</th>
-            <th class="text-center py-2">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for employee in employees %}
-          <tr>
-            <td class="px-2 py-1 text-center">{{ employee.employee_id }}</td>
-            <td class="px-2 py-1 text-center">{{ employee.employee_name }}</td>
-            
-            <td class="px-2 py-1 text-center">
-              {% if employee.role == "employee" %}
-                Employee
-              {% elif employee.role == "superadmin" %}
-                Super Admin
-              {% elif employee.role == "manager" %}
-                Manager
-              {% elif employee.role == "scrummaster" %}
-                Scrum Master
-              {% else %}
-                Employee
-              {% endif %}
-            </td>
-            
-            <td class="px-2 py-1 text-center my-auto">
-              {% if employee.is_active == 1 %}
-              <span
-                class="badge rounded-pill px-3"
-                style="background-color: rgb(133, 91, 172)"
-                >Active</span
-              >
-              {% else %}
-              <span class="badge bg-secondary rounded-pill px-3">Inactive</span>
-              {% endif %}
-            </td>
-            <td class="px-2 py-1 text-center">
-              <button
-                class="btn btn-secondary btn-sm edit-data"
-                id="edit-data"
-                type="button"
-                data-id="{{ employee.employee_id }}"
-                title="Edit"
-              >
-                <i class="fa-solid fa-pen"></i>
-              </button>
-              <button
-                class="btn btn-danger btn-sm delete-data mt-lg-0 mt-2"
-                type="button"
-                data-id="{{ employee.employee_id }}"
-                title="Delete"
-              >
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <!-- end of heading row -->
+    <!-- filter row -->
+    <div class="row mx-auto mt-2" style="background-color: #ecd5ef; min-height: 7%; border-radius: 5px;">
+      <form method="get">
+        <div class="row">
+          <div class="col-lg-3 col-md-6 my-2">
+              {% render_field filter_queryset.form.employee_id|add_class:"form-control employee_id"|attr:"placeholder:Employee ID"%}
+          </div>
+          <div class="col-lg-3 col-md-6 my-2">
+            {% render_field filter_queryset.form.employee_name|attr:"class:form-control name"|attr:"placeholder:Employee Name"%}
+          </div>
+          <div class="col-lg-2 col-md-6 my-2">
+            <div class="input-group">
+              <span class="input-group-text">Role</span>
+              {% render_field filter_queryset.form.role|add_class:"form-control role"%}
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-6 my-2">
+            <div class="input-group">
+              <span class="input-group-text">Status</span>
+              {{filter_queryset.form.is_active|add_class:"form-control is_active"}} 
+            </div>
+          </div>
+          <div class="col-auto my-2">
+            <button
+            class="btn text-light me-1"
+            style="background-color: #4981b2 !important"
+            id="search"
+            type="submit"
+            disabled="true"
+          >
+          <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+            <button
+              class="btn text-light ms-1"
+              style="background-color: #b24949 !important"
+              id="clear"
+              disabled="true"
+            >
+            <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="col-auto ms-auto ms-xs-1 me-1 my-2">
+            <a class="btn text-light"
+              style="background-color: #4981b2 !important"
+              href="{% url 'download' %}?{{ request.GET.urlencode }}">
+              <i class="fa-solid fa-download"></i>
+            </a>
+          </div>
+        </div>
+      </form>
     </div>
+    <!-- end of filter row -->
+    <!-- table row -->
+    <div class="row mt-5">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <colgroup>
+            <col width="10%" />
+            <col width="26%" />
+            <col width="26%" />
+            <col width="16%" />
+            <col width="11%" />
+          </colgroup>
+          <thead>
+            <tr class="table-secondary">
+              <th class="text-center py-2">Employee Id</th>
+              <th class="text-center py-2">Name</th>
+              <th class="text-center py-2">Role</th>
+              <th class="text-center py-2">Status</th>
+              <th class="text-center py-2">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for employee in paginated_results %}
+            <tr>
+              <td class="px-2 py-1 text-center">{{ employee.employee_id }}</td>
+              <td class="px-2 py-1 text-center">{{ employee.employee_name }}</td>
+              
+              <td class="px-2 py-1 text-center">
+                {% if employee.role == "employee" %}
+                  Employee
+                {% elif employee.role == "superadmin" %}
+                  Super Admin
+                {% elif employee.role == "manager" %}
+                  Manager
+                {% elif employee.role == "scrummaster" %}
+                  Scrum Master
+                {% else %}
+                  Employee
+                {% endif %}
+              </td>
+              
+              <td class="px-2 py-1 text-center my-auto">
+                {% if employee.is_active == 1 %}
+                <span
+                  class="badge rounded-pill px-3"
+                  style="background-color: rgb(133, 91, 172)"
+                  >Active</span
+                >
+                {% else %}
+                <span class="badge bg-secondary rounded-pill px-3">Inactive</span>
+                {% endif %}
+              </td>
+              <td class="px-2 py-1 text-center">
+                <button
+                  class="btn btn-secondary btn-sm edit-data"
+                  id="edit-data"
+                  type="button"
+                  data-id="{{ employee.employee_id }}"
+                  title="Edit"
+                >
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button
+                  class="btn btn-danger btn-sm delete-data mt-lg-0 mt-2"
+                  type="button"
+                  data-id="{{ employee.employee_id }}"
+                  title="Delete"
+                >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- end of table row -->
+    <!-- pagination row -->
+    <div class="row mt-5">
+      <div class="col">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            {% if paginated_results.has_previous  %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{paginated_results.previous_page_number}}"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+              </li>
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+              </li>
+            {% endif %}
+              <li class="page-item disabled">
+                <a href="?page={{forloop.counter}}" class="page-link">
+                  {{ paginated_results.number }} of {{ paginated_results.paginator.num_pages }}
+                </a>
+              </li>
+            {% if paginated_results.has_next  %}
+              <li class="page-item">
+              <a class="page-link" href="?page={{paginated_results.next_page_number}}"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+              </li>
+              <li class="page-item">
+              <a class="page-link" href="?page={{paginated_results.paginator.num_pages}}"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+              </li>
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!-- end of pagination row -->
   </div>
+  <!-- end of container -->
   <script>
   
   
@@ -133,7 +235,69 @@
       });
     }
   </script>
-</div>
+  <script>
+    $(document).ready(function() {
+      $('#clear').on('click', function() {
+        $('.employee_id').val('');
+        $('.name').val('');
+        $('.role').val('');
+        $('.is_active').val('');
+      });
+    });
+  </script>
+<script>
+  function checkInput() {
+    var employee_id = document.querySelector('.employee_id').value;
+    var name = document.querySelector('.name').value;
+    var role = document.querySelector('.role').value;
+    var status = document.querySelector('.is_active').value;
+
+    var searchButton = document.getElementById('search');
+    var clearButton = document.getElementById('clear');
+
+    if (!employee_id && !name && !role && !status) {
+      searchButton.disabled = true;
+      clearButton.disabled = true;
+    } else {
+      searchButton.disabled = false;
+      clearButton.disabled = false;
+    }
+  }
+
+  document.querySelector('.employee_id').addEventListener('input', checkInput);
+  document.querySelector('.name').addEventListener('input', checkInput);
+  document.querySelector('.role').addEventListener('input', checkInput);
+  document.querySelector('.is_active').addEventListener('input', checkInput);
+</script>
+
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script>
+    $(function() {
+      var availableTags = [
+        "{% for employee_name in employee_names_list %}"
+          ,"{{ employee_name }}",
+        "{% endfor %}"
+      ];
+      $(".name").autocomplete({
+        source: availableTags
+      });
+    });
+  </script>
+  <script>
+    $(function() {
+      var availableTags = [
+        "{% for employee_id in employee_ids_list %}"
+          ,"{{ employee_id }}",
+        "{% endfor %}"
+      ];
+      $(".employee_id").autocomplete({
+        source: availableTags
+      });
+    });
+  </script>
+</body>
 {% endblock pageContent %} {% block ScriptBlock %}
 
 
