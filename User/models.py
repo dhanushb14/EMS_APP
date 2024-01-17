@@ -55,6 +55,47 @@ class Employee(AbstractBaseUser, PermissionsMixin):
         ('Night shift', 'Night shift')
     ]
     shift = models.CharField(max_length = 50, choices=employee_shift)
+    personal_email = models.EmailField(unique=True,blank=True,null=True)
+    dob = models.DateField(blank=True,null=True)
+    gender_choices = [
+        ('Male', 'Male'),
+        ('Female', 'Female')
+        ]
+    gender = models.CharField(max_length=10,choices=gender_choices,blank=True,null=True)
+    blood_group_choices = [
+    ('A+', 'A+'),
+    ('A-', 'A-'),
+    ('B+', 'B+'),
+    ('B-', 'B-'),
+    ('O+', 'O+'),
+    ('O-', 'O-'),
+    ('AB+', 'AB+'),
+    ('AB-', 'AB-'),
+]
+    blood_group = models.CharField(max_length=5,choices=blood_group_choices,blank=True,null=True)
+    joining_date = models.DateField(blank=True,null=True)
+    marital_status_choices= [
+        ('Married','Married'),
+        ('Single','Single')
+    ]
+    marital_status = models.CharField(choices=marital_status_choices,blank=True,null=True)
+    emergency_contact = models.CharField(max_length=20, unique=True,blank=True,null=True)
+    address = models.CharField(max_length=255,blank=True,null=True)
+    father_name = models.CharField(blank=True,null=True)
+    father_dob = models.DateField(blank=True,null=True)
+    mother_name = models.CharField(blank=True,null=True)
+    mother_dob = models.DateField(blank=True,null=True)
+    bank_name = models.CharField(blank=True,null=True)
+    bank_branch = models.CharField(blank=True,null=True)
+    bank_account_no = models.CharField(blank=True,null=True)
+    bank_ifsc_code = models.CharField(blank=True,null=True)
+    bank_uan_no = models.CharField(blank=True,null=True)
+    bank_nominee_name = models.CharField(blank=True,null=True)
+    bank_nominee_dob = models.DateField(blank=True,null=True)
+    proofs_aadhar_no = models.CharField(max_length=12,blank=True,null=True)
+    proofs_pancard_no = models.CharField(max_length=10,blank=True,null=True)
+    proofs_aadhar_softcopy = models.ImageField(blank=True,null=True)
+    proofs_pancard_softcopy = models.ImageField(blank=True,null=True)
     objects = EmployeeManager()
 
     USERNAME_FIELD = 'employee_id'

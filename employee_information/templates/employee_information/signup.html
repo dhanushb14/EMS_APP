@@ -84,6 +84,7 @@
                     id="employee_id"
                     name="employee_id"
                     placeholder="Employee ID"
+                    oninput="checkInput()"
                     required
                   />
                   <label for="employee_id" class="form-label"
@@ -97,6 +98,7 @@
                     id="employee_name"
                     name="employee_name"
                     placeholder="Name"
+                    oninput="checkInput()"
                     required
                   />
                   <label for="employee_name" class="form-label">Name *</label>
@@ -108,6 +110,7 @@
                     id="email_id"
                     name="email_id"
                     placeholder="Email"
+                    oninput="checkInput()"
                     required
                   />
                   <label for="email_id" class="form-label">Email *</label>
@@ -119,6 +122,7 @@
                     id="phonenumber"
                     name="phonenumber"
                     placeholder="Phone Number"
+                    oninput="checkInput()"
                     required
                   />
                   <label for="phonenumber" class="form-label"
@@ -126,7 +130,7 @@
                   >
                 </div>
                 <div class="my-4">
-                  <select class="form-select" name="shift">
+                  <select class="form-select" name="shift" id="shift"  oninput="checkInput()">
                     <option value="Morning shift">Morning shift</option>
                     <option value="Night shift">Night shift</option>
                   </select>
@@ -138,6 +142,7 @@
                     id="password"
                     name="password"
                     placeholder="Enter Password"
+                    oninput="checkInput()"
                     required
                   />
                   <label for="password" class="form-label">Password *</label>
@@ -147,6 +152,7 @@
                   class="col-12 btn text-white"
                   style="background-color: #2b3887"
                   id="submitbtn"
+                  disabled
                 >
                   Create Account
                 </button>
@@ -240,4 +246,24 @@
     </script> -->
     
   </body>
+  <script>
+    function checkInput() {
+      var employee_id = document.getElementById('employee_id').value;
+      var employee_name = document.getElementById('employee_name').value;
+      var email_id = document.getElementById('email_id').value;
+      var phonenumber = document.getElementById('phonenumber').value;
+      var shift = document.getElementById('shift').value;
+      var password = document.getElementById('password').value;
+  
+      var submitbtn = document.getElementById('submitbtn');
+  
+      if (employee_id && employee_name && email_id && phonenumber && shift && password) {
+        submitbtn.disabled = false;
+      } else {
+        submitbtn.disabled = true;
+      }
+    }
+  </script>
+  
+  
 </html>

@@ -64,6 +64,7 @@
                     id="employee_id"
                     name="employee_id"
                     placeholder="Enter Employee ID"
+                    oninput="checkInput()"
                     required
                   />
                   <label for="employee_id">Employee ID</label>
@@ -75,14 +76,17 @@
                     id="password"
                     name="password"
                     placeholder="Enter Password"
+                    oninput="checkInput()"
                     required
                   />
                   <label for="password">Password</label>
                 </div>
                 <button
                   type="submit"
+                  id="submitbtn"
                   class="col-12 btn text-white"
                   style="background-color: #2b3887"
+                  disabled
                 >
                   Login
                 </button>
@@ -103,7 +107,21 @@
         </div>
       </div>
     </div>
-
+    <script>
+      function checkInput() {
+        var employee_id = document.getElementById('employee_id').value;
+        var password = document.getElementById('password').value;
+    
+        var submitbtn = document.getElementById('submitbtn');
+    
+        if (employee_id && password) {
+          submitbtn.disabled = false;
+        } else {
+          submitbtn.disabled = true;
+        }
+      }
+    </script>
+    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>

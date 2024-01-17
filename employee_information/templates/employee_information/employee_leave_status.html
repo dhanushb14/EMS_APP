@@ -1,0 +1,226 @@
+{% extends "employee_information/base.html" %}
+{% block pageContent %}
+{% load widget_tweaks %}
+<style>
+  .alert {
+      position: fixed;  /* Position the alert absolutely within its parent */
+      left: 50%; 
+      top: 50%;
+      bottom: 50%;
+      left: 50%; /* Move the alert to the right by 50% of the parent's width */
+      transform: translateX(-50%);  /* Move the alert to the left by 50% of its own width */
+      
+      
+      
+      
+      width: 30%;
+      text-align: center;
+  }
+  
+  .alert-success {
+      color: #3c763d;
+      background-color: #dff0d8;
+      border-color: #d6e9c6;
+      height: fit-content;
+      
+  }
+  
+  .alert-danger {
+      color: #a94442;
+      background-color: #f2dede;
+      border-color: #ebccd1;
+  }
+</style>
+
+<body class="body_bg">
+  <div class="container mg-t">
+    <div class="row">
+      <div class="col">
+        <h2 class="fw-bold mb-4">Employee Leave Status</h2>
+      </div>
+    </div>
+    <div class="row mx-auto mt-2" style="background-color: #ecd5ef; min-height: 7%; border-radius: 5px;">
+      <form method="get">
+        <div class="row">
+          <div class="col-lg-2 col-md-6 my-2">
+            <input id="employee_id" type="text" placeholder="Employee ID" class="form-control">
+            {% render_field filter_queryset.form.employee_name|attr:"class:form-control name"|attr:"placeholder:Employee ID"%}
+        </div>
+        <div class="col-lg-2 col-md-6 my-2">
+            <div class="input-group">
+                <input id="employee_name" type="text" placeholder="Employee Name" class="form-control">
+                {% render_field filter_queryset.form.start_date|add_class:"form-control start_date"|attr:"type:date"%}
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-6 my-2">
+            <div class="input-group">
+                <span class="input-group-text">Start Date</span>
+                <input id="employee_name" type="date" class="form-control">
+                {% render_field filter_queryset.form.end_date|add_class:"form-control end_date"|attr:"type:date"%}
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-6 my-2">
+            <div class="input-group">
+                <span class="input-group-text">End Date</span>
+                <input id="employee_name" type="date" class="form-control">
+              {{filter_queryset.form.status|add_class:"form-control status"}} 
+            </div>
+          </div>
+          <div class="col-auto my-2">
+            <button
+            class="btn text-light me-1"
+            style="background-color: #4981b2 !important"
+            id="search"
+            type="submit"
+            disabled="true"
+          >
+          <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+            <button
+              class="btn text-light ms-1"
+              style="background-color: #b24949 !important"
+              id="clear"
+              disabled="true"
+            >
+            <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="col-auto ms-auto ms-xs-1 me-1 my-2">
+            <a class="btn text-light"
+              style="background-color: #4981b2 !important"
+              href="{% url 'download' %}?{{ request.GET.urlencode }}">
+              <i class="fa-solid fa-download"></i>
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row mt-5">
+      <div class="col">
+          <form method="post" action="">
+            {% csrf_token %}
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr class="table-secondary">
+                    <th class="text-center col">Employee Id</th>
+                    <th class="text-center col">EmployeeName</th>
+                    <th class="text-center col">Leaves Taken</th>
+                    <th class="text-center col">WFH Taken</th>
+                    <th class="text-center col">Leaves Left</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td class="text-center" id="employee_id">122100</td>
+                      <td class="text-center">Test</td>
+                      <td class="text-center">2</td>
+                      <td class="text-center">1</td>
+                      <td class="text-center">5</td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
+          </form>        
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            {% if paginated_results.has_previous  %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{paginated_results.previous_page_number}}"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-angles-left fa-xs"></i></a>
+              </li>
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-chevron-left fa-xs"></i></a>
+              </li>
+            {% endif %}
+              <li class="page-item disabled">
+                <a href="?page={{forloop.counter}}" class="page-link">
+                  {{ paginated_results.number }} of {{ paginated_results.paginator.num_pages }}
+                </a>
+              </li>
+            {% if paginated_results.has_next  %}
+              <li class="page-item">
+              <a class="page-link" href="?page={{paginated_results.next_page_number}}"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+              </li>
+              <li class="page-item">
+              <a class="page-link" href="?page={{paginated_results.paginator.num_pages}}"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-chevron-right fa-xs"></i></a>
+              </li>
+              <li class="page-item disabled">
+                <a class="page-link" href="#"><i class="fa-solid fa-angles-right fa-xs"></i></a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  $(document).ready(function() {
+    $('#clear').on('click', function() {
+      $('.name').val('');
+      $('.start_date').val('');
+      $('.end_date').val('');
+      $('.status').val('');
+      $('.leave_type').val('');
+    });
+  });
+</script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script>
+  $(function() {
+    var availableTags = [
+      "{% for employee_name in employee_names %}"
+        ,"{{ employee_name }}",
+      "{% endfor %}"
+    ];
+    $(".name").autocomplete({
+      source: availableTags
+    });
+  });
+</script>
+<script>
+  function checkInput() {
+    var name = document.querySelector('.name').value;
+    var start_date = document.querySelector('.start_date').value;
+    var end_date = document.querySelector('.end_date').value;
+    var status = document.querySelector('.status').value;
+    var leave_type = document.querySelector('.leave_type').value;
+
+    var searchButton = document.getElementById('search');
+    var clearButton = document.getElementById('clear');
+
+
+    if (!name && !start_date && !end_date && !status && !leave_type) {
+      searchButton.disabled = true;
+      clearButton.disabled = true;
+    } else {
+      searchButton.disabled = false;
+      clearButton.disabled = false;
+    }
+  }
+
+  document.querySelector('.name').addEventListener('input', checkInput);
+  document.querySelector('.start_date').addEventListener('input', checkInput);
+  document.querySelector('.end_date').addEventListener('input', checkInput);
+  document.querySelector('.status').addEventListener('input', checkInput);
+  document.querySelector('.leave_type').addEventListener('input', checkInput);
+
+</script>
+{% endblock pageContent %}

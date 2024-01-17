@@ -296,7 +296,7 @@ def employees(request):
     employee_list = Employee.objects.all()
     filter_queryset = EmployeeListFilter(request.GET,queryset=employee_list)
     employee_list = filter_queryset.qs
-    paginator = Paginator(employee_list,5)
+    paginator = Paginator(employee_list,10)
     page = request.GET.get('page')
     paginated_results = paginator.get_page(page)
     employee_names_list = list(set(employee_names.employee_name for employee_names in paginated_results))
@@ -1190,7 +1190,7 @@ def view_timesheet(request):
         print("return")
         return JsonResponse(data="success", safe=False)
 
-
+@login_required
 def leave_request_manager(request):
     if request.method == 'POST':
         # print('in')
@@ -1248,6 +1248,7 @@ def leave_request_manager(request):
     employee_names = list(set(leave_request.employee_name for leave_request in paginated_results))
     return render(request, 'employee_information/leave_bs.html', {'filter_queryset':filter_queryset,'paginated_results':paginated_results,'employee_names':employee_names})
 
+@login_required
 def leave_request_manager_model(request):
     if request.method == 'GET':
         try:
@@ -1310,6 +1311,7 @@ def leave_request_manager_model(request):
             return JsonResponse({'message': 'failed'})
         print('post', data)
 
+@login_required
 def user_leave_request(request):
     leave_requests = LeaveRequest.objects.filter(employee=request.user)
     paginator = Paginator(leave_requests,4)
@@ -1369,7 +1371,7 @@ def forgot_password(request):
 
 load_dotenv()
 
-
+@login_required
 def send_email(employee_email, employee_name, decrypted_password, employee_id):
     sender_email = 'intellectoglobal@gmail.com'
     sender_password = 'yawx mjxr mxqv lswr'
@@ -1390,6 +1392,7 @@ def send_email(employee_email, employee_name, decrypted_password, employee_id):
 
         server.sendmail(sender_email, employee_email, message.as_string())
 
+@login_required
 def send_password(request):
     employee_email = request.POST.get('email')
     try:
@@ -1405,6 +1408,7 @@ def send_password(request):
     except Employee.DoesNotExist:
         return render(request, 'employee_information/forgot_password.html', {'user_exists': False})
 
+@login_required
 def download_data(request):
     # Get the filtered queryset based on the user's role
     print('hit download')
@@ -1436,6 +1440,7 @@ def download_data(request):
     return response
 
 ## Views for all the employee data per month for the admin
+@login_required
 def export_data(request): 
     
     if request.method == 'POST':    # import pdb
@@ -1696,4 +1701,10 @@ def export_data(request):
         return response
         
 
+@login_required
+def employee_leave_status(request):
+    return render(request,'employee_information/employee_leave_status.html')
 
+@login_required
+def tabs(request):
+    return render(request,'employee_information/tabs.html')

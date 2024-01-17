@@ -147,6 +147,7 @@
       }
       .active {
         color: var(--white-color);
+        /* border-left: 5px solid var(--white-color); */
       }
       .active::before {
         content: "";
@@ -421,6 +422,23 @@
                 <!-- end of LMS My pending approvals -->
                 {% endif %}
               </div>
+              {% if request.user.role == "superadmin" or request.user.role == "manager" %}
+              <!-- LMS Employee Leave Status -->
+              <div class="sub_menu_bg">
+                <a
+                  href="{% url 'employee_leave_status' %}"
+                  class="sub_menu_nav_link {% if request.path == '/leave_status/' %}sub_menu_active{% endif %}"
+                  title="Employee Leave Status"
+                >
+                <i class="fa-regular fa-calendar-xmark sub_menu_icon {% if request.path == '/leave_status/' %}sub_menu_active_icon{% endif %}"></i>
+                  <span
+                    class="sub_menu_font {% if request.path == '/leave_status/' %}sub_menu_active_font{% endif %}"
+                    >Employee Leave Status</span
+                  >
+                </a>
+              </div>
+              <!-- end of LMS Employee Leave Status -->
+              {% endif %}
               {% if request.user.role != "superadmin" %}
               <div class="sub_menu_bg">
                 <!-- apply leave -->
@@ -595,7 +613,7 @@
       });
       $(document).ready(function () {
         // Define the paths of the Myapproval pages
-        var LMSSubmenuPaths = ["/leave_manager/","/leave_request/", "/leave_detail/"];
+        var LMSSubmenuPaths = ["/leave_manager/","/leave_request/", "/leave_detail/","/leave_status/"];
 
         // Check if the current path is a Myapproval page
         if (LMSSubmenuPaths.includes(window.location.pathname)) {

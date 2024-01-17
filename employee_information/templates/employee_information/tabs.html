@@ -1,0 +1,837 @@
+{#{% extends "employee_information/base.html" %} {% block pageContent %}#}
+<!-- Bootstrap 4 CSS -->
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+rel="stylesheet"
+/>
+<!-- Font Awesome CSS -->
+<script
+src="https://kit.fontawesome.com/7f5caf3864.js"
+crossorigin="anonymous"
+></script>
+<!-- jQuery JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $("#tile-1 .nav-tabs a").click(function () {
+      var position = $(this).parent().position();
+
+      var width = $(this).parent().width();
+
+      $("#tile-1 .slider").css({ left: +position.left, width: width });
+    });
+    var actWidth = $("#tile-1 .nav-tabs").find(".active").parent("li").width();
+
+    var actPosition = $("#tile-1 .nav-tabs .active").position();
+
+    $("#tile-1 .slider").css({ left: +actPosition.left, width: actWidth });
+  });
+</script>
+
+<style>
+  .tile {
+    /* width: 80%; */
+    /* margin: 60px 0; */
+    
+  }
+  #tile-1 .tab-pane {
+    padding: 15px;
+    height: 80px;
+  }
+  #tile-1 .nav-tabs {
+    position: relative;
+    border: none !important;
+    background-color: #fff;
+    /*   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2); */
+    border-radius: 6px;
+  }
+  #tile-1 .nav-tabs li {
+    margin: 0px !important;
+  }
+  #tile-1 .nav-tabs li a {
+    position: relative;
+    margin-right: 0px !important;
+    padding: 20px 40px !important;
+    font-size: 16px;
+    border: none !important;
+    color: #333;
+  }
+  #tile-1 .nav-tabs a:hover {
+    background-color: #fff !important;
+    border: none;
+  }
+  #tile-1 .slider {
+    display: inline-block;
+    width: 30px;
+    height: 4px;
+    border-radius: 3px;
+    background-color: #1F325C;
+    position: absolute;
+    z-index: 1200;
+    bottom: 0;
+    transition: all 0.4s linear;
+  }
+  #tile-1 .nav-tabs .active {
+    background-color: transparent !important;
+    border: none !important;
+    color: #1F325C !important;
+  }
+  .approved-row {
+        border-left: 5px solid #8effa8;
+      }
+      .rejected-row {
+        border-left: 5px solid #ff8491;
+      }
+      .pending-row {
+        border-left: 5px solid rgb(249, 249, 113);
+      }
+      .table-responsive {
+        overflow-y: auto;
+        max-height: 138.5px; /* Adjust the max-height as per your requirement */
+      }
+      @media (min-width: 576px){
+        #export_data_loading{
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          margin: auto;
+          z-index: 3;
+        }
+        #alert_toast{
+          position: absolute;
+          top: 200px;
+          left: 600px;
+          z-index: 3;
+        }
+      }
+      @media (max-width: 577px){
+        #export_data_loading{
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          margin: auto;
+          z-index: 3;
+        }
+        #alert_toast{
+          position: absolute;
+          top: 325px;
+          left: 70px;
+          z-index: 3;
+        }
+      }
+      @media (max-width: 576px) {
+        .mg-t {
+          margin-top: 15%;
+        }
+      }
+
+      @media (min-width: 577px) {
+        .mg-t {
+          margin-top: 7%;
+        }
+      }
+</style>
+<!-- whole tab div -->
+<div class="tile mg-t" id="tile-1">
+  <!-- Nav menu tabs -->
+  <ul class="nav nav-tabs nav-justified" role="tablist">
+    <div class="slider"></div>
+    <li class="nav-item">
+      <a
+        class="nav-link active fs-5"
+        id="home-tab"
+        data-toggle="tab"
+        href="#home"
+        role="tab"
+        aria-controls="home"
+        aria-selected="true"
+        ><i class="fas fa-sitemap fs-5 me-3"></i> Dashboard</a
+      >
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link fs-5"
+        id="profile-tab"
+        data-toggle="tab"
+        href="#profile"
+        role="tab"
+        aria-controls="profile"
+        aria-selected="false"
+        ><i class="fa-solid fa-user-pen fs-5 me-3"></i> Personal Info</a
+        >
+    </li>
+  </ul>
+  <!-- End of Nav menu tabs -->
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <!-- Home tab content -->
+    <div
+      class="tab-pane fade show active"
+      id="home"
+      role="tabpanel"
+      aria-labelledby="home-tab"
+    >
+      <body class="body_bg">
+        <div class="row">
+          <div class="col text-center my-3 my-lg-0">
+            <div class="spinner-border text-primary spinner-border-md" id="export_data_loading" role="status" style="display: none; width: 3rem; height: 3rem;">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <div class="alert alert-danger toast" role="alert" id="alert_toast" style=" background-color: #b24949; color: white;">
+              No Data!
+            </div>
+          </div>
+        </div>
+        {% if request.user.role == "superadmin" %}
+          <div class="row mx-auto mt-3" style="background-color: #ecd5ef; min-height: 7%; border-radius: 5px;">
+            <div class="col-lg-8 col-12 my-2 text-center text-lg-start">
+              <span class="fs-5">Download Monthly Report</span>
+            </div>
+            <div class="col-lg-3 col-9 my-2">
+              <div class="input-group">
+                <label class="input-group-text">Select Month</label>
+                <input id="report_month" type=month class="form-control" oninput="checkInput()"></input>
+              </div>
+            </div>
+            <!-- <div class=""> -->
+              <button
+              class="btn text-light col-2 col-lg-auto my-2 ms-lg-auto me-3"
+              style="background-color: #4981b2"
+              id="download"
+              onclick="export_data()"
+              disabled="true"
+            >
+              <i class="fa-solid fa-download" id="export_data_icon"></i> 
+              
+            </button>
+            <!-- </div> -->
+          </div>
+        {% endif %}
+        <div class="row mt-5">
+          <div class="col-lg-5 col-md-12 mb-5 mb-lg-0">
+            <div class="card" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-2 text-center my-auto">
+                    <i
+                      class="fa-solid fa-user my-auto ms-2"
+                      style="color: rgb(28, 35, 119); font-size: 60px"
+                    ></i>
+                  </div>
+                  <div class="col ms-5 ms-lg-4">
+                    <p class="h4 mt-2">{{ request.user.employee_name }} ( {{ request.user.employee_id }} )</p>
+                    <p class="mt-3">
+                      <i
+                        class="fa-solid fa-briefcase me-1"
+                        style="color: #3855b4;"
+                      ></i>
+      
+                      {% if request.user.role == "superadmin" %}Super Admin
+                      {% elif request.user.role == "scrummaster" %}Srum Master
+                      {% elif request.user.role == "manager" %}Manager
+                      {% else %}Employee{% endif %}
+                    </p>
+                    <p class="mt-3 fs-6">
+                      <i class="fa-solid fa-envelope me-2" style="color: #3855b4;"></i
+                      >{{ request.user.email_id}}
+                    </p>
+                    <p class="mt-3 mb-4 fs-6">
+                      <i class="fa-solid fa-building-circle-check me-1 " style="color: #3855b4;"></i
+                      >Intello Global Services
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card mb-3" style="height: 215px; box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col text-center">
+                    {% if request.user.role == "superadmin" %}
+                      <a type="button" class="btn position-relative" style="cursor:default;">
+                        <i class="fa-solid fa-bell" style="font-size: 30px; color: rgb(28, 35, 119);"></i>
+                        <span class="position-absolute top-0 start-10 translate-middle badge rounded-pill bg-danger">
+                          {{pending_lists|length}}
+                          <span class="visually-hidden">pending time sheet approvals</span>
+                        </span>
+                      </a>
+                      <span class="h4 text-uppercase">
+                        Notice Board
+                      </span>
+                    {% else %}
+                    <p class="h4 text-uppercase text-center">
+                      <i class="fa-solid fa-bell me-4" style="color: rgb(28, 35, 119);"></i>Notice
+                      Board
+                    </p>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Comments</th>
+                      </thead>
+                      <tbody>
+                        {% if request.user.role == 'superadmin' %}
+                          {% if pending_lists %}
+                            {% for pending_list in pending_lists %}
+                                <tr class="pending-row">
+                                  <td>{{pending_list.start_date}}</td>
+                                  {% if pending_list.leave_type %}
+                                    <td>LeaveRequest</td>
+                                  {% else %}
+                                    <td>TimeSheet</td>
+                                  {% endif %}
+                                  <td>Pending</td>
+                                  <td>{{pending_list.comments}}</td>
+                                </tr>
+                            {% endfor %}
+                          {% else %}
+                          <tr class="rejected-row">
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                          </tr>
+                          {% endif %}
+                        {% else %}
+                          {% if data_result %}
+                          {% for position in data_result %}
+                            {% if position.status == "Rejected" %}
+                              <tr class="rejected-row">
+                                <td>{{position.start_date}}</td>
+                                {% if position.leave_type %}
+                                  <td>LeaveRequest</td>
+                                {% else %}
+                                  <td>TimeSheet</td>
+                                {% endif %}
+                                <td>Rejected</td>
+                                <td>{{position.comments}}</td>
+                              </tr>
+                            {% endif %}
+                            {% if position.status == "uncheck" %}
+                              <tr class="rejected-row">
+                                <td>{{position.start_date}}</td>
+                                {% if position.leave_type %}
+                                  <td>LeaveRequest</td>
+                                {% else %}
+                                  <td>TimeSheet</td>
+                                {% endif %}
+                                <td>Uncheck</td>
+                                <td>{{position.comments}}</td>
+                              </tr>
+                            {% endif %}
+                            {% if position.status == "Approved" %}
+                              <tr class="approved-row">
+                                <td>{{position.start_date}}</td>
+                                {% if position.leave_type %}
+                                  <td>LeaveRequest</td>
+                                {% else %}
+                                  <td>TimeSheet</td>
+                                {% endif %}
+                                <td>Approved</td>
+                                <td>{{position.comments}}</td>
+                              </tr>
+                            {% endif %}
+                          {% endfor %}
+                        {% else %}
+                          <tr class="rejected-row">
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        {% endif %}
+                          </tr>
+                        {% endif %}
+                        
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <!-- <div class="row">
+                  <div class="col mt-3 text-center">
+                    <p class="h5">Pending Time sheet approvals</p>
+                    <a type="button" class="btn position-relative mt-3" href="{% url 'timesheet_manager' %}">
+                      <i class="fa-solid fa-clock" style="font-size: 50px; color: rgb(28, 35, 119);"></i>
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ tms_pending_list|length }}
+                        <span class="visually-hidden">pending time sheet approvals</span>
+                      </span>
+                    </a>
+                  </div>
+                  <div class="col mt-3 text-center">
+                    <p class="h5">Pending Leave approvals</p>
+                    <a type="button" class="btn position-relative mt-3" href="{% url 'leave_manager' %}">
+                      <i class="fa-regular fa-calendar" style="font-size: 50px; color: rgb(28, 35, 119);"></i>
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ lms_pending_list|length }}
+                        <span class="visually-hidden">pending leave approvals</span>
+                      </span>
+                    </a>
+                  </div>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-5" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-2 text-center my-auto">
+                <i
+                  class="fa-solid fa-sitemap my-auto ms-2"
+                  style="color: rgb(28, 35, 119); font-size: 60px"
+                ></i>
+              </div>
+              {% if request.user.role != "manager" %}
+                {% if request.user.role != "superadmin" %}
+                  <!-- employee and scrummaster manager -->
+                  <div class="col-lg-3 col-8 ms-5 ms-lg-2">
+                    <p class="mt-2 h4 text-uppercase">Manager</p>
+                    <p class="h6 mt-3"><i class="fa-solid fa-user me-2" style="color: #3855b4;"></i>{{manager.employee_name}}</p>
+                    <p class="h6 mt-3">
+                      <i class="fa-solid fa-envelope me-2" style="color: #3855b4;"></i>{{manager.email_id}}
+                    </p>
+                    <p class="h6 mt-3">
+                      <i class="fa-solid fa-phone me-2" style="color: #3855b4;"></i>{{manager.phonenumber}}
+                    </p>
+                  </div>
+                  <!-- end of employee and scrummaster manager -->
+                {% else %}
+                  <!-- admin's managers list  -->
+                  <div class="col-lg-3 col-8 ms-5 ms-lg-2">
+                    <p class="h4 text-uppercase">Managers</p>
+                    {% for name in allManagers %}
+                      <p class="h6 mt-3">{{ forloop.counter }}. {{name}}</p>
+                      {% endfor %}
+                  </div>
+                  <!-- end of admin's managers list  -->
+                {% endif %}              
+              {% else %}
+                <!-- Manager's admin details -->
+                <div class="col-lg-3 col-8 ms-5 ms-lg-2">
+                  <p class="h4 text-uppercase">Admin</p>
+                  <p class="h6 mt-3"><i class="fa-solid fa-user me-2" style="color: #3855b4;"></i>{{admin.employee_name}}</p>
+                  <p class="h6 mt-3">
+                    <i class="fa-solid fa-envelope me-2" style="color: #3855b4;"></i
+                    >{{admin.email_id}}
+                  </p>
+                  <p class="h6 mt-3">
+                    <i class="fa-solid fa-phone me-2" style="color: #3855b4;"></i
+                    >{{admin.phonenumber}}
+                  </p>
+                </div>
+                <!-- end of Manager's admin details -->
+              {% endif %}
+              {% if scrum_master %}
+                <!-- Employee's scrummaster -->
+                <div class="col-lg-3 col-auto mt-5 mt-lg-0">
+                  <p class="mt-2 h4 text-uppercase">Scrum Master</p>
+                  <p class="h6 mt-3"><i class="fa-solid fa-user me-2" style="color: #3855b4;"></i>{{scrum_master.employee_name}}</p>
+                  <p class="h6 mt-3">
+                    <i class="fa-solid fa-envelope me-2" style="color: #3855b4;"></i
+                    >{{scrum_master.email_id}}
+                  </p>
+                  <p class="h6 mt-3">
+                    <i class="fa-solid fa-phone me-2" style="color: #3855b4;"></i
+                    >{{scrum_master.phonenumber}}
+                  </p>
+                </div>
+                <!-- end of Employee's scrummaster -->
+                <!-- Employee's team -->
+                <div class="col-lg-3 col-auto mt-5 mt-lg-0">
+                  <p class="mt-2 h4 text-uppercase">Team</p>
+                  <p class="h6 mt-3 my-auto"><i class="fa-solid fa-users me-2" style="color: #3855b4;"></i>{{scrum_team}}</p>
+                </div>
+                <!-- end of Employee's team -->
+              {% else %}
+                {% if request.user.role == 'scrummaster' %}
+                  <!-- Scrummaster's team members -->
+                  <div class="col mt-5 mt-lg-0">
+                    <p class="h4 text-uppercase">Team Members</p>
+                    {% for i in team_member %}
+                      <p class="h6 mt-3 my-auto">{{forloop.counter}}. {{i}}</p>
+                    {% endfor %}
+                  </div>
+                  <!-- End of Scrummaster's team members -->
+                  <!-- Scrummaster's teamname -->
+                  <div class="col mt-5 mt-lg-0">
+                    <p class="h4 text-uppercase">Team</p>
+                    <p class="h6 mt-3 my-auto"><i class="fa-solid fa-users me-2" style="color: #3855b4;"></i>{{member_team_name}}</p>
+                  </div>
+                  <!-- End of Scrummaster's teamname -->
+                {% else %}
+                  <!-- admin's scrummasters list -->
+                  <div class="col-lg-3 col mt-5 mt-lg-0">
+                    {% if not team_member and request.user.role != "employee" %}
+                    <p class="h4 text-uppercase">Scrum Masters</p>
+                    {% for emp in scrum_emp %}
+                    
+                        <p class="h6 mt-3 my-auto">{{ forloop.counter }}. {{emp.scrum_master}}</p>
+                      {% endfor %}
+                    {% else %}
+                    <p class="h4 text-uppercase">Scrum Master</p>
+                      <p class="h6 mt-3 my-auto">Nil</p>
+                    {% endif %}
+                  </div>
+                  <!-- End of admin's scrummasters list -->
+                  <!-- admin's teams list -->
+                  <div class="col-lg-3 col mt-5 mt-lg-0">
+                    {% if not team_member and request.user.role != "employee" %}
+                    <p class="h4 text-uppercase">Teams</p>
+                    {% for team in scrum_emp %}
+                    
+                        <p class="h6 mt-3 my-auto">{{ forloop.counter }}. {{team.team_name}}</p>
+                      {% endfor %}
+                    {% else %}
+                    <p class="h4 text-uppercase">Team</p>
+                      <p class="h6">Nil</p>
+                    {% endif %}
+                  </div>
+                  <!-- end of  admin's teams list -->
+                {% endif %}
+              {% endif %}     
+            </div>
+          </div>
+        </div>
+        <script>
+          // export data by month and year wise
+          function export_data (){
+            console.log('export data')
+            // Removing download button and adding loading button
+            var toast = document.getElementById('alert_toast')
+            var download_button = document.getElementById("download") 
+            var loading_icon = document.getElementById('export_data_loading')
+            loading_icon.style.display = 'block'     
+            var input = document.getElementById("report_month").value
+            var date = new Date(input);
+      
+            var data = {
+              'month': date.getMonth()+1,
+              'year' : date.getFullYear(),
+          }
+      
+            console.log(data);
+      
+            // using fetch to expot the month and year to views
+            fetch("{% url 'export_data' %}", {
+              method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify(data)
+              }).then(response => {
+          if (!response.ok) {
+              // If the response is not ok, print the response text
+              console.log('11111')
+              response.text().then(text => console.log(text));
+              throw new Error('Network response was not ok');
+          }
+          return response.blob();
+        }).then(blob => {
+          console.log(blob)
+          if (blob.type == 'application/json'){
+            // Show the error message here if needed
+            loading_icon.style.display = 'none'
+            $('.toast').toast('show');
+            $('.toast').on('hidden.bs.toast', function () {
+        // do something...
+        download_button.style.display = 'block'
+      });
+            
+            
+          }
+          else{
+                  download_button.style.display = 'block'
+                  loading_icon.style.display = 'none'
+      
+                  // Create a new object URL for the blob
+                  const url = window.URL.createObjectURL(blob);
+      
+                  // Create a link and click it to start the download
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = 'my_data.csv';
+                  link.click();
+      
+                  // Release the reference to the object URL
+                  window.URL.revokeObjectURL(url);
+          }});
+              }
+          
+        </script>
+      <script>
+        function checkInput() {
+          var inputField = document.getElementById('report_month').value;
+          var downloadButton = document.getElementById('download');
+          if (!inputField) {
+            downloadButton.disabled = true;
+          } else {
+            downloadButton.disabled = false;
+          }
+        }
+      </script>
+      </body>
+    </div>
+    <!-- End of Home tab content -->
+    <!-- Profile tab content -->
+    <div
+      class="tab-pane fade"
+      id="profile"
+      role="tabpanel"
+      aria-labelledby="profile-tab"
+    >
+    <!-- First row cards -->
+      <div class="row mt-5">
+          <!-- self info card -->
+            <div class="col-lg-8 col-md-12 mb-5">
+              <div class="card" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
+                <div class="card-body">
+                  <div class="row">
+                    <p class="h4 mt-2 text-center">SELF</p>
+                  </div>
+                  <div class="row ">
+                    <div class="col-lg-2 col-md-12 mt-3 my-lg-auto text-center my-auto">
+                      <i
+                        class="fa-solid fa-address-card my-auto ms-2"
+                        style="color: rgb(28, 35, 119); font-size: 80px"
+                      ></i>
+                    </div>
+                    <div class="col-lg col-md-12">
+                      <div class="row">
+                        <!-- first col of self info -->
+                        <div class="col-lg col-md-12">
+                          <p class="mt-3 fs-6">
+                            <i
+                              class="fa-solid fa-hashtag me-1"
+                              style="color: #3855b4;"
+                            ></i>
+                            Employee ID: {{ request.user.employee_id }}
+                          </p>
+                          <p class="mt-3 fs-6">
+                            <i
+                              class="fa-solid fa-user me-1"
+                              style="color: #3855b4;"
+                            ></i>
+                           Name: {{ request.user.employee_name }}
+                          </p>
+                          <p class="mt-3 fs-6">
+                            <i class="fa-solid fa-phone me-2" style="color: #3855b4;"></i
+                            >Phone number: {{ request.user.phonenumber}}
+                          </p>
+                          <p class="mt-3 fs-6">
+                            <i class="fa-solid fa-at me-2" style="color: #3855b4;"></i
+                            >Personal mail: {{ request.user.personal_email }}
+                          </p>
+                          <p class="mt-3 fs-6">
+                            <i class="fa-solid fa-at me-2" style="color: #3855b4;"></i
+                            >Official mail: {{ request.user.email_id }}
+                          </p>
+                          <p class="mt-3 fs-6">
+                            <i class="fa-solid fa-calendar-day me-2" style="color: #3855b4;"></i
+                            >DOB: {{ request.user.dob| date:"j/n/Y"}}
+                          </p>
+                          <p class="mt-3 fs-6">
+                            <i class="fa-solid fa-mars-and-venus me-2" style="color: #3855b4;"></i
+                            >Gender: {{ request.user.gender }}
+                          </p>
+                        </div>
+                        <!-- End of first col of self info -->
+                        <!-- Second col of self info -->
+                        <div class="col-lg col-md-12">
+                          <p class="mt-3 fs-6">
+                            <i class="fa-solid fa-droplet me-2" style="color: #3855b4;"></i
+                            >Blood group: {{ request.user.blood_group }}
+                          </p>
+                          <p class="mt-3 fs-6">
+                            <i class="fa-solid fa-calendar me-2" style="color: #3855b4;"></i
+                            >DOJ: {{ request.user.joining_date| date:"j/n/Y" }}
+                          </p>
+                          <p class="mt-3 fs-6">
+                            <i class="fa-solid fa-circle-info me-2" style="color: #3855b4;"></i
+                            >Marital status: {{ request.user.marital_status }}
+                          </p>
+                          <p class="mt-3 fs-6">
+                            <i class="fa-solid fa-phone me-2" style="color: #3855b4;"></i
+                            >Emergency contact: {{ request.user.emergency_contact }}
+                          </p>
+                          <p class="mt-3 fs-6">
+                            <i
+                              class="fa-solid fa-location-dot me-1"
+                              style="color: #3855b4;"
+                            ></i>
+                            Address: {{ request.user.address }}
+                          </p>
+                        </div>
+                        <!-- End of Second col of self info -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <!-- End of self info card -->
+          <!-- Bank info card -->
+            <div class="col-lg-4 col-md-12 mb-5">
+              <div class="card" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
+                <div class="card-body">
+                  <div class="row">
+                    <p class="h4 mt-2 text-center">BANK</p>
+                  </div>
+                  <div class="row">
+                    <div class="col text-center my-auto">
+                      <i
+                        class="fa-solid fa-building-columns my-auto ms-2"
+                        style="color: rgb(28, 35, 119); font-size: 80px"
+                      ></i>
+                    </div>
+                    <div class="col">
+                      <p class="mt-3 fs-6">
+                        <i
+                          class="fa-solid fa-circle-info me-1"
+                          style="color: #3855b4;"
+                        ></i>
+                        Bank name: {{ request.user.bank_name }}
+                      </p>
+                      <p class="mt-2 fs-6">
+                        <i class="fa-solid fa-location-dot me-2" style="color: #3855b4;"></i
+                        >
+                      Branch: {{ request.user.bank_branch }}
+                      </p>
+                      <p class="mt-2 fs-6">
+                        <i class="fa-solid fa-hashtag me-2" style="color: #3855b4;"></i
+                        >Account no: {{ request.user.bank_account_no }}
+                      </p>
+                      <p class="mt-2 fs-6">
+                        <i class="fa-solid fa-hashtag me-2" style="color: #3855b4;"></i
+                        >IFSC code: {{ request.user.bank_ifsc_code }}
+                      </p>
+                      <p class="mt-2 fs-6">
+                        <i class="fa-solid fa-hashtag me-2" style="color: #3855b4;"></i
+                        >UAN no: {{ request.user.bank_uan_no }}
+                      </p>
+                      <p class="mt-3 fs-6">
+                        <i class="fa-solid fa-user me-2" style="color: #3855b4;"></i
+                        >Nominee: {{ request.user.bank_nominee_name }}
+                      </p>
+                      <p class="mt-3 fs-6">
+                        <i class="fa-solid fa-calendar-day me-2" style="color: #3855b4;"></i
+                        >Nominee DOB: {{ request.user.bank_nominee_dob| date:"j/n/Y" }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <!-- End of Bank info card -->
+      </div>
+    <!-- End of First row cards -->
+    <!-- Second row cards -->
+      <div class="row">
+          <!-- Family info card -->
+            <div class="col-lg-6 col-md-12 mb-5">
+              <div class="card">
+                <div class="card-body" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
+                  <div class="row">
+                    <p class="h4 mt-2 text-center">FAMILY</p>
+                  </div>
+                  <div class="row">
+                    <div class="col text-center my-auto">
+                      <i
+                      class="fa-solid fa-users my-auto ms-2"
+                      style="color: rgb(28, 35, 119); font-size: 80px"
+                    ></i>
+                    </div>
+                    <div class="col">
+                      <p class="mt-4 fs-6">
+                        <i
+                          class="fa-solid fa-user me-1"
+                          style="color: #3855b4;"
+                        ></i>
+                        Father name: {{ request.user.father_name }}
+                      </p>
+                      <p class="mt-3 fs-6">
+                        <i class="fa-solid fa-calendar-day me-2" style="color: #3855b4;"></i
+                        >DOB: {{ request.user.father_dob| date:"j/n/Y" }}
+                      </p>
+                      <p class="mt-3 fs-6">
+                        <i
+                          class="fa-solid fa-user me-1"
+                          style="color: #3855b4;"
+                        ></i>
+                      Mother name:   {{ request.user.mother_name }}
+                      </p>
+                      <p class="mt-3 mb-5 fs-6">
+                        <i class="fa-solid fa-calendar-day me-2" style="color: #3855b4;"></i
+                        >DOB: {{ request.user.mother_dob| date:"j/n/Y" }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <!-- End of Family info card -->
+          <!-- Proofs card -->
+            <div class="col-lg-6 col-md-12 mb-5">
+              <div class="card" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
+                <div class="card-body">
+                  <div class="row">
+                    <p class="h4 mt-2 text-center">PROOFS</p>
+                  </div>
+                  <div class="row">
+                    <div class="col text-center my-auto">
+                      <i
+                        class="fa-solid fa-address-card my-auto ms-2"
+                        style="color: rgb(28, 35, 119); font-size: 80px"
+                      ></i>
+                    </div>
+                    <div class="col">
+                      <p class="mt-4 fs-6">
+                        <i
+                          class="fa-solid fa-fingerprint me-1"
+                          style="color: #3855b4;"
+                        ></i>
+                      Aadhar no: {{ request.user.proofs_aadhar_no }}
+                      </p>
+                      <p class="mt-3 fs-6">
+                        <i class="fa-solid fa-hashtag me-2" style="color: #3855b4;"></i
+                        >Pan no: {{ request.user.proofs_pancard_no }}
+                      </p>
+                      <p class="mt-3 fs-6">
+                        <i class="fa-solid fa-file-image me-2" style="color: #3855b4;"></i
+                        >{{ request.user.proofs_aadhar_softcopy }}
+                      </p>
+                      <p class="mt-3 mb-5 fs-6">
+                        <i class="fa-solid fa-file-image me-2" style="color: #3855b4;"></i
+                        >{{ request.user.proofs_pancard_softcopy }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <!-- End of Proofs card -->
+      </div>
+    </div>
+    <!-- End of Second row cards -->
+    <!-- End of Profile tab content -->
+  </div>
+  <!-- End of Tab panes -->
+</div>
+<!-- End of whole tab div -->
+{#{% endblock pageContent %}#}
