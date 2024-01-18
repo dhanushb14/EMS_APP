@@ -1,20 +1,31 @@
-{#{% extends "employee_information/base.html" %} {% block pageContent %}#}
-<!-- Bootstrap 4 CSS -->
-<link
-href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
-rel="stylesheet"
-/>
-<!-- Font Awesome CSS -->
-<script
-src="https://kit.fontawesome.com/7f5caf3864.js"
-crossorigin="anonymous"
-></script>
-<!-- jQuery JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<!-- Bootstrap JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script>
+{% extends "employee_information/base.html" %} {% block pageContent %}
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap 4 CSS -->
+<script>
+  $(document).ready(function () {
+  $('.nav-tabs a').click(function () {
+    $(this).tab('show');
+  });
+});
+
+</script>
+<style>
+  .full-width-tab-content {
+    width: 100%;
+  }
+</style>
+<style>
+  .custom-nav {
+    display: flex;
+    flex-direction: row; /* Explicitly set the flex direction */
+    justify-content: left; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+     /* Prevent wrapping of items */
+     /* Remove margin if it's a default list */
+    list-style: none; /* Remove list style */
+    width: 100%; /* Ensure the nav takes full width */
+  }
+</style>
 <script>
   $(document).ready(function () {
     $("#tile-1 .nav-tabs a").click(function () {
@@ -41,6 +52,8 @@ crossorigin="anonymous"
   #tile-1 .tab-pane {
     padding: 15px;
     height: 80px;
+    width: 100%;
+    color: #333;
   }
   #tile-1 .nav-tabs {
     position: relative;
@@ -142,10 +155,11 @@ crossorigin="anonymous"
 <!-- whole tab div -->
 <div class="tile mg-t" id="tile-1">
   <!-- Nav menu tabs -->
-  <ul class="nav nav-tabs nav-justified" role="tablist">
+  <ul class="nav nav-tabs custom-nav" role="tablist">
     <div class="slider"></div>
     <li class="nav-item">
       <a
+      
         class="nav-link active fs-5"
         id="home-tab"
         data-toggle="tab"
@@ -171,6 +185,7 @@ crossorigin="anonymous"
   </ul>
   <!-- End of Nav menu tabs -->
   <!-- Tab panes -->
+  
   <div class="tab-content">
     <!-- Home tab content -->
     <div
@@ -179,7 +194,7 @@ crossorigin="anonymous"
       role="tabpanel"
       aria-labelledby="home-tab"
     >
-      <body class="body_bg">
+      <body class="body_bg ">
         <div class="row">
           <div class="col text-center my-3 my-lg-0">
             <div class="spinner-border text-primary spinner-border-md" id="export_data_loading" role="status" style="display: none; width: 3rem; height: 3rem;">
@@ -831,7 +846,9 @@ crossorigin="anonymous"
     <!-- End of Second row cards -->
     <!-- End of Profile tab content -->
   </div>
+
   <!-- End of Tab panes -->
 </div>
 <!-- End of whole tab div -->
-{#{% endblock pageContent %}#}
+
+{% endblock pageContent %}
