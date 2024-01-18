@@ -111,13 +111,15 @@
                   </tr>
                 </thead>
                 <tbody>
+                  {% for employee in context %}
                     <tr>
-                      <td class="text-center" id="employee_id">122100</td>
-                      <td class="text-center">Test</td>
-                      <td class="text-center">2</td>
-                      <td class="text-center">1</td>
-                      <td class="text-center">5</td>
+                      <td class="text-center" id="employee_id">{{employee.employee_id}}</td>
+                      <td class="text-center">{{employee.employee_name}}</td>
+                      <td class="text-center">{{employee.leave_taken}}</td>
+                      <td class="text-center">{{employee.wfh_taken}}</td>
+                      <td class="text-center">{{employee.available_leave}}</td>
                     </tr>
+                  {% endfor %}
                 </tbody>
               </table>
             </div>

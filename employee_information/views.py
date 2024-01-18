@@ -1701,10 +1701,108 @@ def export_data(request):
         return response
         
 
-@login_required
-def employee_leave_status(request):
-    return render(request,'employee_information/employee_leave_status.html')
+
 
 @login_required
 def tabs(request):
     return render(request,'employee_information/tabs.html')
+
+
+@login_required
+def employee_leave_status(request):
+    from datetime import datetime, timedelta
+    from django.utils import timezone
+    
+    print("came to leave_status")
+    month = [1,2,3,4,5,6,7,8,9,10,11,12]
+    current_year = timezone.now().year
+
+    # Getting all the unique employee
+    unique_employee_names = Employee.objects.exclude(employee_name='admin').values_list('employee_name', flat=True).distinct()
+    unique_employee_names_list = list(unique_employee_names)
+    print(unique_employee_names_list)
+
+    result_list = []
+
+    for employee in unique_employee_names_list:
+        data = LeaveRequest.objects.filter(employee_name = employee, status='Approved')
+        work_from_home = 0
+        available_leave = 0
+        for i in data:
+            for current_month in month:
+                if i.start_date.year == current_year and i.start_date.month < current_month and i.end_date.month >= current_month:               
+                    if current_month == 12:
+                        next_month = 1
+                        next_year = current_year + 1
+                    else:
+                        next_month = current_month + 1
+                        next_year = current_year
+                    last_day_of_current_month = datetime(current_year, current_month, 1)
+                    last_day_of_current_month_date = last_day_of_current_month.date()
+                    if i.end_date.month == current_month and i.end_date.year == current_year:
+                        end_date = i.end_date
+                        days_in_current_month = (i.end_date - last_day_of_current_month_date).days + 1
+                        working_days = 0
+                        current_date = last_day_of_current_month.date()
+                        print('current date',current_date)
+                        while current_date <= end_date:
+                            if i.shift == "Night shift":
+                                if current_date.weekday() not in [5, 6]:  # Check if the day is not Saturday or Sunday
+                                    working_days += 1
+                            else:
+                                if current_date.weekday() not in [6]:  # Check if the day is not Saturday or Sunday
+                                    working_days += 1
+                            current_date += timedelta(days=1)
+                            print('1')      
+                        days_in_current_month = working_days
+                    else:
+                        import calendar
+                        import datetime
+                        current_month1 = datetime.datetime.now().month
+                        current_year1 = datetime.datetime.now().year
+                        total_days_in_current_month = calendar.monthrange(current_year1, current_month1)[1]
+                        working_days = 0
+                        for day in range(1, total_days_in_current_month + 1):
+                            date = datetime.date(current_year, current_month, day)
+                            if i.shift == "Night shift":
+                                if date.weekday() not in [5, 6]:
+                                    working_days += 1
+                            else:
+                                if date.weekday() not in [6]:
+                                    working_days += 1
+                        print("765",working_days)
+                        days_in_current_month = working_days
+                    if i.leave_type == "Work from home":
+                        work_from_home = work_from_home + days_in_current_month
+                    else:
+                        available_leave = available_leave + days_in_current_month
+                if i.start_date.month == current_month and i.start_date.year == current_year:
+                    if i.leave_type == "Work from home":
+                        work_from_home = work_from_home + i.no_of_days
+                    else:
+                        available_leave = available_leave + i.no_of_days
+        data1 = Employee.objects.filter(employee_name = employee)
+        for j in data1:
+            if j.shift == 'Night shift':
+                leave_left = 14-available_leave
+            else:
+                leave_left = 24-available_leave
+            employee_id = j.employee_id
+        details = {
+            'employee_id': employee_id,
+            'employee_name': i.employee_name,
+            'wfh_taken': work_from_home,
+            'leave_taken': available_leave,
+            'available_leave': leave_left,
+        }
+        result_list.append(details)
+        print(work_from_home,available_leave)
+
+
+
+
+    return render(request,'employee_information/employee_leave_status.html', {'context': result_list} )
+
+@login_required
+def download_leaveStatus(request):
+    return

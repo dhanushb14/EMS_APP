@@ -53,5 +53,6 @@ urlpatterns = [
     path('download',views.download_data,name='download'),
     path('export_data', views.export_data, name='export_data'),
     path('leave_status/', views.employee_leave_status, name='employee_leave_status'),
-    path('t',views.tabs,name='tabs')
+    path('t',views.tabs,name='tabs'),
+    path('download_leaveStatus',views.download_leaveStatus,name='download_leaveStatus'),
 ]
