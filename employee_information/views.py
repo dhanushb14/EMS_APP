@@ -1699,13 +1699,6 @@ def export_data(request):
         # return JsonResponse(data="success", safe=False)
     if request.method != 'POST':
         return response
-        
-
-
-
-@login_required
-def tabs(request):
-    return render(request,'employee_information/tabs.html')
 
 @login_required
 def personal(request):
