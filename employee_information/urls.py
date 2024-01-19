@@ -54,5 +54,6 @@ urlpatterns = [
     path('export_data', views.export_data, name='export_data'),
     path('leave_status/', views.employee_leave_status, name='employee_leave_status'),
     path('t',views.tabs,name='tabs'),
+    path('personal',views.personal,name='personal'),
     path('download_leaveStatus',views.download_leaveStatus,name='download_leaveStatus'),
 ]

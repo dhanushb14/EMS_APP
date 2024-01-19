@@ -1707,6 +1707,9 @@ def export_data(request):
 def tabs(request):
     return render(request,'employee_information/tabs.html')
 
+@login_required
+def personal(request):
+    return render(request,'employee_information/personal_info_form.html')
 
 @login_required
 def employee_leave_status(request):
