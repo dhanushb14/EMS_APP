@@ -2,6 +2,10 @@
     
     <form action="" id="employee-form">
         <div class="container mg-t">
+            <div class="row mt-3">
+                
+                
+            </div>
         <!-- first row -->
        <div class="row mt-3">
         <h4>SELF</h4>
@@ -11,64 +15,112 @@
                 <!-- first col -->
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="employee_name" name="employee_name" placeholder="name" value="{{ request.user.employee_name|default:'' }}">
+                            <input type="text" class="form-control" id="employee_name" name="employee_name" placeholder="name" value="{{ employee.employee_name|default:'' }}">
                             <label for="employee_name">Name*</label>
                         </div>
                         <div class="row">
                             <div class="col">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="employee_id" name="employee_id" placeholder="employee id" value="{{ request.user.employee_id|default:'' }}">
+                                    <input type="text" class="form-control" id="employee_id" name="employee_id" placeholder="employee id" value="{{ employee.employee_id|default:'' }}">
                                     <label for="employee_id">Employee ID*</label>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="phonenumber" name="phonenumber" placeholder="phone number" value="{{ request.user.phonenumber|default:'' }}">
+                                    <input type="text" class="form-control" id="phonenumber" name="phonenumber" placeholder="phone number" value="{{ employee.phonenumber|default:'' }}">
                                     <label for="phonenumber">Phone Number*</label>
                                 </div>
                             </div>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="email_id" name="email_id" placeholder="official email" value="{{ request.user.email_id|default:'' }}">
+                            <input type="email" class="form-control" id="email_id" name="email_id" placeholder="official email" value="{{ employee.email_id|default:'' }}">
                             <label for="email_id">Official Email*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="personal_email" name="personal_email" placeholder="personal email" value="{{ request.user.personal_email|default:'' }}">
+                            <input type="email" class="form-control" id="personal_email" name="personal_email" placeholder="personal email" value="{{ employee.personal_email|default:'' }}">
                             <label for="personal_email">Personal Email*</label>
                         </div>
                         <div class="row">
                             <div class="col">
                                 <div class="form-floating mb-3">
-                                    <input type="date" class="form-control" id="self_dob" name="dob" value='{{ request.user.dob | date:"Y-m-d" }}'>
+                                    <input type="date" class="form-control" id="self_dob" name="dob" value='{{ employee.dob | date:"Y-m-d" }}'>
                                     <label for="self_dob">DOB*</label>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="gender" name="gender">
-                                        <option value="Male" {% if request.user.gender == 'Male' %}selected{% endif %}>Male</option>
-                                        <option value="Female" {% if request.user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                        <option value="Male" {% if employee.gender == 'Male' %}selected{% endif %}>Male</option>
+                                        <option value="Female" {% if employee.gender == 'Female' %}selected{% endif %}>Female</option>
                                     </select>
-                                    <label for="blood_group">Gender*</label>
+                                    <label for="gender">Gender*</label>
                                 </div>
                             </div>
                             
                         </div>
+                        
+                            <div class="form-floating mb-3">
+                                
+                                <select name="is_active" id="is_active" class="form-select form-select-sm rounded-0" required>
+                                    {% if employee.is_active == 1 %}
+                                    <option value=1 selected >Active</option>
+                                    {% else %}
+                                    <option value=1 >Active</option>
+                                    {% endif %}
+                        
+                                    {% if employee.is_active == 0 %}
+                                    <option value=0 selected>Inactive</option>
+                                    {% else %}
+                                    <option value=0>Inactive</option>
+                                    {% endif %}
+                                </select>
+                                <label for="is_active">Status*</label>
+                            </div>
+                        
                     </div>
                 <!-- end of first col -->
                 <!-- second col -->
                     <div class="col">
                         <div class="col">
+                            {% if request.user.role == "superadmin" %}
+                
+                    
+                        <div class="form-floating mb-3">
+                            <select name="role" id="role" class="form-select" required>
+                                {% if employee.role == "employee" or employee.role == "" %}
+                                <option value="employee" selected >Employee</option>
+                                {% else %}
+                                <option value="employee">Employee</option>
+                                {% endif %}
+
+                                {% if employee.role == "manager" %}
+                                <option value="manager" selected >Manager</option>
+                                {% else %}
+                                <option value="manager">Manager</option>
+                                {% endif %}
+
+                                {% if employee.role == "superadmin" %}
+                                <option value="superadmin" selected >Admin</option>
+                                {% else %}
+                                <option value="superadmin">Admin</option>
+                                {% endif %}
+                        
+                            </select>
+                            <label for="role">Role*</label>
+                        
+                        </div>
+                
+                    {% endif %}
                             <div class="form-floating mb-3">
-                                <select class="form-select large-input" id="blood_group" name="blood_group" value="{{ request.user.blood_group }}">
-                                    <option value="A+" {% if request.user.blood_group == 'A+' %}selected{% endif %}>A+</option>
-                                    <option value="A-" {% if request.user.blood_group == 'A-' %}selected{% endif %}>A-</option>
-                                    <option value="B+" {% if request.user.blood_group == 'B+' %}selected{% endif %}>B+</option>
-                                    <option value="B-" {% if request.user.blood_group == 'B-' %}selected{% endif %}>B-</option>
-                                    <option value="O+" {% if request.user.blood_group == 'O+' %}selected{% endif %}>O+</option>
-                                    <option value="O-" {% if request.user.blood_group == 'O-' %}selected{% endif %}>O-</option>
-                                    <option value="AB+" {% if request.user.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
-                                    <option value="AB-" {% if request.user.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                                <select class="form-select large-input" id="blood_group" name="blood_group" value="{{ employee.blood_group }}">
+                                    <option value="A+" {% if employee.blood_group == 'A+' %}selected{% endif %}>A+</option>
+                                    <option value="A-" {% if employee.blood_group == 'A-' %}selected{% endif %}>A-</option>
+                                    <option value="B+" {% if employee.blood_group == 'B+' %}selected{% endif %}>B+</option>
+                                    <option value="B-" {% if employee.blood_group == 'B-' %}selected{% endif %}>B-</option>
+                                    <option value="O+" {% if employee.blood_group == 'O+' %}selected{% endif %}>O+</option>
+                                    <option value="O-" {% if employee.blood_group == 'O-' %}selected{% endif %}>O-</option>
+                                    <option value="AB+" {% if employee.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                                    <option value="AB-" {% if employee.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
                                 </select>
                                 <label for="blood_group">Blood Group*</label>
                             </div>
@@ -77,28 +129,29 @@
                             
                             <div class="col">
                                 <div class="form-floating mb-3">
-                                    <input type="date" class="form-control" id="joining_date" name="joining_date" value="{{ request.user.joining_date | date:'Y-m-d' }}">
+                                    <input type="date" class="form-control" id="joining_date" name="joining_date" value="{{ employee.joining_date | date:'Y-m-d' }}">
                                     <label for="joining_date">DOJ*</label>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-floating mb-3">
-                                    <select class="form-select" id="marital_status" name="marital_status" value="{{ request.user.marital_status }}">
-                                        <option value="Married" {% if request.user.marital_status == 'Married'%}selected{% endif %}>Married</option>
-                                        <option value="Single" {% if request.user.marital_status == 'Single' %}selected{% endif %}>Single</option>
+                                    <select class="form-select" id="marital_status" name="marital_status" value="{{ employee.marital_status|default:''  }}">
+                                        <option value="Married" {% if employee.marital_status == 'Married'%}selected{% endif %}>Married</option>
+                                        <option value="Single" {% if employee.marital_status == 'Single' %}selected{% endif %}>Single</option>
                                     </select>
                                     <label for="marital_status">Marital Status*</label>
                                 </div>
                             </div>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="emergency_contact" name="emergency_contact" placeholder="Emergency contact" value="{{ request.user.emergency_contact }}">
+                            <input type="text" class="form-control" id="emergency_contact" name="emergency_contact" placeholder="Emergency contact" value="{{ employee.emergency_contact|default:''  }}">
                             <label for="emergency_contact">Emergency Contact*</label>
                         </div>
-                        <div class="form-floating">
-                            <textarea class="form-control" id="address" name="address" style="height: 130px" placeholder="address">{{ request.user.address }}</textarea>
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="address" name="address" style="height: 130px" placeholder="address">{{ employee.address|default:''  }}</textarea>
                             <label for="address">Address*</label>
                         </div>
+                        
                     </div>
                 <!-- end of second col -->
             <!-- end of self -->
@@ -113,19 +166,19 @@
                 <!-- bank -->
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="bank_name" name="bank_name" placeholder="Bank name" value="{{ request.user.bank_name|default:'' }}">
+                            <input type="email" class="form-control" id="bank_name" name="bank_name" placeholder="Bank name" value="{{ employee.bank_name|default:'' }}">
                             <label for="bank_name">Bank Name*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="bank_branch" name="bank_branch" placeholder="Branch name" value="{{ request.user.bank_branch|default:'' }}">
+                            <input type="email" class="form-control" id="bank_branch" name="bank_branch" placeholder="Branch name" value="{{ employee.bank_branch|default:'' }}">
                             <label for="bank_branch">Branch*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="bank_account_no" name="bank_account_no" placeholder="Account no" value="{{ request.user.bank_account_no|default:'' }}">
+                            <input type="email" class="form-control" id="bank_account_no" name="bank_account_no" placeholder="Account no" value="{{ employee.bank_account_no|default:'' }}">
                             <label for="bank_account_no">Account No*</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="bank_ifsc_code" name="bank_ifsc_code" placeholder="IFSC code" value="{{ request.user.bank_ifsc_code|default:'' }}">
+                            <input type="email" class="form-control" id="bank_ifsc_code" name="bank_ifsc_code" placeholder="IFSC code" value="{{ employee.bank_ifsc_code|default:'' }}">
                             <label for="bank_ifsc_code">IFSC Code*</label>
                         </div>
                     </div>
@@ -134,15 +187,15 @@
             <!-- second col -->
                 <div class="col">
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="bank_uan_no" name="bank_uan_no" placeholder="UAN no" value="{{ request.user.bank_uan_no|default:'' }}">
+                        <input type="email" class="form-control" id="bank_uan_no" name="bank_uan_no" placeholder="UAN no" value="{{ employee.bank_uan_no|default:'' }}">
                         <label for="bank_uan_no">UAN No*</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="bank_nominee_name" name="bank_nominee_name" placeholder="Nominee" value="{{ request.user.bank_nominee_name|default:'' }}">
+                        <input type="email" class="form-control" id="bank_nominee_name" name="bank_nominee_name" placeholder="Nominee" value="{{ employee.bank_nominee_name|default:'' }}">
                         <label for="bank_nominee_name">Nominee*</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="bank_nominee_dob" name="bank_nominee_dob" value="{{ request.user.bank_nominee_dob | date:'Y-m-d' }}">
+                        <input type="date" class="form-control" id="bank_nominee_dob" name="bank_nominee_dob" value="{{ employee.bank_nominee_dob | date:'Y-m-d' }}">
                         <label for="bank_nominee_dob">Nominee DOB*</label>
                     </div>
                 </div>
@@ -158,21 +211,21 @@
             <div class="row">
                 <div class="col">
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="father_name" name="father_name" placeholder="Father name" value="{{ request.user.father_name|default:'' }}">
+                        <input type="email" class="form-control" id="father_name" name="father_name" placeholder="Father name" value="{{ employee.father_name|default:'' }}">
                         <label for="father_name">Father Name*</label>
                     </div>        
                     <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="father_dob" name="father_dob" value="{{ request.user.father_dob | date:'Y-m-d' }}">
+                        <input type="date" class="form-control" id="father_dob" name="father_dob" value="{{ employee.father_dob | date:'Y-m-d' }}">
                         <label for="father_dob">Father DOB*</label>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="mother_name" name="mother_name" placeholder="Mother name" value="{{ request.user.mother_name|default:'' }}">
+                        <input type="text" class="form-control" id="mother_name" name="mother_name" placeholder="Mother name" value="{{ employee.mother_name|default:'' }}">
                         <label for="mother_name">Mother Name*</label>
                     </div>        
                     <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="mother_dob" name="mother_dob" value="{{ request.user.mother_dob | date:'Y-m-d' }}">
+                        <input type="date" class="form-control" id="mother_dob" name="mother_dob" value="{{ employee.mother_dob | date:'Y-m-d' }}">
                         <label for="mother_dob">Mother DOB*</label>
                     </div>
                 </div>
@@ -189,22 +242,26 @@
             <div class="row mt-1">
                 <div class="col mt-3">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="proofs_aadhar_no" name="proofs_aadhar_no" placeholder="Aadhar no" value="{{ request.user.proofs_aadhar_no|default:'' }}">
+                        <input type="text" class="form-control" id="proofs_aadhar_no" name="proofs_aadhar_no" placeholder="Aadhar no" value="{{ employee.proofs_aadhar_no|default:'' }}">
                         <label for="proofs_aadhar_no">Aadhar No*</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="proofs_pancard_no" name="proofs_pancard_no" placeholder="Pan no" value="{{ request.user.proofs_pancard_no|default:'' }}">
+                        <input type="text" class="form-control" id="proofs_pancard_no" name="proofs_pancard_no" placeholder="Pan no" value="{{ employee.proofs_pancard_no|default:'' }}">
                         <label for="proofs_pancard_no">Pan No*</label>
                     </div>
                 </div>
                 <div class="col">
+                    <label for="proofs_aadhar_softcopy" class="form-label">Aadhar Softcopy*</label>
                     <div class="mb-3">
-                        <label for="proofs_aadhar_softcopy" class="form-label">Aadhar Softcopy*</label>
-                        <input class="form-control" type="file" id="proofs_aadhar_softcopy" name="proofs_aadhar_softcopy">
+                        
+                        <input class="form-control" type="file" id="proofs_aadhar_softcopy" name="proofs_aadhar_softcopy" onchange="previewImage(this, 'aadhar_preview')">
+                        <img id="aadhar_preview" src="#" alt="Aadhar Preview" style="max-width: 200px; display: none;"/>
                     </div>
+                    <label for="proofs_pancard_softcopy" class="form-label">Pan Softcopy*</label>
                     <div class="mb-3">
-                        <label for="proofs_pancard_softcopy" class="form-label">Pan Softcopy*</label>
-                        <input class="form-control" type="file" id="proofs_pancard_softcopy" name="proofs_pancard_softcopy">
+                       
+                        <input class="form-control" type="file" id="proofs_pancard_softcopy" name="proofs_pancard_softcopy" onchange="previewImage(this, 'pancard_preview')">
+                        <img id="pancard_preview" src="#" alt="Pan Card Preview" style="max-width: 200px; display: none;"/>
                     </div>       
                 </div>
             </div>
@@ -212,9 +269,23 @@
         </div>
         <!-- end of fourth row -->
     </div>
+    
     </form>
 </div>
 <script>
+    function previewImage(input, previewId) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#' + previewId).attr('src', e.target.result).show();
+                $(input).hide(); // hide the input field
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+
+
     $(function() {
         $('#employee-form').submit(function(e) {
             e.preventDefault();
