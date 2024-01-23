@@ -67,7 +67,6 @@ class TimeSheet(models.Model):
     th_hour = ArrayField(
         models.CharField(max_length=255), default=['{0}'])
     username = models.CharField(max_length=255)
-
     comments = models.CharField(max_length=100)
     timesheet_status = (
         ('Approve', 'Approve'),
@@ -132,3 +131,4 @@ class LeaveRequest(models.Model):
 
     def __str__(self):
         return f"{self.employee} {self.leave_type}"
+    

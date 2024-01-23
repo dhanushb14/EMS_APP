@@ -584,8 +584,9 @@
     <!-- First row cards -->
       <div class="row">
         <div class="col d-flex flex-column align-items-end">
-          <a
-            href="{% url 'leave_detail' %}"
+          <button
+            id = "editInfo"
+            data-id="{{ request.user.employee_id }}"
             style="background-color: #4981b2"
             class="btn btn-primary"
             role="button"
@@ -633,11 +634,11 @@
                           </p>
                           <p class="mt-3 fs-6">
                             <i class="fa-solid fa-at me-2" style="color: #3855b4;"></i
-                            >Personal mail: {{ request.user.personal_email }}
+                            >Official mail: {{ request.user.email_id }}
                           </p>
                           <p class="mt-3 fs-6">
                             <i class="fa-solid fa-at me-2" style="color: #3855b4;"></i
-                            >Official mail: {{ request.user.email_id }}
+                            >Personal mail: {{ request.user.personal_email }}
                           </p>
                           <p class="mt-3 fs-6">
                             <i class="fa-solid fa-calendar-day me-2" style="color: #3855b4;"></i
@@ -845,5 +846,17 @@
   <!-- End of Tab panes -->
 </div>
 <!-- End of whole tab div -->
-
+<script>
+   $(function() {
+          
+          $('#editInfo').click(function() {
+        console.log('1')
+        uni_modal(
+          "Fill your details",
+          "{% url 'manage_employees-page' %}?id=" + $(this).attr("data-id"),
+          "modal-lg"
+        );
+      });
+   });
+</script>
 {% endblock pageContent %}

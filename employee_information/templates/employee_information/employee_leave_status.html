@@ -43,36 +43,39 @@
       <form method="get">
         <div class="row">
           <div class="col-lg-2 col-md-6 my-2">
-            <input id="employee_id" type="text" placeholder="Employee ID" class="form-control employee_id">
-            {% render_field filter_queryset.form.employee_name|attr:"class:form-control id"%}
+            <input id="employee_id" onchange="checkInput()" type="text" placeholder="Employee ID" class="form-control">
+            {% render_field filter_queryset.form.employee_name|attr:"class:form-control name"|attr:"placeholder:Employee ID"%}
         </div>
         <div class="col-lg-2 col-md-6 my-2">
             <div class="input-group">
-                <input id="employee_name" type="text" placeholder="Employee Name" class="form-control employee_name">
-                {% render_field filter_queryset.form.start_date|add_class:"form-control name"%}
+                <input id="name" onchange="checkInput()" type="text" placeholder="Employee Name" class="form-control">
+                {% render_field filter_queryset.form.start_date|add_class:"form-control start_date"|attr:"type:date"%}
             </div>
         </div>
         <div class="col-lg-3 col-md-6 my-2">
             <div class="input-group">
-                <span class="input-group-text">Start Month</span>
-                <input id="start_month" type="month" class="form-control start_month">
-                {% render_field filter_queryset.form.end_date|add_class:"form-control start_month"%}
+                <span class="input-group-text">Start Date</span>
+                <input id="start_date" onchange="checkInput()" type="month" class="form-control">
+                {% render_field filter_queryset.form.end_date|add_class:"form-control end_date"|attr:"type:date"%}
             </div>
         </div>
         <div class="col-lg-3 col-md-6 my-2">
             <div class="input-group">
-                <span class="input-group-text">End Month</span>
-                <input id="end_month" type="month" class="form-control end_month">
-              {{filter_queryset.form.status|add_class:"form-control end_month"}} 
+                <span class="input-group-text">End Date</span>
+                <input id="end_date" onchange="checkInput()" type="month" class="form-control">
+              {{filter_queryset.form.status|add_class:"form-control status"}} 
             </div>
           </div>
           <div class="col-auto my-2">
+            
             <button
             class="btn text-light me-1"
             style="background-color: #4981b2 !important"
             id="search"
-            type="submit"
+            data-bs-toggle="popover" data-bs-title="Popover title" data-bs-content="And here's some amazing content. It's very engaging. Right?"
             disabled="true"
+            data-bs-delay="200"
+            data-bs-hide="100" 
           >
           <i class="fa-solid fa-magnifying-glass"></i>
             </button>
@@ -86,11 +89,12 @@
             </button>
           </div>
           <div class="col-auto ms-auto ms-xs-1 me-1 my-2">
-            <a class="btn text-light"
+            <button class="btn text-light"
+              id = saveBtn
               style="background-color: #4981b2 !important"
-              href="{% url 'download' %}?{{ request.GET.urlencode }}">
+              href="">
               <i class="fa-solid fa-download"></i>
-            </a>
+            </button>
           </div>
         </div>
       </form>
@@ -107,17 +111,19 @@
                     <th class="text-center col">EmployeeName</th>
                     <th class="text-center col">Leaves Taken</th>
                     <th class="text-center col">WFH Taken</th>
-                    <th class="text-center col">Leaves Left</th>
+                    <th class="text-center col">Leave Left</th>
+                    
                   </tr>
                 </thead>
                 <tbody>
                   {% for employee in context %}
                     <tr>
-                      <td class="text-center" id="employee_id">{{employee.employee_id}}</td>
+                      <td class="text-center">{{employee.employee_id}}</td>
                       <td class="text-center">{{employee.employee_name}}</td>
                       <td class="text-center">{{employee.leave_taken}}</td>
                       <td class="text-center">{{employee.wfh_taken}}</td>
-                      <td class="text-center">{{employee.available_leave}}</td>
+                      <td class="text-center">{{employee.leave_left}}</td>
+                      
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -174,10 +180,11 @@
 <script>
   $(document).ready(function() {
     $('#clear').on('click', function() {
+      $('.name').val('');
+      $('.start_date').val('');
+      $('.end_date').val('');
       $('.employee_id').val('');
-      $('.employee_name').val('');
-      $('.start_month').val('');
-      $('.end_month').val('')
+      
     });
   });
 </script>
@@ -198,28 +205,229 @@
 </script>
 <script>
   function checkInput() {
-    var id = document.querySelector('.employee_id').value;
-    var name = document.querySelector('.employee_name').value;
-    var start_month = document.querySelector('.start_month').value;
-    var end_month = document.querySelector('.end_month').value;
+    var name = document.getElementById('name').value;
+    var start_date = document.getElementById('start_date').value;
+    var end_date = document.getElementById('end_date').value;
+    var employee_id = document.getElementById('employee_id').value;
+    
+
+
 
     var searchButton = document.getElementById('search');
     var clearButton = document.getElementById('clear');
 
+    
 
-    if (!id && !name && !start_month && !end_month) {
-      searchButton.disabled = true;
-      clearButton.disabled = true;
-    } else {
+    if (!name || !start_date || !end_date || !employee_id || !leave_type) {
       searchButton.disabled = false;
       clearButton.disabled = false;
+    } else {
+      searchButton.disabled = true;
+      clearButton.disabled = true;
     }
   }
 
-  document.querySelector('.name').addEventListener('input', checkInput);
-  document.querySelector('.id').addEventListener('input', checkInput);
-  document.querySelector('.start_month').addEventListener('input', checkInput);
-  document.querySelector('.end_month').addEventListener('input', checkInput);
+</script>
+
+<script>
+  document.getElementById('search').addEventListener('click', function() {
+    event.preventDefault()
+    var employee_name = document.getElementById("name").value;
+    var start_date = document.getElementById("start_date").value;
+    var end_date = document.getElementById("end_date").value;
+    var employee_id = document.getElementById("employee_id").value;
+    var status_dict = {};
+    if (employee_name){
+      status_dict["employee_name"] = employee_name
+    }
+    if (start_date){
+      status_dict["start_date__gte"] = start_date + "-01";
+    }
+    if (end_date){
+      status_dict["end_date__lte"] = end_date + "-29"
+    }
+    if (employee_id){
+      status_dict["employee__employee_id"] = employee_id
+    }
+    console.log(status_dict);
+    var paginationElement = document.querySelector('.pagination');
+    while (paginationElement.firstChild) {
+        paginationElement.removeChild(paginationElement.firstChild);
+    }
+    fetch("{% url 'employee_leave_status' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(status_dict)
+    }).then(function(response) {
+        return response.json();
+    }).then(function(response_data) {
+      var tableBody = document.querySelector('.table tbody');
+        var allData = response_data.results;
+        console.log('allData', allData)
+        var itemsPerPage = 5;
+        var currentPage = 1;
+        var totalPages = Math.ceil(allData.length / itemsPerPage);
+        // Previous page buttons
+        var prevPageItem = document.createElement('li');
+        prevPageItem.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+        var prevPageLink = document.createElement('a');
+        prevPageLink.className = 'page-link';
+        prevPageLink.href = '?page=' + (currentPage - 1);
+        prevPageLink.innerHTML = '<i class="fa-solid fa-chevron-left fa-xs"></i>';
+        prevPageItem.appendChild(prevPageLink);
+        paginationElement.appendChild(prevPageItem);
+
+        // Current page text
+        var currentPageItem = document.createElement('li');
+        currentPageItem.className = 'page-item disabled';
+        var currentPageLink = document.createElement('a');
+        currentPageLink.className = 'page-link';
+        currentPageLink.href = '?page=' + currentPage;
+        currentPageLink.textContent = currentPage + ' of ' + totalPages;
+        currentPageItem.appendChild(currentPageLink);
+        paginationElement.appendChild(currentPageItem);
+
+        // Next page buttons
+        var nextPageItem = document.createElement('li');
+        nextPageItem.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+        var nextPageLink = document.createElement('a');
+        nextPageLink.className = 'page-link';
+        nextPageLink.href = '?page=' + (currentPage + 1);
+        nextPageLink.innerHTML = '<i class="fa-solid fa-chevron-right fa-xs"></i>';
+        nextPageItem.appendChild(nextPageLink);
+        paginationElement.appendChild(nextPageItem);
+
+        function updatePage() {
+          console.log('inside updatePage')
+          var start = (currentPage - 1) * itemsPerPage;
+          var end = start + itemsPerPage;
+          var pageData = allData.slice(start, end);
+          console.log('pageData', pageData)
+
+          while (tableBody.firstChild) {
+              tableBody.removeChild(tableBody.firstChild);
+          }
+
+          pageData.forEach(function(item) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td id="employee_id" class="text-center">${item.employee_id}</td>
+                    <td id="employee_name" class="text-center">${item.employee_name}</td>
+                    <td id='start_date' class="text-center">${item.leave_taken}</td>
+                    <td id='end_date' class="text-center">${item.wfh_taken}</td>
+                    <td id='end_date' class="text-center">${item.leave_left}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Update pagination
+            // var paginationElement = document.querySelector('.pagination');
+            while (paginationElement.firstChild) {
+                paginationElement.removeChild(paginationElement.firstChild);
+            }
+
+            var prevPageItem = document.createElement('li');
+            prevPageItem.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+            var prevPageLink = document.createElement('a');
+            prevPageLink.className = 'page-link';
+            prevPageLink.href = '?page=' + (currentPage - 1);
+            prevPageLink.innerHTML = '<i class="fa-solid fa-chevron-left fa-xs"></i>';
+            prevPageItem.appendChild(prevPageLink);
+            paginationElement.appendChild(prevPageItem);
+
+            // Current page text
+            var currentPageItem = document.createElement('li');
+            currentPageItem.className = 'page-item disabled';
+            var currentPageLink = document.createElement('a');
+            currentPageLink.className = 'page-link';
+            currentPageLink.href = '?page=' + currentPage;
+            currentPageLink.textContent = currentPage + ' of ' + totalPages;
+            currentPageItem.appendChild(currentPageLink);
+            paginationElement.appendChild(currentPageItem);
+
+            // Next page buttons
+            var nextPageItem = document.createElement('li');
+            nextPageItem.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+            var nextPageLink = document.createElement('a');
+            nextPageLink.className = 'page-link';
+            nextPageLink.href = '?page=' + (currentPage + 1);
+            nextPageLink.innerHTML = '<i class="fa-solid fa-chevron-right fa-xs"></i>';
+            nextPageItem.appendChild(nextPageLink);
+            paginationElement.appendChild(nextPageItem);
+
+            // Previous button click event
+            prevPageLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+                }
+            });
+            // Next button click event
+            nextPageLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+                }
+              });
+        }
+// Call updatePage to refresh the table and pagination for the first time
+          updatePage(allData, currentPage, itemsPerPage, tableBody, paginationElement);
+        
+    });
+  });
+</script>
+<script>
+  //download
+  document.getElementById('saveBtn').addEventListener('click', function() {
+    var employee_name = document.getElementById("name").value;
+    var start_date = document.getElementById("start_date").value;
+    var end_date = document.getElementById("end_date").value;
+    var employee_id = document.getElementById("employee_id").value;
+    var status_dict = {};
+    if (employee_name){
+      status_dict["employee_name"] = employee_name
+    }
+    if (start_date){
+      status_dict["start_date__gte"] = start_date + "-01";
+    }
+    if (end_date){
+      status_dict["end_date__lte"] = end_date + "-29"
+    }
+    if (employee_id){
+      status_dict["employee__employee_id"] = employee_id
+    }
+    console.log(status_dict);
+    fetch("{% url 'employee_leave_status' %}", {
+        method: 'POST',
+        body: JSON.stringify(status_dict),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+
+      }).then(response => response.blob())
+.then(blob => {
+    // Create a new object URL for the blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a link and click it to start the download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'leave_status.csv';
+    link.click();
+
+    // Release the reference to the object URL
+    window.URL.revokeObjectURL(url);
+});
+});
 
 </script>
+
+
+
 {% endblock pageContent %}
