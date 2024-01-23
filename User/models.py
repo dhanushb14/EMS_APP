@@ -94,8 +94,8 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     bank_nominee_dob = models.DateField(blank=True,null=True)
     proofs_aadhar_no = models.CharField(max_length=12,blank=True,null=True)
     proofs_pancard_no = models.CharField(max_length=10,blank=True,null=True)
-    proofs_aadhar_softcopy = models.ImageField(blank=True,null=True)
-    proofs_pancard_softcopy = models.ImageField(blank=True,null=True)
+    proofs_aadhar_softcopy = models.ImageField(blank=True,null=True,upload_to='images')
+    proofs_pancard_softcopy = models.ImageField(blank=True,null=True,upload_to='images')
     objects = EmployeeManager()
 
     USERNAME_FIELD = 'employee_id'
