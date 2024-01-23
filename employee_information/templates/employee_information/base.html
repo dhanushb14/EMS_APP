@@ -37,7 +37,7 @@
       }
       @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
       :root {
-        --header-height: 3rem;
+        --header-height: 2.5rem;
         --nav-width: 68px;
         --first-color: #1F325C;
         --first-color-light: #eceff3;
@@ -178,7 +178,7 @@
         background-color: #142248;
         margin-top: -10px;
         margin-left: 20px;
-        max-width: 220px;
+        max-width: 225px;
         border-radius: 10px;
         
       }
@@ -305,7 +305,7 @@
               >
                 <i class="fa-solid fa-screwdriver-wrench nav_icon"></i>
                 <!-- <i class="fa-solid fa-user-tie nav_icon"></i> -->
-                <span class="nav_name">Admin Panel</span>
+                <span class="nav_name">Admin panel</span>
               </a>
             {% endif %}
             {% if request.user.role == "superadmin" or request.user.role == "manager" %}
@@ -316,7 +316,7 @@
               title="Employee List"
             >
               <i class="fa-solid fa-address-book nav_icon"></i>
-              <span class="nav_name">Employee List</span>
+              <span class="nav_name">Employee list</span>
             </a>
             <!-- end of employee list  -->
             {% endif %}
@@ -352,6 +352,23 @@
                 <!-- end of TMS My pending approvals -->
                 {% endif %}
               </div>
+              {% if request.user.role == "superadmin" or request.user.role == "manager" %}
+              <!-- Download monthly report -->
+              <div class="sub_menu_bg">
+                <a
+                  href="{% url 'export_data' %}"
+                  class="sub_menu_nav_link {% if request.path == '/export_data' %}sub_menu_active{% endif %}"
+                  title="Download monthly report"
+                >
+                <i class="fa-solid fa-download sub_menu_icon {% if request.path == '/export_data' %}sub_menu_active_icon{% endif %}"></i>
+                  <span
+                    class="sub_menu_font {% if request.path == '/export_data' %}sub_menu_active_font{% endif %}"
+                    >Download monthly report</span
+                  >
+                </a>
+              </div>
+              <!-- end of Download monthly report -->
+              {% endif %}
               {% if request.user.role != "superadmin" %}
               <div class="sub_menu_bg">
                 <!-- submit timesheet -->
@@ -433,7 +450,7 @@
                 <i class="fa-regular fa-calendar-xmark sub_menu_icon {% if request.path == '/leave_status/' %}sub_menu_active_icon{% endif %}"></i>
                   <span
                     class="sub_menu_font {% if request.path == '/leave_status/' %}sub_menu_active_font{% endif %}"
-                    >Employee Leave Status</span
+                    >Employee leave status</span
                   >
                 </a>
               </div>

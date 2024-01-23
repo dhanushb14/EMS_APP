@@ -1371,7 +1371,6 @@ def forgot_password(request):
 
 load_dotenv()
 
-@login_required
 def send_email(employee_email, employee_name, decrypted_password, employee_id):
     sender_email = 'intellectoglobal@gmail.com'
     sender_password = 'yawx mjxr mxqv lswr'
@@ -1392,7 +1391,6 @@ def send_email(employee_email, employee_name, decrypted_password, employee_id):
 
         server.sendmail(sender_email, employee_email, message.as_string())
 
-@login_required
 def send_password(request):
     employee_email = request.POST.get('email')
     try:

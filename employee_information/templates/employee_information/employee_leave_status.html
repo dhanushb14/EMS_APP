@@ -43,27 +43,27 @@
       <form method="get">
         <div class="row">
           <div class="col-lg-2 col-md-6 my-2">
-            <input id="employee_id" type="text" placeholder="Employee ID" class="form-control">
-            {% render_field filter_queryset.form.employee_name|attr:"class:form-control name"|attr:"placeholder:Employee ID"%}
+            <input id="employee_id" type="text" placeholder="Employee ID" class="form-control employee_id">
+            {% render_field filter_queryset.form.employee_name|attr:"class:form-control id"%}
         </div>
         <div class="col-lg-2 col-md-6 my-2">
             <div class="input-group">
-                <input id="employee_name" type="text" placeholder="Employee Name" class="form-control">
-                {% render_field filter_queryset.form.start_date|add_class:"form-control start_date"|attr:"type:date"%}
+                <input id="employee_name" type="text" placeholder="Employee Name" class="form-control employee_name">
+                {% render_field filter_queryset.form.start_date|add_class:"form-control name"%}
             </div>
         </div>
-        <div class="col-lg-2 col-md-6 my-2">
+        <div class="col-lg-3 col-md-6 my-2">
             <div class="input-group">
-                <span class="input-group-text">Start Date</span>
-                <input id="employee_name" type="date" class="form-control">
-                {% render_field filter_queryset.form.end_date|add_class:"form-control end_date"|attr:"type:date"%}
+                <span class="input-group-text">Start Month</span>
+                <input id="start_month" type="month" class="form-control start_month">
+                {% render_field filter_queryset.form.end_date|add_class:"form-control start_month"%}
             </div>
         </div>
-        <div class="col-lg-2 col-md-6 my-2">
+        <div class="col-lg-3 col-md-6 my-2">
             <div class="input-group">
-                <span class="input-group-text">End Date</span>
-                <input id="employee_name" type="date" class="form-control">
-              {{filter_queryset.form.status|add_class:"form-control status"}} 
+                <span class="input-group-text">End Month</span>
+                <input id="end_month" type="month" class="form-control end_month">
+              {{filter_queryset.form.status|add_class:"form-control end_month"}} 
             </div>
           </div>
           <div class="col-auto my-2">
@@ -174,11 +174,10 @@
 <script>
   $(document).ready(function() {
     $('#clear').on('click', function() {
-      $('.name').val('');
-      $('.start_date').val('');
-      $('.end_date').val('');
-      $('.status').val('');
-      $('.leave_type').val('');
+      $('.employee_id').val('');
+      $('.employee_name').val('');
+      $('.start_month').val('');
+      $('.end_month').val('')
     });
   });
 </script>
@@ -199,17 +198,16 @@
 </script>
 <script>
   function checkInput() {
-    var name = document.querySelector('.name').value;
-    var start_date = document.querySelector('.start_date').value;
-    var end_date = document.querySelector('.end_date').value;
-    var status = document.querySelector('.status').value;
-    var leave_type = document.querySelector('.leave_type').value;
+    var id = document.querySelector('.employee_id').value;
+    var name = document.querySelector('.employee_name').value;
+    var start_month = document.querySelector('.start_month').value;
+    var end_month = document.querySelector('.end_month').value;
 
     var searchButton = document.getElementById('search');
     var clearButton = document.getElementById('clear');
 
 
-    if (!name && !start_date && !end_date && !status && !leave_type) {
+    if (!id && !name && !start_month && !end_month) {
       searchButton.disabled = true;
       clearButton.disabled = true;
     } else {
@@ -219,10 +217,9 @@
   }
 
   document.querySelector('.name').addEventListener('input', checkInput);
-  document.querySelector('.start_date').addEventListener('input', checkInput);
-  document.querySelector('.end_date').addEventListener('input', checkInput);
-  document.querySelector('.status').addEventListener('input', checkInput);
-  document.querySelector('.leave_type').addEventListener('input', checkInput);
+  document.querySelector('.id').addEventListener('input', checkInput);
+  document.querySelector('.start_month').addEventListener('input', checkInput);
+  document.querySelector('.end_month').addEventListener('input', checkInput);
 
 </script>
 {% endblock pageContent %}
