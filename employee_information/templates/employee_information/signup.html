@@ -130,10 +130,14 @@
                   >
                 </div>
                 <div class="my-4">
-                  <select class="form-select" name="shift" id="shift"  oninput="checkInput()">
-                    <option value="Morning shift">Morning shift</option>
-                    <option value="Night shift">Night shift</option>
-                  </select>
+                  <div class="form-floating">
+                    <select class="form-select" name="shift" id="shift"  oninput="checkInput()">
+                      <option value="" selected>Select your shift</option>
+                      <option value="Morning shift">Morning shift</option>
+                      <option value="Night shift">Night shift</option>
+                    </select>
+                    <label for="shift">Shift*</label>
+                  </div>
                 </div>
                 <div class="form-floating my-4">
                   <input
