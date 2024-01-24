@@ -1,4 +1,5 @@
 from email.mime.multipart import MIMEMultipart
+from django.conf import settings
 from email.mime.text import MIMEText
 from datetime import datetime
 from dateutil.relativedelta import relativedelta, MO
@@ -335,7 +336,22 @@ def manage_employees(request):
 
         }
         return render(request, 'employee_information/manage_employee.html', context)
-     
+    
+
+def handle_uploaded_file(f, folder):
+    # Create the folder if it doesn't exist.
+    save_path = os.path.join(settings.MEDIA_ROOT, folder)
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
+    # Save the file.
+    file_path = os.path.join(save_path, f.name)
+    with open(file_path, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+    
+    # Return the URL path.
+    return os.path.join(settings.MEDIA_URL, folder, f.name)     
 
 @login_required
 def save_employee(request):
@@ -353,8 +369,18 @@ def save_employee(request):
     
     try:
         employee_check = Employee.objects.get(id=data['id'])
+         
+        aadhar_file = request.FILES.get('proofs_aadhar_softcopy')
+        pancard_file = request.FILES.get('proofs_pancard_softcopy')
+        if aadhar_file:
+                aadhar_softcopy_path = handle_uploaded_file(aadhar_file, 'aadhar')
+        
+        if pancard_file:
+                pancard_softcopy_path = handle_uploaded_file(pancard_file, 'pancards')
+        
         if (employee_check):
             print('true')
+            print(data)
             
             update_fields = {
                 'employee_name': data.get('employee_name'),
@@ -379,8 +405,15 @@ def save_employee(request):
                 'mother_name': data.get('mother_name'),
                 'proofs_aadhar_no': data.get('proofs_aadhar_no'),
                 'proofs_pancard_no': data.get('proofs_pancard_no'),
+
                 # Add other fields here as necessary
             }
+            if aadhar_file:
+                update_fields['proofs_aadhar_softcopy'] = aadhar_softcopy_path
+            if pancard_file:
+                update_fields['proofs_pancard_softcopy'] = pancard_softcopy_path
+            
+            
             save_employee = Employee.objects.filter(id=data['id']).update(**update_fields)
             update_field = {
                 'employee_name': data.get('employee_name'),     
@@ -394,6 +427,8 @@ def save_employee(request):
 
     # print(json.dumps({"code": data['code'], "name": data['name'], "contact": data['contact'],"email": data['email'], "status": data['status']}))
     return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
 
 
 @login_required
@@ -1996,3 +2031,6 @@ def employee_leave_status(request):
 @login_required
 def download_leaveStatus(request):
     return
+
+def view_export_data(request):
+    return render(request,'employee_information/export_data.html')

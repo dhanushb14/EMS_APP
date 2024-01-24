@@ -1,0 +1,141 @@
+<style>
+    
+    @media (min-width: 576px){
+        #export_data_loading{
+          position: absolute;
+          /* top: 200px;
+          left: 700px;
+          z-index: 4; */
+          left: 0;
+          right: 0;
+          top: 225px;
+          bottom: 0;
+          margin: auto;
+          z-index: 3;
+        }
+        #alert_toast{
+          position: absolute;
+          top: -50px;
+          left: 90px;
+          right: 0;
+          z-index: 3;
+          
+          max-width: 300px;
+          align-items: center;
+          
+        }
+      }
+      @media (max-width: 577px){
+        #export_data_loading{
+          position: absolute;
+          /* top: 325px;
+          left: 210px;
+          z-index: 4; */
+          left: 0;
+          right: 0;
+          top: 255px;
+          bottom: 0;
+          margin: auto;
+          z-index: 3;
+        }
+        #alert_toast{
+            position: absolute;
+          top: -50px;
+          left: 90px;
+          right: 0;
+          z-index: 3;
+          
+          max-width: 300px;
+          align-items: center;
+        }
+    }
+</style>
+  <div class="container" >
+    <div class="row  justify-content-center" >
+        <div class="col-12">
+            <div class="input-group">
+                <label class="input-group-text">Select Month</label>
+                <input id="report_month" class="form-control" style="border-color: lightgray;" type=month oninput="checkInput()"></input>
+                <button
+                    class="btn text-light mx-auto"
+                    style="background-color: #4981b2"
+                    id="download"
+                    onclick="export_data()"
+                    disabled="true"
+                >
+                <i class="fa-solid fa-download" id="export_data_icon"></i> 
+                </button>
+            </div>        
+        </div>
+    </div>
+    <div class="row">
+        <div class="alert alert-danger text-center" role="alert" id="alert_toast" style=" background-color: #b24949; color: white; display: none;" >
+            <span class="">No Data!</span>
+        </div>
+    </div>
+</div>
+<script>
+    // export data by month and year wise
+    function export_data (){
+            console.log('export data')
+            // Removing download button and adding loading button
+            var toast = document.getElementById('alert_toast')
+            var download_button = document.getElementById("download") 
+            var loading_icon = document.getElementById('alert_toast')
+                 
+            var input = document.getElementById("report_month").value
+            var date = new Date(input);
+      
+            var data = {
+              'month': date.getMonth()+1,
+              'year' : date.getFullYear(),
+          }
+      
+            console.log(data);
+      
+            // using fetch to expot the month and year to views
+            fetch("{% url 'export_data' %}", {
+              method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify(data)
+              }).then(response => {
+          if (!response.ok) {
+              // If the response is not ok, print the response text
+              console.log('11111')
+              response.text().then(text => console.log(text));
+              throw new Error('Network response was not ok');
+          }
+          return response.blob();
+        }).then(blob => {
+          console.log(blob)
+          if (blob.type == 'application/json'){
+            // Show the error message here if needed
+            loading_icon.style.display = 'block';
+            setTimeout(function() {
+                loading_icon.style.display = 'none';
+            console.log("table data is ", tableData)
+        }, 1700);
+          }
+          else{
+                  download_button.style.display = 'block'
+                  loading_icon.style.display = 'none'
+      
+                  // Create a new object URL for the blob
+                  const url = window.URL.createObjectURL(blob);
+      
+                  // Create a link and click it to start the download
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = 'my_data.csv';
+                  link.click();
+      
+                  // Release the reference to the object URL
+                  window.URL.revokeObjectURL(url);
+          }});
+              }
+        var modalFooter = document.querySelector(".modal-footer");
+        modalFooter.parentNode.removeChild(modalFooter);
+  </script>

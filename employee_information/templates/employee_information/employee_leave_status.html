@@ -81,6 +81,7 @@
             </button>
             <button
               class="btn text-light ms-1"
+              onclick="location.reload();"
               style="background-color: #b24949 !important"
               id="clear"
               disabled="true"
@@ -426,6 +427,17 @@
 });
 });
 
+</script>
+<script>
+  // Function to set the end date when the start date is changed
+  function setEndDate() {
+    var startDate = document.getElementById('start_date').value;
+    document.getElementById('end_date').value = startDate;
+    checkInput(); // Call checkInput to update the button states
+  }
+
+  // Attach the setEndDate function to the onchange event of the start date input
+  document.getElementById('start_date').addEventListener('change', setEndDate);
 </script>
 
 

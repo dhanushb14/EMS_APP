@@ -38,7 +38,6 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     employee_role = [
         ('superadmin', 'Super Admin'),
         ('manager', 'Manager'),
-        ('scrummaster', 'Scrum Master'),
         ('employee', 'Employee')
     ]
     role = models.CharField(max_length=100, default='employee',choices=employee_role)

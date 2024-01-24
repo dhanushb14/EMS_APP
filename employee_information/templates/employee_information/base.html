@@ -356,7 +356,7 @@
               <!-- Download monthly report -->
               <div class="sub_menu_bg">
                 <a
-                  href="{% url 'export_data' %}"
+                  id="download_monthly_report"
                   class="sub_menu_nav_link {% if request.path == '/export_data' %}sub_menu_active{% endif %}"
                   title="Download monthly report"
                 >
@@ -527,8 +527,9 @@
             ></button>
           </div>
           <div class="modal-body">
-            <p>Modal body text goes here.</p>
+            
           </div>
+          
           
           <div class="modal-footer">
             <button
@@ -562,7 +563,7 @@
             <h5 class="modal-title">Confirmation</h5>
           </div>
           <div class="modal-body">
-            <div id="delete_content"></div>
+            
           </div>
           <div class="modal-footer">
             <button
@@ -675,18 +676,7 @@
                 focus: true,
               });
               // Check if the title or URL matches the one for uni_modal.html
-              if (
-                $title === "Edit TimeSheet" ||
-                $url.includes("view_timesheet") ||
-                $title === "Edit Leave Request" ||
-                $url.includes("leave_request_manager_model")
-              ) {
-                // If it does, hide the buttons
-                $("#uni_modal .modal-footer").hide();
-              } else {
-                // If it doesn't, show the buttons
-                $("#uni_modal .modal-footer").show();
-              }
+              
               $("#uni_modal").modal("show");
               end_loader();
             }
@@ -715,4 +705,17 @@
         });
       });
       </script>
+  <script>
+    $(function() {
+          
+          $('#download_monthly_report').click(function() {
+        console.log('1')
+        uni_modal(
+          "Monthly Report",
+          "{% url 'view_export_data' %}",
+          "modal-md"
+        );
+      });
+    });
+  </script>
 </html>

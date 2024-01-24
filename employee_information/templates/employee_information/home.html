@@ -190,16 +190,7 @@
       aria-labelledby="home-tab"
     >
       <body class="body_bg ">
-        <div class="row">
-          <div class="col text-center my-3 my-lg-0">
-            <div class="spinner-border text-primary spinner-border-md" id="export_data_loading" role="status" style="display: none; width: 3rem; height: 3rem;">
-              <span class="sr-only">Loading...</span>
-            </div>
-            <div class="alert alert-danger toast" role="alert" id="alert_toast" style=" background-color: #b24949; color: white;">
-              No Data!
-            </div>
-          </div>
-        </div>
+        
         <div class="row mt-4">
           <div class="col-lg-5 col-md-12 mb-5 mb-lg-0">
             <div class="card" style="box-shadow: 0 0  4px 4px rgb(238, 236, 236);">
@@ -493,73 +484,7 @@
             </div>
           </div>
         </div>
-        <script>
-          // export data by month and year wise
-          function export_data (){
-            console.log('export data')
-            // Removing download button and adding loading button
-            var toast = document.getElementById('alert_toast')
-            var download_button = document.getElementById("download") 
-            var loading_icon = document.getElementById('export_data_loading')
-            loading_icon.style.display = 'block'     
-            var input = document.getElementById("report_month").value
-            var date = new Date(input);
-      
-            var data = {
-              'month': date.getMonth()+1,
-              'year' : date.getFullYear(),
-          }
-      
-            console.log(data);
-      
-            // using fetch to expot the month and year to views
-            fetch("{% url 'export_data' %}", {
-              method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'X-CSRFToken': '{{ csrf_token }}'
-                  },
-                  body: JSON.stringify(data)
-              }).then(response => {
-          if (!response.ok) {
-              // If the response is not ok, print the response text
-              console.log('11111')
-              response.text().then(text => console.log(text));
-              throw new Error('Network response was not ok');
-          }
-          return response.blob();
-        }).then(blob => {
-          console.log(blob)
-          if (blob.type == 'application/json'){
-            // Show the error message here if needed
-            loading_icon.style.display = 'none'
-            $('.toast').toast('show');
-            $('.toast').on('hidden.bs.toast', function () {
-        // do something...
-        download_button.style.display = 'block'
-      });
-            
-            
-          }
-          else{
-                  download_button.style.display = 'block'
-                  loading_icon.style.display = 'none'
-      
-                  // Create a new object URL for the blob
-                  const url = window.URL.createObjectURL(blob);
-      
-                  // Create a link and click it to start the download
-                  const link = document.createElement('a');
-                  link.href = url;
-                  link.download = 'my_data.csv';
-                  link.click();
-      
-                  // Release the reference to the object URL
-                  window.URL.revokeObjectURL(url);
-          }});
-              }
-          
-        </script>
+        
       <script>
         function checkInput() {
           var inputField = document.getElementById('report_month').value;
@@ -642,7 +567,7 @@
                           </p>
                           <p class="mt-3 fs-6">
                             <i class="fa-solid fa-calendar-day me-2" style="color: #3855b4;"></i
-                            > DOB: {{ request.user.dob| date:"j/n/Y"}}
+                            > DOB: {{ request.user.dob}}
                           </p>
                           <p class="mt-3 fs-6">
                             <i class="fa-solid fa-mars-and-venus me-2" style="color: #3855b4;"></i
@@ -658,7 +583,7 @@
                           </p>
                           <p class="mt-3 fs-6">
                             <i class="fa-solid fa-calendar me-2" style="color: #3855b4;"></i
-                            >DOJ: {{ request.user.joining_date| date:"j/n/Y" }}
+                            >DOJ: {{ request.user.joining_date }}
                           </p>
                           <p class="mt-3 fs-6">
                             <i class="fa-solid fa-circle-info me-2" style="color: #3855b4;"></i

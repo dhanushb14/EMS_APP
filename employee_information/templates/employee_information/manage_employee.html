@@ -1,6 +1,6 @@
 <div class="container-fluid">
     
-    <form action="" id="employee-form">
+    <form action="" id="employee-form" enctype="multipart/form-data">
         <div class="container mg-t">
             <div class="row mt-3">
                 
@@ -67,7 +67,7 @@
                                     {% else %}
                                     <option value=1 >Active</option>
                                     {% endif %}
-                        
+                         
                                     {% if employee.is_active == 0 %}
                                     <option value=0 selected>Inactive</option>
                                     {% else %}
@@ -300,7 +300,7 @@
                 return false;
             }
             start_loader();
-            var formData = new FormData($(this)[0]);
+            var formData = new FormData(_this[0]);
             formData.append('id', '{{ employee.id }}');
             console.log(formData)
             $.ajax({
@@ -367,4 +367,16 @@
         // Trigger calculation on input change
         $('input[id$="_value"], input[id^="ovt_"]').on('input', calculateTotalHours);
         });
+</script>
+<script type="text/javascript">
+    // Set a JavaScript variable from a Django template variable
+    var userRole = "{{ request.user.role }}";
+    console.log("1",userRole);
+    if (userRole == "manager" || userRole == "superadmin"){
+        console.log('modal footer')
+    }
+    else{
+        var modalFooter = document.querySelector(".modal-footer");
+        modalFooter.parentNode.removeChild(modalFooter);        
+    }
 </script>

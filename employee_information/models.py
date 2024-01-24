@@ -5,14 +5,17 @@ from User.models import Employee
 from datetime import timedelta
 from django.db.models import Sum
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 # Create your models here.
 class Teams(models.Model):
-    employees = Employee.objects.all()
-    scrumMaster = [sm for sm in employees if sm.role == "scrummaster"]
-    members = [emp for emp in employees if (emp.role != "scrummaster" and emp.role !="manager" and emp.role !="superadmin")]
+    # employees = Employee.objects.all()
+    # scrumMaster = [sm for sm in employees if sm.role == "scrummaster"]
+    # members = [emp for emp in employees if (emp.role != "scrummaster" and emp.role !="manager" and emp.role !="superadmin")]
     team_name = models.CharField(max_length=255)
     scrum_master = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': 'employee'}, related_name='scrum_teams')
-    team_members = models.ManyToManyField(Employee, related_name='teams', limit_choices_to={'role__in': ['employee', 'other_role']})
+    team_members = models.ManyToManyField(Employee, related_name='teams', limit_choices_to={'role__in': ['employee']})
+
+    
 
     def save(self, *args, **kwargs):
         print("save function")
@@ -21,7 +24,12 @@ class Teams(models.Model):
             scrum_master = Employee.objects.get(id=self.scrum_master_id)  # Fetch the actual Employee object
             scrum_master.role = 'scrummaster'  # Change the role
             scrum_master.save()  # Save the Employee object
+        
         super(Teams, self).save(*args, **kwargs)
+        
+
+    
+        
 
     def delete(self, *args, **kwargs):
         if self.scrum_master_id:  # Check if a scrum_master is set
