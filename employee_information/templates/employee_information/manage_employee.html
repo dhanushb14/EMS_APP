@@ -253,15 +253,21 @@
                 <div class="col">
                     <label for="proofs_aadhar_softcopy" class="form-label">Aadhar Softcopy*</label>
                     <div class="mb-3">
-                        
+                        {% if employee.proofs_aadhar_softcopy %}
+                        <img id="aadhar_preview" src="{{employee.proofs_aadhar_softcopy}}" alt="Aadhar Preview" style="max-width: 200px;"/>
+                        {% else %}
                         <input class="form-control" type="file" id="proofs_aadhar_softcopy" name="proofs_aadhar_softcopy" onchange="previewImage(this, 'aadhar_preview')">
                         <img id="aadhar_preview" src="#" alt="Aadhar Preview" style="max-width: 200px; display: none;"/>
+                        {% endif %}
                     </div>
                     <label for="proofs_pancard_softcopy" class="form-label">Pan Softcopy*</label>
                     <div class="mb-3">
-                       
+                        {% if employee.proofs_pancard_softcopy %}
+                        <img id="pancard_preview" src="{{employee.proofs_pancard_softcopy}}" alt="Pan Card Preview" style="max-width: 200px;"/>
+                        {% else %}
                         <input class="form-control" type="file" id="proofs_pancard_softcopy" name="proofs_pancard_softcopy" onchange="previewImage(this, 'pancard_preview')">
                         <img id="pancard_preview" src="#" alt="Pan Card Preview" style="max-width: 200px; display: none;"/>
+                        {% endif %}
                     </div>       
                 </div>
             </div>

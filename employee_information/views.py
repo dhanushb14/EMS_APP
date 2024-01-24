@@ -1,4 +1,7 @@
 from email.mime.multipart import MIMEMultipart
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 from django.conf import settings
 from email.mime.text import MIMEText
 from datetime import datetime
@@ -335,23 +338,17 @@ def manage_employees(request):
             'employee': employee
 
         }
+        print(employee.proofs_pancard_softcopy)
         return render(request, 'employee_information/manage_employee.html', context)
     
 
-def handle_uploaded_file(f, folder):
-    # Create the folder if it doesn't exist.
-    save_path = os.path.join(settings.MEDIA_ROOT, folder)
-    if not os.path.exists(save_path):
-        os.makedirs(save_path)
+def handle_uploaded_file(f, folder, public_id):
 
-    # Save the file.
-    file_path = os.path.join(save_path, f.name)
-    with open(file_path, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-    
-    # Return the URL path.
-    return os.path.join(settings.MEDIA_URL, folder, f.name)     
+    # Upload the file to Cloudinary
+    print("f", f)
+    result = cloudinary.uploader.upload(f, folder = folder, public_id = public_id)
+       # Return the URL of the uploaded file
+    return result['url']      
 
 @login_required
 def save_employee(request):
@@ -373,10 +370,10 @@ def save_employee(request):
         aadhar_file = request.FILES.get('proofs_aadhar_softcopy')
         pancard_file = request.FILES.get('proofs_pancard_softcopy')
         if aadhar_file:
-                aadhar_softcopy_path = handle_uploaded_file(aadhar_file, 'aadhar')
+                aadhar_softcopy_path = handle_uploaded_file(aadhar_file, 'images/aadhar', f"aadhar_{data.get('employee_name')}")
         
         if pancard_file:
-                pancard_softcopy_path = handle_uploaded_file(pancard_file, 'pancards')
+                pancard_softcopy_path = handle_uploaded_file(pancard_file, 'images/pancards', f"pancard_{data.get('employee_name')}")
         
         if (employee_check):
             print('true')
@@ -413,7 +410,7 @@ def save_employee(request):
             if pancard_file:
                 update_fields['proofs_pancard_softcopy'] = pancard_softcopy_path
             
-            
+            print("update_fields", update_fields)
             save_employee = Employee.objects.filter(id=data['id']).update(**update_fields)
             update_field = {
                 'employee_name': data.get('employee_name'),     
