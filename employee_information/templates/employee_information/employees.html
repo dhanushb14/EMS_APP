@@ -23,13 +23,13 @@
           <div class="col-lg-2 col-md-6 my-2">
             <div class="input-group">
               <span class="input-group-text">Role</span>
-              {% render_field filter_queryset.form.role|add_class:"form-control role"%}
+              {% render_field filter_queryset.form.role|add_class:"form-control role form-select"%}
             </div>
           </div>
           <div class="col-lg-2 col-md-6 my-2">
             <div class="input-group">
               <span class="input-group-text">Status</span>
-              {{filter_queryset.form.is_active|add_class:"form-control is_active"}} 
+              {{filter_queryset.form.is_active|add_class:"form-control is_active form-select"}} 
             </div>
           </div>
           <div class="col-auto my-2">
