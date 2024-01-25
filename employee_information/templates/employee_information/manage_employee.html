@@ -254,11 +254,13 @@
                     <label for="proofs_aadhar_softcopy" class="form-label">Aadhar Softcopy*</label>
                     <div class="mb-3">
                         {% if employee.proofs_aadhar_softcopy %}
-                        <img id="aadhar_preview" src="{{employee.proofs_aadhar_softcopy}}" alt="Aadhar Preview" style="max-width: 100px;"/>
+                        <input class="form-control" type="file" id="proofs_aadhar_softcopy" name="proofs_aadhar_softcopy" onchange="previewImage(this, 'aadhar_preview')" style="display: none;" >
+                        <img id="aadhar_preview" src="{{employee.proofs_aadhar_softcopy}}" alt="Aadhar Preview" style="max-width: 200px;"/>
                         <button
                             class="btn mt-lg-0 mt-2"
                             type="button"
                             data-id="{{employee.proofs_aadhar_softcopy}}"
+                            onclick="deleteImage('images/aadhar/aadhar_' + '{{employee.employee_name}}', 'proofs_aadhar_softcopy', 'aadhar_preview')"
                             title="Delete Aadhar"
                             id="delete_aadhar"
                             >
@@ -266,7 +268,7 @@
                         </button>
                         <button
                             class="btn mt-lg-0 mt-2"
-                            type="submit"
+                            onclick="downloadImage('{{employee.proofs_aadhar_softcopy}}')"
                             data-id="{{employee.proofs_aadhar_softcopy}}"
                             title="Download Aadhar"
                             id="download_aadhar"
@@ -274,36 +276,141 @@
                         >
                             <i class="fa-solid fa-download"></i>
                         </button>
-                        {% else %}
-                        <input class="form-control" type="file" id="proofs_aadhar_softcopy" name="proofs_aadhar_softcopy" onchange="previewImage(this, 'aadhar_preview')">
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            type="button"
+                            data-id="{{employee.proofs_aadhar_softcopy}}"
+                            onclick="ondelete('proofs_aadhar_softcopy', 'aadhar_preview' )"
+                            title="Delete Aadhar"
+                            id="delete_aadhar_preview"
+                            style="display: none;"
+                            >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+
+
+
+                        <!-- disabled --- it will get enabled in js after deleting the image  -->
+                        <!-- <input class="form-control" type="file" id="proofs_aadhar_softcopy_js" name="proofs_aadhar_softcopy" onchange="previewImage(this, 'aadhar_preview')" style="display: none;" >
                         <img id="aadhar_preview" src="#" alt="Aadhar Preview" style="max-width: 200px; display: none;"/>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            type="button"
+                            data-id="{{employee.proofs_aadhar_softcopy}}"
+                            onclick="deleteImage('')"
+                            title="Delete Aadhar"
+                            id="delete_aadhar_preview"
+                            style="display: none;"
+                            >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            onclick="downloadImage('{{employee.proofs_aadhar_softcopy}}')"
+                            data-id="{{employee.proofs_aadhar_softcopy}}"
+                            title="Download Aadhar"
+                            id="download_aadhar_preview"
+                            style="display: none;"
+                        >
+                            <i class="fa-solid fa-download"></i>
+                        </button> -->
+
+                        
+                        {% else %}
+                        <input class="form-control" type="file" id="proofs_aadhar_softcopy" name="proofs_aadhar_softcopy" onchange="previewImage(this, 'aadhar_preview')" style="display: block;" >
+                        <img id="aadhar_preview" src="#" alt="Aadhar Preview" style="max-width: 200px; display: none;"/>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            type="button"
+                            data-id="{{employee.proofs_aadhar_softcopy}}"
+                            onclick="ondelete('proofs_aadhar_softcopy', 'aadhar_preview' )"
+                            title="Delete Aadhar"
+                            id="delete_aadhar_preview"
+                            style="display: none;"
+                            >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                         {% endif %}
                     </div>
                     <label for="proofs_pancard_softcopy" class="form-label">Pan Softcopy*</label>
                     <div class="mb-3">
                         {% if employee.proofs_pancard_softcopy %}
-                        <img id="pancard_preview" src="{{employee.proofs_pancard_softcopy}}" alt="Pan Card Preview" style="max-width: 100px;"/>
+                        <input class="form-control" type="file" id="proofs_pancard_softcopy" name="proofs_pancard_softcopy" onchange="previewImage(this, 'pancard_preview')" style="display: none;">
+                        <img id="pancard_preview" src="{{employee.proofs_pancard_softcopy}}" alt="Pan Card Preview" style="max-width: 200px;"/>
                         <button
                             class="btn mt-lg-0 mt-2"
                             type="button"
                             data-id="{{employee.proofs_pancard_softcopy}}"
+                            onclick="deleteImage('images/pancards/pancard_' + '{{employee.employee_name}}', 'proofs_pancard_softcopy', 'pancard_preview' )"
                             title="Delete Pan"
-                            id="delete_pan"
+                            id="delete_pancard"
                         >
                             <i class="fa-solid fa-trash"></i>
                         </button>
                         <button
                             class="btn mt-lg-0 mt-2"
-                            type="submit"
+                            onclick="downloadImage('{{employee.proofs_pancard_softcopy}}')"
                             data-id="{{employee.proofs_pancard_softcopy}}"
                             title="Download Pan"
-                            id="download_pan"
+                            id="download_pancard"
                         >
                             <i class="fa-solid fa-download"></i>
                         </button>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            type="button"
+                            data-id="{{employee.proofs_pancard_softcopy}}"
+                            onclick="ondelete('proofs_pancard_softcopy', 'pancard_preview' )"
+                            title="Delete Pan"
+                            id="delete_pancard_preview"
+                            style="display: none;"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+
+
+                        <!-- disabled --- it will get enabled in js after deleting the image  -->
+
+                        <!-- <input class="form-control" type="file" id="proofs_pancard_softcopy_js" name="proofs_pancard_softcopy" onchange="previewImage(this, 'pancard_preview')" style="display: none;">
+                        <img id="pancard_preview" src="#" alt="Pan Card Preview" style="max-width: 200px; display: none;"/>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            type="button"
+                            data-id="{{employee.proofs_pancard_softcopy}}"
+                            onclick=""
+                            title="Delete Pan"
+                            id="delete_pan_preview"
+                            style="display: none;"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            onclick="downloadImage('{{employee.proofs_pancard_softcopy}}')"
+                            data-id="{{employee.proofs_pancard_softcopy}}"
+                            title="Download Pan"
+                            id="download_pan_preview"
+                            style="display: none;"
+                        >
+                            <i class="fa-solid fa-download"></i>
+                        </button> -->
+
+
+
                         {% else %}
                         <input class="form-control" type="file" id="proofs_pancard_softcopy" name="proofs_pancard_softcopy" onchange="previewImage(this, 'pancard_preview')">
                         <img id="pancard_preview" src="#" alt="Pan Card Preview" style="max-width: 200px; display: none;"/>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            type="button"
+                            data-id="{{employee.proofs_pancard_softcopy}}"
+                            onclick="ondelete('proofs_pancard_softcopy', 'pancard_preview' )"
+                            title="Delete Pan"
+                            id="delete_pancard_preview"
+                            style="display: none;"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                         {% endif %}
                     </div>       
                 </div>
@@ -316,16 +423,8 @@
     </form>
 </div>
 <script>
-    function previewImage(input, previewId) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                $('#' + previewId).attr('src', e.target.result).show();
-                $(input).hide(); // hide the input field
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
+    
+    
 
 
 
@@ -421,5 +520,107 @@
     else{
         var modalFooter = document.querySelector(".modal-footer");
         modalFooter.parentNode.removeChild(modalFooter);        
+    }
+</script>
+<script>
+    function downloadImage(url) {
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                var link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = url.split('/').pop().split('#')[0].split('?')[0]; // get the filename
+                link.click();
+            })
+            .catch(console.error);
+    }
+</script>
+<script>
+    function deleteImage(url, input1, previewId) {
+        console.log('url', url, input1, previewId);
+        
+        fetch("{% url 'delete_image' %}", {  // replace with the actual path to your delete_image route
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'  // Django's CSRF token
+            },
+            body: JSON.stringify({ url: url })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.result === 'ok') {
+                console.log('image deleted successfully', input1, previewId)
+                var input = $('#' + input1);
+                var preview = $('#' + previewId);
+                var proofs = previewId.split('_')[0]; // This will be 'aadhar'
+                var deleteButton = $('#delete_' + proofs);
+                var downloadButton = $('#download_' + proofs);
+
+                // Hide the preview and delete button
+                preview.hide();
+                deleteButton.hide();
+                downloadButton.hide();
+
+                // Clear the input field by replacing it with a clone of itself
+                var newInput = input.clone(true).val('');
+                input.replaceWith(newInput);
+
+                // Reattach the onchange event handler to the new input
+                newInput.on('change', function() {
+                    previewImage(this, previewId);
+                });
+
+                // Show the new input field
+                newInput.show();
+                
+                } else {
+                    // something went wrong
+                    console.error(data);
+                }
+            })
+        .catch(console.error);
+    }
+</script>
+<script>
+    function previewImage(input, previewId) {
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#' + previewId).attr('src', e.target.result).show();
+                $('#delete_' + previewId).show();
+                $(input).hide(); // hide the input field
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+<script>
+    function ondelete(input, previewId) {
+        // $('#' + previewId).hide();
+        // $('#' + input).show();
+        // $('#delete_' + previewId).hide();
+
+
+        var input = $('#' + input);
+        var preview = $('#' + previewId);
+        var deleteButton = $('#delete_' + previewId);
+
+        // Hide the preview and delete button
+        preview.hide();
+        deleteButton.hide();
+
+        // Clear the input field by replacing it with a clone of itself
+        var newInput = input.clone(true).val('');
+        input.replaceWith(newInput);
+
+        // Reattach the onchange event handler to the new input
+        newInput.on('change', function() {
+            previewImage(this, previewId);
+        });
+
+        // Show the new input field
+        newInput.show();
     }
 </script>

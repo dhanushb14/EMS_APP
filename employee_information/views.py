@@ -3,6 +3,8 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from django.conf import settings
+from cloudinary.uploader import destroy
+from django.http import JsonResponse
 from email.mime.text import MIMEText
 from datetime import datetime
 from dateutil.relativedelta import relativedelta, MO
@@ -2031,3 +2033,17 @@ def download_leaveStatus(request):
 
 def view_export_data(request):
     return render(request,'employee_information/export_data.html')
+
+def delete_image(request):
+    if request.method == 'POST':
+        image_url = json.loads(request.body)['url']
+        print('url', image_url) 
+        employee_name = image_url.split('/')[-1].split('_')[1] # extract public_id from URL
+        credential = image_url.split('/')[1]
+          # extract public_id from URL
+        result = destroy(image_url)
+        if credential == 'pancards':
+            delete_model = Employee.objects.filter(employee_name=employee_name).update(proofs_pancard_softcopy='')
+        if credential == 'aadhar':
+            delete_model = Employee.objects.filter(employee_name = employee_name).update(proofs_aadhar_softcopy='')
+        return JsonResponse(result)

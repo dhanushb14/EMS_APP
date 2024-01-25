@@ -55,4 +55,5 @@ urlpatterns = [
     path('leave_status/', views.employee_leave_status, name='employee_leave_status'),
     path('download_leaveStatus',views.download_leaveStatus,name='download_leaveStatus'),
     path('view_export_data', views.view_export_data, name='view_export_data'),
+    path('delete_image',views.delete_image, name='delete_image'),
 ]
