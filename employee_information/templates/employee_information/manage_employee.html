@@ -254,7 +254,26 @@
                     <label for="proofs_aadhar_softcopy" class="form-label">Aadhar Softcopy*</label>
                     <div class="mb-3">
                         {% if employee.proofs_aadhar_softcopy %}
-                        <img id="aadhar_preview" src="{{employee.proofs_aadhar_softcopy}}" alt="Aadhar Preview" style="max-width: 200px;"/>
+                        <img id="aadhar_preview" src="{{employee.proofs_aadhar_softcopy}}" alt="Aadhar Preview" style="max-width: 100px;"/>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            type="button"
+                            data-id="{{employee.proofs_aadhar_softcopy}}"
+                            title="Delete Aadhar"
+                            id="delete_aadhar"
+                            >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            type="submit"
+                            data-id="{{employee.proofs_aadhar_softcopy}}"
+                            title="Download Aadhar"
+                            id="download_aadhar"
+                            
+                        >
+                            <i class="fa-solid fa-download"></i>
+                        </button>
                         {% else %}
                         <input class="form-control" type="file" id="proofs_aadhar_softcopy" name="proofs_aadhar_softcopy" onchange="previewImage(this, 'aadhar_preview')">
                         <img id="aadhar_preview" src="#" alt="Aadhar Preview" style="max-width: 200px; display: none;"/>
@@ -263,7 +282,25 @@
                     <label for="proofs_pancard_softcopy" class="form-label">Pan Softcopy*</label>
                     <div class="mb-3">
                         {% if employee.proofs_pancard_softcopy %}
-                        <img id="pancard_preview" src="{{employee.proofs_pancard_softcopy}}" alt="Pan Card Preview" style="max-width: 200px;"/>
+                        <img id="pancard_preview" src="{{employee.proofs_pancard_softcopy}}" alt="Pan Card Preview" style="max-width: 100px;"/>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            type="button"
+                            data-id="{{employee.proofs_pancard_softcopy}}"
+                            title="Delete Pan"
+                            id="delete_pan"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <button
+                            class="btn mt-lg-0 mt-2"
+                            type="submit"
+                            data-id="{{employee.proofs_pancard_softcopy}}"
+                            title="Download Pan"
+                            id="download_pan"
+                        >
+                            <i class="fa-solid fa-download"></i>
+                        </button>
                         {% else %}
                         <input class="form-control" type="file" id="proofs_pancard_softcopy" name="proofs_pancard_softcopy" onchange="previewImage(this, 'pancard_preview')">
                         <img id="pancard_preview" src="#" alt="Pan Card Preview" style="max-width: 200px; display: none;"/>

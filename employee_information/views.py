@@ -178,120 +178,120 @@ def about(request):
 # Departments
 
 
-@login_required
-def departments(request):
-    department_list = Department.objects.all()
-    context = {
-        'page_title': 'Departments',
-        'departments': department_list,
-    }
-    return render(request, 'employee_information/departments.html', context)
+# @login_required
+# def departments(request):
+#     department_list = Department.objects.all()
+#     context = {
+#         'page_title': 'Departments',
+#         'departments': department_list,
+#     }
+#     return render(request, 'employee_information/departments.html', context)
 
 
-@login_required
-def manage_departments(request):
-    department = {}
-    if request.method == 'GET':
-        data = request.GET
-        id = ''
-        if 'id' in data:
-            id = data['id']
-        if id.isnumeric() and int(id) > 0:
-            department = Department.objects.filter(id=id).first()
+# @login_required
+# def manage_departments(request):
+#     department = {}
+#     if request.method == 'GET':
+#         data = request.GET
+#         id = ''
+#         if 'id' in data:
+#             id = data['id']
+#         if id.isnumeric() and int(id) > 0:
+#             department = Department.objects.filter(id=id).first()
 
-    context = {
-        'department': department
-    }
-    return render(request, 'employee_information/manage_department.html', context)
-
-
-@login_required
-def save_department(request):
-    data = request.POST
-    resp = {'status': 'failed'}
-    try:
-        if (data['id']).isnumeric() and int(data['id']) > 0:
-            save_department = Department.objects.filter(id=data['id']).update(
-                name=data['name'], description=data['description'], status=data['status'])
-        else:
-            save_department = Department(
-                name=data['name'], description=data['description'], status=data['status'])
-            save_department.save()
-        resp['status'] = 'success'
-    except:
-        resp['status'] = 'failed'
-    return HttpResponse(json.dumps(resp), content_type="application/json")
+#     context = {
+#         'department': department
+#     }
+#     return render(request, 'employee_information/manage_department.html', context)
 
 
-@login_required
-def delete_department(request):
-    data = request.POST
-    resp = {'status': ''}
-    try:
-        Department.objects.filter(id=data['id']).delete()
-        resp['status'] = 'success'
-    except:
-        resp['status'] = 'failed'
-    return HttpResponse(json.dumps(resp), content_type="application/json")
-
-# Positions
-
-
-@login_required
-def positions(request):
-    position_list = Position.objects.all()
-    context = {
-        'page_title': 'Positions',
-        'positions': position_list,
-    }
-    return render(request, 'employee_information/positions.html', context)
+# @login_required
+# def save_department(request):
+#     data = request.POST
+#     resp = {'status': 'failed'}
+#     try:
+#         if (data['id']).isnumeric() and int(data['id']) > 0:
+#             save_department = Department.objects.filter(id=data['id']).update(
+#                 name=data['name'], description=data['description'], status=data['status'])
+#         else:
+#             save_department = Department(
+#                 name=data['name'], description=data['description'], status=data['status'])
+#             save_department.save()
+#         resp['status'] = 'success'
+#     except:
+#         resp['status'] = 'failed'
+#     return HttpResponse(json.dumps(resp), content_type="application/json")
 
 
-@login_required
-def manage_positions(request):
-    position = {}
-    if request.method == 'GET':
-        data = request.GET
-        id = ''
-        if 'id' in data:
-            id = data['id']
-        if id.isnumeric() and int(id) > 0:
-            position = Position.objects.filter(id=id).first()
+# @login_required
+# def delete_department(request):
+#     data = request.POST
+#     resp = {'status': ''}
+#     try:
+#         Department.objects.filter(id=data['id']).delete()
+#         resp['status'] = 'success'
+#     except:
+#         resp['status'] = 'failed'
+#     return HttpResponse(json.dumps(resp), content_type="application/json")
 
-    context = {
-        'position': position
-    }
-    return render(request, 'employee_information/manage_position.html', context)
+# # Positions
 
 
-@login_required
-def save_position(request):
-    data = request.POST
-    resp = {'status': 'failed'}
-    try:
-        if (data['id']).isnumeric() and int(data['id']) > 0:
-            save_position = Position.objects.filter(id=data['id']).update(
-                name=data['name'], description=data['description'], status=data['status'])
-        else:
-            save_position = Position(
-                name=data['name'], description=data['description'], status=data['status'])
-            save_position.save()
-        resp['status'] = 'success'
-    except:
-        resp['status'] = 'failed'
-    return HttpResponse(json.dumps(resp), content_type="application/json")
+# @login_required
+# def positions(request):
+#     position_list = Position.objects.all()
+#     context = {
+#         'page_title': 'Positions',
+#         'positions': position_list,
+#     }
+#     return render(request, 'employee_information/positions.html', context)
 
 
-@login_required
-def delete_position(request):
-    data = request.POST
-    resp = {'status': ''}
-    try:
-        Position.objects.filter(id=data['id']).delete()
-        resp['status'] = 'success'
-    except:
-        resp['status'] = 'failed'
-    return HttpResponse(json.dumps(resp), content_type="application/json")
+# @login_required
+# def manage_positions(request):
+#     position = {}
+#     if request.method == 'GET':
+#         data = request.GET
+#         id = ''
+#         if 'id' in data:
+#             id = data['id']
+#         if id.isnumeric() and int(id) > 0:
+#             position = Position.objects.filter(id=id).first()
+
+#     context = {
+#         'position': position
+#     }
+#     return render(request, 'employee_information/manage_position.html', context)
+
+
+# @login_required
+# def save_position(request):
+#     data = request.POST
+#     resp = {'status': 'failed'}
+#     try:
+#         if (data['id']).isnumeric() and int(data['id']) > 0:
+#             save_position = Position.objects.filter(id=data['id']).update(
+#                 name=data['name'], description=data['description'], status=data['status'])
+#         else:
+#             save_position = Position(
+#                 name=data['name'], description=data['description'], status=data['status'])
+#             save_position.save()
+#         resp['status'] = 'success'
+#     except:
+#         resp['status'] = 'failed'
+#     return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
+# @login_required
+# def delete_position(request):
+#     data = request.POST
+#     resp = {'status': ''}
+#     try:
+#         Position.objects.filter(id=data['id']).delete()
+#         resp['status'] = 'success'
+#     except:
+#         resp['status'] = 'failed'
+#     return HttpResponse(json.dumps(resp), content_type="application/json")
 
 
 @login_required
@@ -442,24 +442,24 @@ def delete_employee(request):
     return HttpResponse(json.dumps(resp), content_type="application/json")
 
 
-@login_required
-def view_employee(request):
-    employee = {}
-    departments = Department.objects.filter(status=1).all()
-    positions = Position.objects.filter(status=1).all()
-    if request.method == 'GET':
-        data = request.GET
-        id = ''
-        if 'id' in data:
-            id = data['id']
-        if id.isnumeric() and int(id) > 0:
-            employee = Employees.objects.filter(id=id).first()
-    context = {
-        'employee': employee,
-        'departments': departments,
-        'positions': positions
-    }
-    return render(request, 'employee_information/view_employee.html', context)
+# @login_required
+# def view_employee(request):
+#     employee = {}
+#     departments = Department.objects.filter(status=1).all()
+#     positions = Position.objects.filter(status=1).all()
+#     if request.method == 'GET':
+#         data = request.GET
+#         id = ''
+#         if 'id' in data:
+#             id = data['id']
+#         if id.isnumeric() and int(id) > 0:
+#             employee = Employees.objects.filter(id=id).first()
+#     context = {
+#         'employee': employee,
+#         'departments': departments,
+#         'positions': positions
+#     }
+#     return render(request, 'employee_information/view_employee.html', context)
 
 
 @login_required
