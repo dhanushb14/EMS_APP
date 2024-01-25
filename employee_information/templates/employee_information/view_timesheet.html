@@ -301,6 +301,13 @@
                     </tbody>
                 </table>
             </div>
+            <div class="row">
+                <div class="col">
+                    {% if request.user.role == "superadmin" or request.user.role == 'manager' %}
+                    <button id="submitBtn" class="btn btn-md text-light float-end" style="background-color: #4981b2;">Submit</button>
+                    {% endif %}
+                </div>
+            </div>
             </form>
         </div>
     </div>

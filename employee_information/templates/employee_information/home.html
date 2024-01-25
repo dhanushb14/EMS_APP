@@ -20,8 +20,8 @@
     flex-direction: row; /* Explicitly set the flex direction */
     justify-content: left; /* Center items horizontally */
     align-items: center; /* Center items vertically */
-     /* Prevent wrapping of items */
-     /* Remove margin if it's a default list */
+    flex-wrap: nowrap; /* Prevent wrapping of items */
+     /* Enable horizontal scrolling */
     list-style: none; /* Remove list style */
     width: 100%; /* Ensure the nav takes full width */
   }
@@ -43,6 +43,7 @@
   });
 </script>
 
+  
 <style>
   /* .tile {
     width: 80%;
@@ -144,6 +145,12 @@
           top: 225px;
           left: 70px;
           z-index: 3;
+        }
+        #profile-tab{
+          font-size: 0px !important;
+        }
+        #home-tab{
+          font-size: 0px !important;
         }
       }
 </style>

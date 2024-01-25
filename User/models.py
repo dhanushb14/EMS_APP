@@ -111,11 +111,11 @@ class Employee(AbstractBaseUser, PermissionsMixin):
         LeaveRequest = apps.get_model('employee_information', 'LeaveRequest')
         data = LeaveRequest.objects.filter(employee_name = self.employee_name, status='Approved')
         if self.shift == 'Night shift':
-            self.available_leave = 7
+            self.available_leave = 12
             self.work_from_home = 2
         else:
             self.available_leave = 24
-            self.work_from_home = 0
+            self.work_from_home = 4
         for i in data:
             
             print("1")

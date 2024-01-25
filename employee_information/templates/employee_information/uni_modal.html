@@ -173,10 +173,10 @@ input[type="text"]:not(#project_name):not(#task) {
     </div>
   </div>
   <div class="row">
-    <div class="">
-        
-        <button id="submitBtn" class="btn btn-md text-light float-end" style="background-color: #4981b2; {% if request.user.role != "scrummaster" %}display: none;{% endif %}">Submit</button>
-        
+    <div class="col">
+        {% if request.user.role == "superadmin" or request.user.role == 'manager' %}
+        <button id="submitBtn" class="btn btn-md text-light float-end" style="background-color: #4981b2;">Submit</button>
+        {% endif %}
     </div>
 </div>
 </div>
@@ -431,6 +431,10 @@ $(document).on('input[class$="_value"], input[class^="ovt_"]').on('input', calcu
         
 });
 
+</script>
+<script>
+  var modalFooter = document.querySelector(".modal-footer");
+        modalFooter.parentNode.removeChild(modalFooter);
 </script>
 
 
